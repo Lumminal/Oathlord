@@ -1,3 +1,4 @@
+using Robust.Shared.Configuration; // Oathlord
 using System.Linq;
 using Content.Client.Guidebook.RichText;
 using Content.Client.UserInterface.ControlExtensions;
@@ -19,6 +20,7 @@ public sealed partial class GuidebookWindow : FancyWindow, ILinkClickHandler, IA
 {
     [Dependency] private DocumentParsingManager _parsingMan = default!;
     [Dependency] private IResourceManager _resourceManager = default!;
+    [Dependency] private IConfigurationManager _cfg = default!; //Baseline
 
     private Dictionary<ProtoId<GuideEntryPrototype>, GuideEntry> _entries = [];
 
@@ -290,6 +292,10 @@ public sealed partial class GuidebookWindow : FancyWindow, ILinkClickHandler, IA
         var parent = forcedRoot == null ? null : AddEntry(forcedRoot.Value, null, addedEntries);
         foreach (var entry in GetSortedEntries(roots))
         {
+            //Baseline start
+            if (entry.Hidden) continue;
+            if (entry.LocFilter is not null && entry.LocFilter != _cfg.GetCVar(CCVars.ServerLanguage)) continue;
+            //Baseline end
             AddEntry(entry.Id, parent, addedEntries);
         }
 

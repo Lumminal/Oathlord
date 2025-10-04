@@ -65,7 +65,7 @@ public sealed partial class JobPrototype : IPrototype
     /// Should this job appear in preferences menu?
     /// </summary>
     [DataField]
-    public bool SetPreference = true;
+    public bool SetPreference = false; // Oathlord - false by default
 
     /// <summary>
     /// Should the selected traits be applied for this job?

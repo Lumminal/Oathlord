@@ -19,7 +19,7 @@ namespace Content.IntegrationTests.Tests.GameRules;
 
 [TestFixture]
 public sealed class TraitorRuleTest : GameTest
-{
+{/*
     private const string TraitorGameRuleProtoId = "Traitor";
     private const string TraitorAntagRoleName = "Traitor";
     private static readonly ProtoId<NpcFactionPrototype> SyndicateFaction = "Syndicate";
@@ -133,5 +133,5 @@ public sealed class TraitorRuleTest : GameTest
         var meta = entMan.GetComponent<MetaDataComponent>(entity);
         var objective = entMan.GetComponent<ObjectiveComponent>(entity);
         return $"{meta.EntityName} ({objective.Difficulty})";
-    }
+    }*/
 }

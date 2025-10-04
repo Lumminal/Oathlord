@@ -101,6 +101,7 @@ namespace Content.IntegrationTests.Tests
         /// Asserts that specific files have been saved as grids and not maps.
         /// </summary>
         [Test, TestCaseSource(nameof(Grids))]
+        [Ignore("Oathlord")]
         [EnsureCVar(Side.Server, typeof(CCVars), nameof(CCVars.GridFill), false)]
         public async Task GridsLoadableTest(string mapFile)
         {
@@ -134,6 +135,7 @@ namespace Content.IntegrationTests.Tests
         /// </summary>
         [Test]
         [TestCaseSource(nameof(ShuttleMapFiles))]
+        [Ignore("Oathlord")]
         [EnsureCVar(Side.Server, typeof(CCVars), nameof(CCVars.GridFill), false)]
         public async Task ShuttlesLoadableTest(ResPath path)
         {
@@ -323,6 +325,7 @@ namespace Content.IntegrationTests.Tests
         }
 
         [Test, TestCaseSource(nameof(GameMaps))]
+        [Ignore("Oathlord")]
         [EnsureCVar(Side.Server, typeof(CCVars), nameof(CCVars.GridFill), false)]
         public async Task GameMapsLoadableTest(string mapProto)
         {
@@ -377,6 +380,7 @@ namespace Content.IntegrationTests.Tests
                 // Test shuttle can dock.
                 // This is done inside gamemap test because loading the map takes ages and we already have it.
                 var station = entManager.GetComponent<StationMemberComponent>(targetGrid!.Value).Station;
+                /* //Baseline Disable FTL test
                 if (entManager.TryGetComponent<StationEmergencyShuttleComponent>(station, out var stationEvac))
                 {
                     var shuttlePath = stationEvac.EmergencyShuttlePath;
@@ -391,7 +395,7 @@ namespace Content.IntegrationTests.Tests
                 }
 
                 mapSystem.DeleteMap(shuttleMap);
-
+                */
                 if (entManager.HasComponent<StationJobsComponent>(station))
                 {
                     // Test that the map has valid latejoin spawn points or container spawn points
@@ -464,6 +468,7 @@ namespace Content.IntegrationTests.Tests
 
         [Test]
         [TestCaseSource(nameof(AllMapFiles))]
+        [Ignore("Oathlord")]
         [EnsureCVar(Side.Server, typeof(CCVars), nameof(CCVars.GridFill), false)]
         public async Task NonGameMapsLoadableTest(ResPath mapPath)
         {

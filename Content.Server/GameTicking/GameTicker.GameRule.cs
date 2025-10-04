@@ -407,8 +407,11 @@ public sealed partial class GameTicker
             if (proto.Abstract)
                 continue;
 
-            if (proto.HasComponent<GameRuleComponent>())
-                yield return proto;
+            //BASELINE - filter all vanilla gamerules
+            if (proto.TryGetComponent<GameRuleComponent>(out var rule))
+                if (!rule.Hidden)
+                    yield return proto;
+            //BASELINE - end
         }
     }
 
