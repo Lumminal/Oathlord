@@ -14,12 +14,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="../Content.Goobstation.Client/Content.Goobstation.Client.csproj" />
-		<ProjectReference Include="../Content.Trauma.Shared/Content.Trauma.Shared.csproj" />
-		<ProjectReference Include="../RobustToolbox/Robust.Client/Robust.Client.csproj" />
-		<ProjectReference Include="../RobustToolbox/Robust.Shared/Robust.Shared.csproj" />
+		<ProjectReference Include="../Content.Oathlord.Shared/Content.Oathlord.Shared.csproj" />
 	</ItemGroup>
 
-	<Import Project="../RobustToolbox/MSBuild/Robust.Properties.targets" />
-	<Import Project="../RobustToolbox/MSBuild/XamlIL.targets" />
+	<Import Project="../RobustToolbox/Imports/Client.props" />
+    <Import Project="../RobustToolbox/Imports/Shared.props" />
+    <Import Project="../RobustToolbox/MSBuild/Robust.Properties.targets" />
+    <Import Project="../RobustToolbox/MSBuild/XamlIL.targets" />
 </Project>

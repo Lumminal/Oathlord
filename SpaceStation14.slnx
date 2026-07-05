@@ -39,8 +39,16 @@
   <Project Path="Content.Shared/Content.Shared.csproj" />
   <Project Path="Content.Tests/Content.Tests.csproj" />
   <Project Path="Content.Tools/Content.Tools.csproj" />
+  <!-- <Oathlord> -->
+  <Project Path="Content.Oathlord.Server/Content.Oathlord.Server.csproj" />
+  <Project Path="Content.Oathlord.Shared/Content.Oathlord.Shared.csproj" />
+  <Project Path="Content.Oathlord.Client/Content.Oathlord.Client.csproj" />
+  <Project Path="Content.Oathlord.Common/Content.Oathlord.Common.csproj" />
+  <Project Path="Content.Common/Content.Common.csproj" />
+  <!-- </Oathlord> -->
   <Project Path="Content.YAMLLinter/Content.YAMLLinter.csproj" />
   <Project Path="Pow3r/Pow3r.csproj" />
+  <Folder Name="/RobustToolbox/.github/" />
   <Folder Name="/RobustToolbox/.github/workflows/">
     <File Path="RobustToolbox/.github/workflows/benchmarks.yml" />
     <File Path="RobustToolbox/.github/workflows/build-all-configurations.yml" />

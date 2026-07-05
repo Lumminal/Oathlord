@@ -14,12 +14,16 @@
 		<ServerGarbageCollection>true</ServerGarbageCollection>
 	</PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Serilog" />
+    </ItemGroup>
+
 	<ItemGroup>
-		<ProjectReference Include="../Content.Trauma.Shared/Content.Trauma.Shared.csproj" />
-		<ProjectReference Include="../Content.Goobstation.Server/Content.Goobstation.Server.csproj" />
+        <ProjectReference Include="../Content.Oathlord.Shared/Content.Oathlord.Shared.csproj" />
 		<ProjectReference Include="../Content.Server/Content.Server.csproj" />
-		<ProjectReference Include="../RobustToolbox/Robust.Shared/Robust.Shared.csproj" />
 	</ItemGroup>
 
+    <Import Project="../RobustToolbox/Imports/Server.props" />
+    <Import Project="../RobustToolbox/Imports/Shared.props" />
 	<Import Project="../RobustToolbox/MSBuild/Robust.Properties.targets" />
 </Project>

@@ -1,6 +1,6 @@
 using Robust.Client;
 
-namespace Content.Trauma.Client;
+namespace Content.Oathlord.Client;
 
 internal sealed class Program
 {

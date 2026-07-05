@@ -1,6 +1,6 @@
 using Robust.Server;
 
-namespace Content.Trauma.Server;
+namespace Content.Oathlord.Server;
 
 internal static class Program
 {
