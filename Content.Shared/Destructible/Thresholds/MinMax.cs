@@ -26,4 +26,9 @@ public partial struct MinMax
     {
         return new MinMax(tuple.Min, tuple.Max);
     }
+
+    public static implicit operator MinMax((int Min, int Max) tuple)
+    {
+        return new MinMax(tuple.Min, tuple.Max);
+    }
 }
