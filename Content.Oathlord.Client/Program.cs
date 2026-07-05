@@ -1,12 +1,13 @@
 using Robust.Client;
 
-namespace Content.Oathlord.Client;
-
-internal sealed class Program
+namespace Content.Oathlord.Client
 {
-    [STAThread]
-    public static void Main(string[] args)
+    internal sealed class Program
     {
-        ContentStart.Start(args);
+        [STAThread]
+        public static void Main(string[] args)
+        {
+            ContentStart.Start(args);
+        }
     }
-}
+};
