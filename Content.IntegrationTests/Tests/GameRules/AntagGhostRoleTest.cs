@@ -8,6 +8,7 @@ using Content.Server.GameTicking;
 using Content.Server.Ghost.Roles;
 using Content.Server.Ghost.Roles.Components;
 using Content.Shared.Antag;
+using Content.Shared.GameTicking.Components;
 using Content.Shared.Players;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
@@ -41,6 +42,10 @@ public sealed partial class AntagGhostRoleTest : AntagTest
     {
         var rule = SProtoMan.Index<EntityPrototype>(ruleId);
         Assert.That(rule.TryGetComponent<AntagSelectionComponent>(out var antag, SEntMan.ComponentFactory), Is.True);
+        // <Oathlord> - Skip hidden rules
+        if (rule.TryGetComponent<GameRuleComponent>(out var gameRuleComp, SEntMan.ComponentFactory) && gameRuleComp.Hidden)
+            return;
+        // </Oathlord>
 
         STicker.StartGameRule(ruleId, out var gameRule);
 
@@ -89,6 +94,10 @@ public sealed partial class AntagGhostRoleTest : AntagTest
         {
             var rule = SProtoMan.Index<EntityPrototype>(ruleId);
             Assert.That(rule.TryGetComponent<AntagSelectionComponent>(out var antag, SEntMan.ComponentFactory), Is.True);
+            // <Oathlord> - Skipped hidden rules
+            if (rule.TryGetComponent<GameRuleComponent>(out var gameRule, SEntMan.ComponentFactory) && gameRule.Hidden)
+                return;
+            // </Oathlord>
             STicker.StartGameRule(ruleId);
         }
 
