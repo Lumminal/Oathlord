@@ -103,6 +103,7 @@ namespace Content.IntegrationTests.Tests
         [Test, TestCaseSource(nameof(Grids))]
         [Ignore("Oathlord")]
         [EnsureCVar(Side.Server, typeof(CCVars), nameof(CCVars.GridFill), false)]
+        [Ignore("Oathlord")]
         public async Task GridsLoadableTest(string mapFile)
         {
             var pair = Pair;
@@ -137,6 +138,7 @@ namespace Content.IntegrationTests.Tests
         [TestCaseSource(nameof(ShuttleMapFiles))]
         [Ignore("Oathlord")]
         [EnsureCVar(Side.Server, typeof(CCVars), nameof(CCVars.GridFill), false)]
+        [Ignore("Oathlord")]
         public async Task ShuttlesLoadableTest(ResPath path)
         {
             var pair = Pair;
@@ -327,6 +329,7 @@ namespace Content.IntegrationTests.Tests
         [Test, TestCaseSource(nameof(GameMaps))]
         [Ignore("Oathlord")]
         [EnsureCVar(Side.Server, typeof(CCVars), nameof(CCVars.GridFill), false)]
+        [Ignore("Oathlord")]
         public async Task GameMapsLoadableTest(string mapProto)
         {
             var pair = Pair;
@@ -470,6 +473,7 @@ namespace Content.IntegrationTests.Tests
         [TestCaseSource(nameof(AllMapFiles))]
         [Ignore("Oathlord")]
         [EnsureCVar(Side.Server, typeof(CCVars), nameof(CCVars.GridFill), false)]
+        [Ignore("Oathlord")]
         public async Task NonGameMapsLoadableTest(ResPath mapPath)
         {
             var pair = Pair;

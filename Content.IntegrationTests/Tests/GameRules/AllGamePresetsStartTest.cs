@@ -34,6 +34,11 @@ public sealed class AllGamePresetsStartTest : AntagTest
     [EnsureCVar(Side.Server, typeof(CCVars), nameof(CCVars.GameTickerIgnoredPresets), GameTicker.DummyGameRule)]
     public async Task TestAllGamemodesCanStart(string presetId)
     {
+        // <Oathlord> - We have disabled default game presets via ignoredPrototypes, so they shouldn't be run against...
+        if (!SProtoMan.HasIndex<GamePresetPrototype>(presetId))
+            return;
+        // </Oathlord>
+
         // Initially in the lobby
         await Server.WaitPost(() =>
         {
