@@ -14,6 +14,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Content.Shared.Database\Content.Shared.Database.csproj" />
+    <!-- <Oathlord> -->
+    <ProjectReference Include="..\Content.Common\Content.Common.csproj" />
+    <ProjectReference Include="..\Content.Oathlord.Common\Content.Oathlord.Common.csproj" />
+    <!-- </Oathlord> -->
   </ItemGroup>
 
   <Import Project="..\RobustToolbox\MSBuild\Robust.Properties.targets" />

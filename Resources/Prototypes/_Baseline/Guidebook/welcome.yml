@@ -2,5 +2,5 @@
   hidden: false
   locFilter: "en-US"
   id: Baseline_Welcome
-  name: Welcome to Baseline
+  name: guidebook-baseline-name
   text: "/ServerInfo/_Baseline/Guidebook_EN/Welcome.xml"
