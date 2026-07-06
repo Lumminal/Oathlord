@@ -2,10 +2,14 @@
 <img alt="Space Station 14" width="880" height="300" src="https://raw.githubusercontent.com/space-wizards/asset-dump/de329a7898bb716b9d5ba9a0cd07f38e61f1ed05/github-logo.svg">
 </div>
 
-Oathloard is a fork of [Space Station 14](https://github.com/space-wizards/space-station-14).
+Oathlord is a fork of [Space Station 14](https://github.com/space-wizards/space-station-14).
 
 > [!WARNING]
 > This fork is under heavy development. 
+
+## Links
+
+[Discord](https://discord.gg/wsVcuN7Cdv)
 
 ## Contributing
 
