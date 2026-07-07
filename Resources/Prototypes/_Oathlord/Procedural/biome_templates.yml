@@ -1,0 +1,6 @@
+- type: biomeTemplate
+  id: SnowFill
+  layers:
+  - !type:BiomeTileLayer
+    threshold: -1.0
+    tile: FloorSnow
