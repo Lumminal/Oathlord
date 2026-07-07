@@ -7,9 +7,8 @@ meta:
   time: 07/07/2026 14:11:52
   entityCount: 5
 maps:
-- 1
+- 2
 grids:
-- 1
 - 2
 orphans: []
 nullspace: []
@@ -19,29 +18,17 @@ tilemap:
 entities:
 - proto: ""
   entities:
-  - uid: 1
+  - uid: 2
     components:
     - type: MetaData
       name: Map Entity
-    - type: Transform
     - type: Map
       mapPaused: True
     - type: GridTree
-    - type: Broadphase
-    - type: Gravity
-      gravityShakeSound: !type:SoundPathSpecifier
-        path: /Audio/Effects/alert.ogg
-      inherent: True
-      enabled: True
-    - type: FootstepModifier
-    - type: MapGrid
-      chunks: {}
-    - type: SpreaderGrid
-    - type: GridPathfinding
-    - type: DecalGrid
+      chunks: { }
       chunkCollection:
         version: 2
-        nodes: []
+        nodes: [ ]
     - type: SunShadow
       alpha: 0.8
       direction: 1,-1.5
@@ -67,16 +54,10 @@ entities:
         moles:
           Oxygen: 21.824879
           Nitrogen: 82.10312
-  - uid: 2
-    components:
-    - type: MetaData
-      name: grid
     - type: Transform
-      pos: -0.40590477,-0.5914488
       parent: 1
     - type: Roof
       data: { }
-    - type: MapLight
     - type: MapGrid
       chunks:
         0,0:
@@ -123,29 +104,6 @@ entities:
       chunkCollection:
         version: 2
         nodes: []
-    - type: GridAtmosphere
-      version: 2
-      data:
-        tiles:
-          0,0:
-            0: 65535
-          0,-1:
-            0: 65280
-          -1,0:
-            0: 61166
-          1,0:
-            0: 4369
-          1,-1:
-            0: 4352
-          -1,-1:
-            0: 60928
-        uniqueMixes:
-        - volume: 2500
-          temperature: 293.15
-          moles:
-            Oxygen: 21.824879
-            Nitrogen: 82.10312
-        chunkSize: 4
     - type: GasTileOverlay
     - type: FootstepModifier
     - type: GravityShake
