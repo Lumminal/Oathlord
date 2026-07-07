@@ -1,0 +1,14 @@
+- type: gameMap
+  id: OathlordDev
+  mapName: Archives
+  mapPath: /Maps/_Oathlord/archives.yml
+  minPlayers: 0
+  stations:
+    Dev:
+      stationProto: BaseExpedition
+      components:
+      - type: StationNameSetup
+        mapNameTemplate: "Dev"
+      - type: StationJobs
+        availableJobs:
+          BaselineRole: [ -1, -1 ]

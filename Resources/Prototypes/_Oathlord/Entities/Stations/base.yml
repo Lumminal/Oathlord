@@ -1,0 +1,9 @@
+- type: entity
+  id: BaseExpedition
+  categories: [ HideSpawnMenu ]
+  parent:
+  - BaseStation
+  - BaseStationAllEventsEligible
+  - BaseStationJobsSpawning
+  - BaseStationAlertLevels
+  - BaseStationRecords
