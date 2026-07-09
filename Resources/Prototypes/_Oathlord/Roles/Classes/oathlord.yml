@@ -1,0 +1,12 @@
+# Wretch
+- type: job
+  id: Wretch
+  name: wretch-class-name-role
+  description: wretch-class-desc-role
+  playTimeTracker: Wretch
+  icon: "JobIconPassenger"
+  supervisors: job-supervisors-everyone # TODO: Change to none
+  setPreference: true
+
+- type: playTimeTracker
+  id: Wretch

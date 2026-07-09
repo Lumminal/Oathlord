@@ -11,4 +11,4 @@
         mapNameTemplate: "Dev"
       - type: StationJobs
         availableJobs:
-          BaselineRole: [ -1, -1 ]
+          Wretch: [ -1, -1 ]

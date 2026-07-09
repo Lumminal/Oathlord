@@ -25,9 +25,9 @@ namespace Content.Shared.GameTicking
         // See ideally these would be pulled from the job definition or something.
         // But this is easier, and at least it isn't hardcoded.
         //TODO: Move these, they really belong in StationJobsSystem or a cvar.
-        public static readonly ProtoId<JobPrototype> FallbackOverflowJob = "BaselineRole"; //BASELINE - Replace it with default fallback job of your fork
+        public static readonly ProtoId<JobPrototype> FallbackOverflowJob = "Wretch"; //Oathlord - Replaced with wretch
 
-        public const string FallbackOverflowJobName = "baseline-job-name-role";
+        public const string FallbackOverflowJobName = "wretch-class-name-role"; //Oathlord - Replaced with wretch
 
         // TODO network.
         // Probably most useful for replays, round end info, and probably things like lobby menus.
