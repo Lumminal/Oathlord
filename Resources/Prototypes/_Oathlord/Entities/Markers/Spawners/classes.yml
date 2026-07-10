@@ -1,0 +1,11 @@
+- type: entity
+  parent: SpawnPointJobBase
+  id: SpawnPointWretch
+  name: wretch
+  categories: [ ForkFiltered ]
+  components:
+  - type: SpawnPoint
+    job_id: Wretch
+  - type: Sprite
+    layers:
+    - state: green
