@@ -1,0 +1,8 @@
+- type: department
+  id: Peasantry
+  name: peasantry-department
+  description: peasantry-department-description
+  color: "#A46106"
+  editorHidden: false
+  roles:
+  - Wretch

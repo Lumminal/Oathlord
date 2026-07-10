@@ -1,0 +1,8 @@
+# For any future classes, use *class-icon in icon->sprite (check StatusIcon/job.yml for reference in upstream)
+- type: jobIcon
+  parent: JobIcon
+  id: ClassIconWretch
+  icon:
+    sprite: &class-icon /Textures/_Oathlord/Interface/Misc/class_icons.rsi
+    state: Wretch
+  jobName: class-name-wretch

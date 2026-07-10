@@ -1,0 +1,14 @@
+# Our naming conventions are "class/classes" instead of jobs.
+#
+# Wretch
+- type: job
+  id: Wretch
+  name: wretch-class-name-role
+  description: wretch-class-desc-role
+  playTimeTracker: Wretch
+  icon: "ClassIconWretch"
+  supervisors: job-supervisors-nobody
+  setPreference: true
+
+- type: playTimeTracker
+  id: Wretch

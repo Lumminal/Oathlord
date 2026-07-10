@@ -104,7 +104,7 @@ entities:
     - type: FootstepModifier
     - type: GravityShake
       shakeTimes: 10
-- proto: BaselineSpawnPoint
+- proto: SpawnPointWretch
   entities:
   - uid: 3
     components:
