@@ -8,6 +8,8 @@
   id: OLRitualDagger
   categories: [ ForkFiltered ]
   components:
+  - type: MeleeWeapon
+    range: 999.9 # range doesn't matter, hitboxes always spawn in a fixed location centered around us
   - type: HitboxWeapon
     hitboxes:
     - hitboxSize: 0.5,1
