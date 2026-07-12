@@ -3,6 +3,7 @@ using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Weapons.Melee.Events;
+using Robust.Shared.Timing;
 
 namespace Content.Oathlord.Shared.Hitbox;
 
@@ -14,6 +15,7 @@ namespace Content.Oathlord.Shared.Hitbox;
 /// </summary>
 public sealed partial class HitboxWeaponSystem : EntitySystem
 {
+    [Dependency] private IGameTiming _timing = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private DamageableSystem _damageable = default!;
@@ -22,10 +24,16 @@ public sealed partial class HitboxWeaponSystem : EntitySystem
 
     public readonly List<Box2Rotated> ActiveHitboxes = new();
 
+    /// <summary>
+    /// After how many seconds should we reset to the original hitbox. TODO: Cvar
+    /// </summary>
+    private TimeSpan _resetTimer = TimeSpan.FromSeconds(2);
+
     public override void Initialize()
     {
         base.Initialize();
 
+        // SubscribeLocalEvent<HitboxWeaponComponent, MapInitEvent>(OnMapInit);
         SubscribeLocalEvent<HitboxWeaponComponent, MeleeHitEvent>(OnMeleeHit);
     }
 
@@ -50,29 +58,33 @@ public sealed partial class HitboxWeaponSystem : EntitySystem
         var dirToClick = clickPos - coords;
         var clickAngle = dirToClick != Vector2.Zero ? dirToClick.ToWorldAngle() : worldRot;
 
-        var first = ent.Comp.Hitboxes[0];
+        var nextHitbox = ent.Comp.CurrentHitboxIndex + 1;
+        if (nextHitbox >= ent.Comp.Hitboxes.Count)
+        {
+            ent.Comp.CurrentHitboxIndex = -1; // Reset if we reached the final hitbox
+            Dirty(ent);
+            return;
+        }
+
+        // TODO: FIND OUT HOW TO DO THIS!
+
+        var currentHitbox = ent.Comp.Hitboxes[nextHitbox];
 
         // We rotate the offset to face where the user is looking, otherwise it'd be a fixed offset
         var rotatedOffset = Vector2.Zero;
-        if (first.Offset != Vector2.Zero)
+        if (currentHitbox.Offset != Vector2.Zero)
         {
-            rotatedOffset = clickAngle.RotateVec(first.Offset);
+            rotatedOffset = clickAngle.RotateVec(currentHitbox.Offset);
         }
 
         var worldPos = coords + rotatedOffset;
-        var shape = Box2.CenteredAround(worldPos, first.HitboxSize);
-        var rotatedShape = new Box2Rotated(shape, clickAngle + first.Rotation, worldPos);
+        var shape = Box2.CenteredAround(worldPos, currentHitbox.HitboxSize);
+        var rotatedShape = new Box2Rotated(shape, clickAngle + currentHitbox.Rotation, worldPos);
 
         ActiveHitboxes.Add(rotatedShape);
 
-        _damage.Clear();
-        _lookup.GetEntitiesIntersecting(xform.MapID, rotatedShape, _damage);
-        foreach (var entity in _damage)
-        {
-            if (entity.Owner == args.User)
-                continue;
-
-            _damageable.ChangeDamage(entity.AsNullable(), first.Damage, true);
-        }
+        var activeComp = EnsureComp<ActiveHitboxWeaponComponent>(ent.Owner);
+        activeComp.CurrentHitboxIndex = ent.Comp.CurrentHitboxIndex;
+        activeComp.NextReset = _resetTimer + _timing.CurTime;
     }
 }

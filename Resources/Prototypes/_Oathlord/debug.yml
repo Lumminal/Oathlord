@@ -15,6 +15,7 @@
     - hitboxSize: 0.5,1
       offset: 0,-1
       rotation: 0
+      lifetime: 0.1
       damage:
         types:
           Heat: 50
