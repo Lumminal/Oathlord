@@ -1,0 +1,19 @@
+- type: entity
+  parent: TargetClown
+  id: OLTargetClown
+  categories: [ ForkFiltered ]
+
+- type: entity
+  parent: RitualDagger
+  id: OLRitualDagger
+  categories: [ ForkFiltered ]
+  components:
+  - type: HitboxWeapon
+    hitboxes:
+    - hitboxSize: 0.5,1
+      offset: 0,-1
+      rotation: 0
+      damage:
+        types:
+          Heat: 50
+
