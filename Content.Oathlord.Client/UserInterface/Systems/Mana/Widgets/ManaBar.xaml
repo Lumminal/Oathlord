@@ -1,15 +1,6 @@
 <widgets:ManaBar
     xmlns="https://spacestation14.io"
     xmlns:widgets="clr-namespace:Content.Oathlord.Client.UserInterface.Systems.Mana.Widgets"
-    xmlns:graphics="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
-    MinSize="64 16">
-    <BoxContainer Orientation="Horizontal" MinSize="200 16">
-        <PanelContainer HorizontalAlignment="Center" VerticalAlignment="Center" MinSize="200 16">
-            <ProgressBar Vertical="False" Name="ManaProgress" MaxValue="200" MinValue="0" Value="100">
-                <ProgressBar.ForegroundStyleBoxOverride>
-                    <graphics:StyleBoxFlat BackgroundColor="#0096FF" BorderThickness="2" BorderColor="#000000"/>
-                </ProgressBar.ForegroundStyleBoxOverride>
-            </ProgressBar>
-        </PanelContainer>
-    </BoxContainer>
+    MinSize="96 96">
+    <ProgressBar Name="ManaProgress" MaxValue="100" MinValue="0" Value="100" MinSize="96 96"/>
 </widgets:ManaBar>

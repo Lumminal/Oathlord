@@ -44,9 +44,9 @@ public sealed partial class ManaUIController : UIController, IOnStateEntered<Gam
         SyncMana();
     }
 
-    private void SystemOnSyncMana(object? sender, FixedPoint2 e)
+    private void SystemOnSyncMana(object? sender, (FixedPoint2 current, FixedPoint2 max) mana)
     {
-        UI?.SyncMana(e);
+        UI?.SyncMana(mana.current, mana.max);
     }
 
     public void SyncMana()
@@ -54,6 +54,8 @@ public sealed partial class ManaUIController : UIController, IOnStateEntered<Gam
         if (_player.LocalEntity is not { } player)
             return;
 
-        SystemOnSyncMana(_mana, _mana.GetMana(player));
+        var current = _mana.GetMana(player);
+        var max = _mana.GetMaxMana(player);
+        SystemOnSyncMana(_mana, (current, max));
     }
 }

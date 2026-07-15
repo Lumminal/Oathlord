@@ -9,24 +9,30 @@ public sealed partial class ManaClientSystem : ManaSystem
 {
     [Dependency] private IPlayerManager _player = default!;
 
-    public event EventHandler<FixedPoint2>? SyncMana;
+    public event EventHandler<(FixedPoint2, FixedPoint2)>? SyncMana;
 
     public override void Initialize()
     {
         base.Initialize();
 
         SubscribeLocalEvent<ManaUserComponent, LocalPlayerAttachedEvent>(OnPlayerAttached);
+        SubscribeLocalEvent<ManaUserComponent, AfterAutoHandleStateEvent>(OnAfterAutoHandle);
     }
 
     private void OnPlayerAttached(Entity<ManaUserComponent> ent, ref LocalPlayerAttachedEvent args)
     {
         if (_player.LocalEntity == ent.Owner)
-            SyncMana?.Invoke(this, ent.Comp.CurrentMana);
+            SyncMana?.Invoke(this, (ent.Comp.CurrentMana, ent.Comp.MaxMana));
+    }
+
+    private void OnAfterAutoHandle(Entity<ManaUserComponent> ent, ref AfterAutoHandleStateEvent args)
+    {
+        UpdateHud(ent);
     }
 
     protected override void UpdateHud(Entity<ManaUserComponent> ent)
     {
         if (_player.LocalEntity == ent.Owner)
-            SyncMana?.Invoke(this, ent.Comp.CurrentMana);
+            SyncMana?.Invoke(this, (ent.Comp.CurrentMana, ent.Comp.MaxMana));
     }
 }

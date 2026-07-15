@@ -8,7 +8,7 @@ namespace Content.Oathlord.Shared.Mana;
 /// but in order to use it in things such as magic, they'll need <see cref="CanUse"/> variable set to true.
 /// </summary>
 [RegisterComponent, NetworkedComponent]
-[AutoGenerateComponentState]
+[AutoGenerateComponentState(true)]
 public sealed partial class ManaUserComponent : Component
 {
     /// <summary>

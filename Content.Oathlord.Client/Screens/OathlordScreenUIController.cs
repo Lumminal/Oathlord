@@ -8,6 +8,7 @@ namespace Content.Oathlord.Client.Screens;
 
 public sealed partial class OathlordScreenUIController : UIController
 {
+
     public override void Initialize()
     {
         base.Initialize();
@@ -19,25 +20,31 @@ public sealed partial class OathlordScreenUIController : UIController
 
     private void OnScreenUnload()
     {
-        if (UIManager.ActiveScreen is DefaultGameScreen screen)
+        switch (UIManager.ActiveScreen)
         {
-            screen.RemoveWidget<ManaBar>();
+            case DefaultGameScreen screen:
+                screen.RemoveWidget<ManaBar>();
+                break;
+            case  SeparatedChatGameScreen separated:
+                separated.RemoveWidget<ManaBar>();
+                break;
         }
     }
 
     private void OnScreenLoad()
     {
-        // get widgetn
         switch (UIManager.ActiveScreen)
         {
             case DefaultGameScreen screen:
+                var manaDefault = screen.GetOrAddWidget<ManaBar>();
+
+                LayoutContainer.SetAnchorPreset(manaDefault, LayoutContainer.LayoutPreset.CenterTop, true);
                 break;
             case SeparatedChatGameScreen separated:
+                var manaSep = separated.GetOrAddWidget<ManaBar>();
+
+                LayoutContainer.SetAnchorPreset(manaSep, LayoutContainer.LayoutPreset.CenterTop);
                 break;
         }
-
-        //LayoutContainer.SetAnchorAndMarginPreset(mana, LayoutContainer.LayoutPreset.TopWide, margin: 100);
     }
-
-
 }
