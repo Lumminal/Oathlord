@@ -46,7 +46,6 @@ public sealed partial class ManaUIController : UIController, IOnStateEntered<Gam
 
     private void SystemOnSyncMana(object? sender, (FixedPoint2 current, FixedPoint2 max, bool canUse) mana)
     {
-        Log.Debug($"UI null? {UI is null}");
         UI?.SyncMana(mana.current, mana.max, mana.canUse);
     }
 
