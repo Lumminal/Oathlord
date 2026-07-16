@@ -28,7 +28,6 @@ public sealed partial class DefaultGameScreen : InGameScreen
 
         MainViewport.OnResized += ResizeActionContainer;
         Inventory.OnResized += ResizeActionContainer;
-        OnLoad?.Invoke(this); // Oathlord
     }
 
     private void ResizeActionContainer()

@@ -16,12 +16,12 @@ public sealed partial class ManaUserComponent : Component
     /// This value, usually, can change throughout the course of the round
     /// </summary>
     [DataField, AutoNetworkedField]
-    public bool CanUse = true; // TODO: False by default
+    public bool CanUse = true;
 
     /// <summary>
     /// The maximum amount of mana this entity can have
     /// </summary>
-    [DataField]
+    [DataField, AutoNetworkedField]
     public FixedPoint2 MaxMana = 100.0f;
 
     /// <summary>

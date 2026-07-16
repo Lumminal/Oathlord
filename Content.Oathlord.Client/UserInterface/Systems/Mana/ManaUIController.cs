@@ -14,7 +14,7 @@ public sealed partial class ManaUIController : UIController, IOnStateEntered<Gam
     [Dependency] private IPlayerManager _player = default!;
     [UISystemDependency] private readonly ManaClientSystem _mana = default!;
 
-    private ManaBar? UI => UIManager.GetActiveUIWidgetOrNull<ManaBar>();
+    public ManaBar? UI => UIManager.GetActiveUIWidgetOrNull<ManaBar>();
 
     public override void Initialize()
     {
@@ -44,9 +44,10 @@ public sealed partial class ManaUIController : UIController, IOnStateEntered<Gam
         SyncMana();
     }
 
-    private void SystemOnSyncMana(object? sender, (FixedPoint2 current, FixedPoint2 max) mana)
+    private void SystemOnSyncMana(object? sender, (FixedPoint2 current, FixedPoint2 max, bool canUse) mana)
     {
-        UI?.SyncMana(mana.current, mana.max);
+        Log.Debug($"UI null? {UI is null}");
+        UI?.SyncMana(mana.current, mana.max, mana.canUse);
     }
 
     public void SyncMana()
@@ -56,6 +57,7 @@ public sealed partial class ManaUIController : UIController, IOnStateEntered<Gam
 
         var current = _mana.GetMana(player);
         var max = _mana.GetMaxMana(player);
-        SystemOnSyncMana(_mana, (current, max));
+        var canUse = _mana.CanUseMana(player);
+        SystemOnSyncMana(_mana, (current, max, canUse));
     }
 }
