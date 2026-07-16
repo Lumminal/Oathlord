@@ -11,6 +11,7 @@ public sealed partial class AdjustManaCommand : LocalizedEntityCommands
     [Dependency] private ManaSystem _mana = default!;
 
     public override string Command => "adjustmana";
+    public override string Description => "Adjusts the current mana of the entity";
 
     public override void Execute(IConsoleShell shell, string argStr, string[] args)
     {
