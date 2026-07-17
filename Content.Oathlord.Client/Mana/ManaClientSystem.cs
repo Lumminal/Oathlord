@@ -17,6 +17,8 @@ public sealed partial class ManaClientSystem : ManaSystem
 
         SubscribeLocalEvent<ManaUserComponent, LocalPlayerAttachedEvent>(OnPlayerAttached);
         SubscribeLocalEvent<ManaUserComponent, AfterAutoHandleStateEvent>(OnAfterAutoHandle);
+
+        SubscribeLocalEvent<ManaUserComponent, ComponentRemove>(OnRemove);
     }
 
     private void OnPlayerAttached(Entity<ManaUserComponent> ent, ref LocalPlayerAttachedEvent args)
@@ -29,6 +31,12 @@ public sealed partial class ManaClientSystem : ManaSystem
     {
         // This is mostly needed for stuff that is being called in the server (like a command)
         UpdateHud(ent);
+    }
+
+    private void OnRemove(Entity<ManaUserComponent> ent, ref ComponentRemove args)
+    {
+        if (_player.LocalEntity == ent.Owner)
+            SyncMana?.Invoke(this, (1, 1, false)); // to make the bar look "unavailable" in the ui
     }
 
     protected override void UpdateHud(Entity<ManaUserComponent> ent)

@@ -2,6 +2,7 @@ using Content.Client.Gameplay;
 using Content.Client.UserInterface.Systems.Gameplay;
 using Content.Oathlord.Client.Mana;
 using Content.Oathlord.Client.UserInterface.Systems.Mana.Widgets;
+using Content.Oathlord.Shared.Mana;
 using Content.Shared.FixedPoint;
 using Robust.Client.Player;
 using Robust.Client.UserInterface;
@@ -12,6 +13,8 @@ namespace Content.Oathlord.Client.UserInterface.Systems.Mana;
 public sealed partial class ManaUIController : UIController, IOnStateEntered<GameplayState>, IOnSystemChanged<ManaClientSystem>
 {
     [Dependency] private IPlayerManager _player = default!;
+    private EntityQuery<ManaUserComponent> _manaQuery = default!;
+
     [UISystemDependency] private readonly ManaClientSystem _mana = default!;
 
     public ManaBar? UI => UIManager.GetActiveUIWidgetOrNull<ManaBar>();
@@ -19,6 +22,8 @@ public sealed partial class ManaUIController : UIController, IOnStateEntered<Gam
     public override void Initialize()
     {
         base.Initialize();
+
+        _manaQuery = EntityManager.GetEntityQuery<ManaUserComponent>();
 
         var gameplayStateLoad = UIManager.GetUIController<GameplayStateLoadController>();
         gameplayStateLoad.OnScreenLoad += OnScreenLoad;
@@ -54,9 +59,17 @@ public sealed partial class ManaUIController : UIController, IOnStateEntered<Gam
         if (_player.LocalEntity is not { } player)
             return;
 
-        var current = _mana.GetMana(player);
-        var max = _mana.GetMaxMana(player);
-        var canUse = _mana.CanUseMana(player);
+        if (!_manaQuery.TryComp(player, out var mana))
+        {
+            SystemOnSyncMana(_mana, (1, 1, false));
+            return;
+        }
+
+        var manaUser = (player, mana);
+
+        var current = _mana.GetMana(manaUser);
+        var max = _mana.GetMaxMana(manaUser);
+        var canUse = _mana.CanUseMana(manaUser);
         SystemOnSyncMana(_mana, (current, max, canUse));
     }
 }
