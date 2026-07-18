@@ -15,6 +15,11 @@
     <ProjectReference Include="..\Content.Server\Content.Server.csproj" />
     <ProjectReference Include="..\Content.Shared\Content.Shared.csproj" />
     <ProjectReference Include="..\Content.Tests\Content.Tests.csproj" />
+    <!-- <Oathlord> -->
+    <ProjectReference Include="..\Content.Oathlord.Server\Content.Oathlord.Server.csproj" />
+    <ProjectReference Include="..\Content.Oathlord.Client\Content.Oathlord.Client.csproj" />
+    <ProjectReference Include="..\Content.Oathlord.Shared\Content.Oathlord.Shared.csproj" />
+    <!-- </Oathlord> -->
   </ItemGroup>
   <Import Project="..\RobustToolbox\MSBuild\Robust.Properties.targets" />
   <Import Project="..\RobustToolbox\MSBuild\Robust.CompNetworkGenerator.targets" />

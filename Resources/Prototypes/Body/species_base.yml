@@ -7,6 +7,7 @@
   - MobPolymorphable
   - StripableInventoryBase
   - BaseSpeciesAppearance
+  - OLBaseSpeciesMob # Oathlord - check our species_base.yml for more info
   id: BaseSpeciesMob
   save: false
   components:

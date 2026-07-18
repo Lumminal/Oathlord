@@ -1,0 +1,9 @@
+﻿# This is used as a parent in BaseSpeciesMob.
+# If you need to add any new components there, add them here instead.
+- type: entity
+  save: false
+  abstract: true
+  id: OLBaseSpeciesMob
+  components:
+  - type: ManaUser
+    currentMana: 100
