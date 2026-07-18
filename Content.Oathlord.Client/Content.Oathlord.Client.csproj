@@ -9,6 +9,7 @@
   </PropertyGroup>
   <Import Project="../MSBuild/Content.props" />
   <ItemGroup>
+    <ProjectReference Include="../Content.Client\Content.Client.csproj" />
     <ProjectReference Include="../Content.Oathlord.Shared/Content.Oathlord.Shared.csproj" />
   </ItemGroup>
 
