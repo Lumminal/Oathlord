@@ -7,13 +7,10 @@
   - MobPolymorphable
   - StripableInventoryBase
   - BaseSpeciesAppearance
+  - OLBaseSpeciesMob # Oathlord - check our species_base.yml for more info
   id: BaseSpeciesMob
   save: false
   components:
-  # <Oathlord>
-  - type: ManaUser
-    currentMana: 100
-  # </Oathlord>
   - type: DamageVisuals
     thresholds: [ 10, 20, 30, 50, 70, 100 ]
     targetLayers:
