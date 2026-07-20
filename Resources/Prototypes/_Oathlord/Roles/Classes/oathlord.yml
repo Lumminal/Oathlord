@@ -9,6 +9,10 @@
   icon: "ClassIconWretch"
   supervisors: job-supervisors-nobody
   setPreference: true
+  special:
+  - !type:AddComponentSpecial
+    components:
+    - type: EconomyAccount
 
 - type: playTimeTracker
   id: Wretch

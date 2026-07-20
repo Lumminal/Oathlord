@@ -7,3 +7,11 @@
   - BaseStationJobsSpawning
   - BaseStationAlertLevels
   - BaseStationRecords
+  - BaseEconomy
+
+# Sets up a basic economy
+- type: entity
+  abstract: true
+  id: BaseEconomy
+  components:
+  - type: EconomyMap
