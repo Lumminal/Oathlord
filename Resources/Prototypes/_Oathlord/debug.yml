@@ -1,0 +1,13 @@
+﻿- type: entity
+  parent: Chair
+  id: DebugEconomyMachine
+  name: Debug
+  categories: [ ForkFiltered ]
+  components:
+  - type: UserInterface
+    interfaces:
+      enum.EconomyMachineUiKey.Key:
+        type: EconomyMachineBoundInterface
+  - type: ActivatableUI
+    key: enum.EconomyMachineUiKey.Key
+

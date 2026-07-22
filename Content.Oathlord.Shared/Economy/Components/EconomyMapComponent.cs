@@ -10,7 +10,7 @@ namespace Content.Oathlord.Shared.Economy.Components;
 public sealed partial class EconomyMapComponent : Component
 {
     /// <summary>
-    /// All the active accounts in the economy
+    /// All the active accounts in this economy
     /// </summary>
     [DataField, AutoNetworkedField]
     public HashSet<EntityUid> ActiveAccounts = new();

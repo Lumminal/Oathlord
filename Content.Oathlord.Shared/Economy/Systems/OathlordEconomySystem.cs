@@ -1,65 +1,57 @@
 ﻿using Content.Oathlord.Shared.Economy.Components;
-using Content.Shared.GameTicking;
+using Content.Shared.Station;
 
 namespace Content.Oathlord.Shared.Economy.Systems;
 
 /// <summary>
+/// This system-clutter handles all of the economic functions of Oathlord.
 ///
+/// Oathlord has one main currency, Nar, which is used for the central economy.
+/// In most cases, there can only be one economy (on the main map).
 /// </summary>
 public sealed partial class OathlordEconomySystem : EntitySystem
 {
-    /// <summary>
-    /// The entity in which the current active economy is stored, for quick access
-    /// Only one economy can be active during a round
-    /// </summary>
-    [ViewVariables]
-    public Entity<EconomyMapComponent>? Economy;
+    [Dependency] private SharedStationSystem _station = default!;
+
+    [Dependency] private EntityQuery<EconomyMapComponent> _econMapQuery = default!;
 
     public override void Initialize()
     {
         base.Initialize();
 
         SubscribeLocalEvent<EconomyAccountComponent, MapInitEvent>(OnMapInit);
-        SubscribeLocalEvent<EconomyMapComponent, MapInitEvent>(OnEconomyInit);
-
-        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnReset);
     }
 
     private void OnMapInit(Entity<EconomyAccountComponent> ent, ref MapInitEvent args)
     {
-        AddAccountToEconomy(ent);
-    }
-
-    private void OnEconomyInit(Entity<EconomyMapComponent> ent, ref MapInitEvent args)
-    {
-        if (Economy != null)
-        {
-            Log.Error("Tried to initialize more than one economy. You may only have 1 at any time");
-            return;
-        }
-
-        Economy = ent;
-        Log.Info("Initialized economy");
-    }
-
-    private void OnReset(RoundRestartCleanupEvent args)
-    {
-        Economy = null;
-        Log.Info("Uninitialized economy");
+        AddAccountToEconomy(ent.Owner);
     }
 
     /// <summary>
-    /// Adds an account to the economy
+    /// Adds an account to all active economies.
     /// </summary>
-    public void AddAccountToEconomy(Entity<EconomyAccountComponent> account)
+    public void AddAccountToEconomy(EntityUid account)
     {
-        if (Economy is not { } economy)
-            return;
-
-        economy.Comp.ActiveAccounts.Add(account);
-        Dirty(economy);
-
-        Log.Info("Added account to economy");
+        // we could use current owning station instead,
+        // but we don't know if someone spawns on a different map with no economy component,
+        // so we have to use an entity query
+        var econQuery = EntityQueryEnumerator<EconomyMapComponent>();
+        while (econQuery.MoveNext(out var uid, out var mapEconomy))
+        {
+            mapEconomy.ActiveAccounts.Add(account);
+            Dirty(uid, mapEconomy);
+        }
     }
 
+    /// <summary>
+    /// Returns the economy the user is residing in.
+    /// If the user is in another map without an economy, then this will return null.
+    /// </summary>
+    public Entity<EconomyMapComponent>? GetCurrentEconomy(EntityUid user)
+    {
+        if (_station.GetOwningStation(user) is not { } station || !_econMapQuery.TryComp(station, out var mapEconomy))
+            return null;
+
+        return (station, mapEconomy);
+    }
 }
