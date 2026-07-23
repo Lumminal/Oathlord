@@ -28,9 +28,35 @@
     <BoxContainer HorizontalAlignment="Right"
                   MinSize="500 260"
                   Margin="16 8 8 8">
-        <Label Text="Select an account from the menu on your right"
+
+        <Label Name="SelectInfo"
+               Text="Select an account from the menu"
                HorizontalExpand="True"
                HorizontalAlignment="Center"
                VerticalAlignment="Top"/>
+
+        <BoxContainer
+            Name="AccountInfo"
+            Visible="False"
+            HorizontalExpand="True"
+            Orientation="Vertical"
+            Margin="16">
+
+            <Label Name="AccountName" Align="Center"/>
+            <Label Name="AccountStored" Align="Center"/>
+
+            <PanelContainer VerticalExpand="True" VerticalAlignment="Bottom">
+                <PanelContainer.PanelOverride>
+                    <graphics:StyleBoxFlat BackgroundColor="#B2BEB5" BorderThickness="5" BorderColor="#191d1e"/>
+                </PanelContainer.PanelOverride>
+
+                <BoxContainer Align="Center" SeparationOverride="10" Margin="8">
+                    <Button Name="DepositButton" Text="Deposit"/>
+                    <Button Name="WithdrawButton" Text="Withdraw"/>
+                </BoxContainer>
+
+            </PanelContainer>
+
+        </BoxContainer>
     </BoxContainer>
 </controls:FancyWindow>
