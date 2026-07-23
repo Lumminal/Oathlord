@@ -4,6 +4,7 @@
   name: Debug
   categories: [ ForkFiltered ]
   components:
+  - type: EconomyMachine
   - type: UserInterface
     interfaces:
       enum.EconomyMachineUiKey.Key:

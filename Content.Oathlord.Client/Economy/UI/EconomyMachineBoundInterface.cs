@@ -1,4 +1,5 @@
-﻿using Robust.Client.UserInterface;
+﻿using Content.Oathlord.Shared.Economy.Components;
+using Robust.Client.UserInterface;
 
 namespace Content.Oathlord.Client.Economy.UI;
 
@@ -14,5 +15,13 @@ public sealed partial class EconomyMachineBoundInterface(EntityUid owner, Enum u
        _window.SetOwner(Owner);
 
        _window.Populate();
+
+       _window.RequestDeposit += RequestDeposit;
+    }
+
+    private void RequestDeposit(NetEntity? entity, int amount)
+    {
+        SendPredictedMessage(new EconomyDepositMessage(entity, amount));
+        _window?.UpdateInfo();
     }
 }

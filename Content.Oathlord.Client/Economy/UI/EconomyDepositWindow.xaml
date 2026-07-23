@@ -1,0 +1,13 @@
+﻿<controls:FancyWindow
+    xmlns="https://spacestation14.io"
+    xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls;assembly=Content.Client"
+    MinSize="300 150"
+    Resizable="False"
+    Title="Deposit">
+
+    <BoxContainer Orientation="Vertical">
+        <LineEdit Name="DepositAmount" PlaceHolder="Enter the amount you want to deposit..." VerticalAlignment="Center" VerticalExpand="True" Margin="16"/>
+        <Button Text="Confirm" Name="ConfirmButton" VerticalAlignment="Bottom" VerticalExpand="True" Margin="8" Disabled="True"/>
+    </BoxContainer>
+
+</controls:FancyWindow>

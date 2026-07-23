@@ -14,10 +14,13 @@ public sealed partial class OathlordEconomySystem : EntitySystem
     [Dependency] private SharedStationSystem _station = default!;
 
     [Dependency] private EntityQuery<EconomyMapComponent> _econMapQuery = default!;
+    [Dependency] private EntityQuery<EconomyAccountComponent> _econAccountQuery = default!;
 
     public override void Initialize()
     {
         base.Initialize();
+
+        InitializeMachine();
 
         SubscribeLocalEvent<EconomyAccountComponent, MapInitEvent>(OnMapInit);
     }
