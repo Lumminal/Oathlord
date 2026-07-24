@@ -7,12 +7,13 @@ namespace Content.Oathlord.Shared.Economy.Systems;
 /// </summary>
 public sealed partial class OathlordEconomySystem
 {
-    public void InitializeMachine()
+    private void InitializeMachine()
     {
         Subs.BuiEvents<EconomyMachineComponent>(EconomyMachineUiKey.Key,
             subs =>
             {
                 subs.Event<EconomyDepositMessage>(OnDeposit);
+                subs.Event<EconomyWithdrawMessage>(OnWithdraw);
             });
     }
 
@@ -27,6 +28,18 @@ public sealed partial class OathlordEconomySystem
 
         // TODO: Check that the amount was within economy's budget
 
-        AddCurrencyToAccount((entity, account), args.Amount);
+        AdjustCurrencyFromAccount((entity, account), args.Amount);
+    }
+
+    private void OnWithdraw(Entity<EconomyMachineComponent> ent, ref EconomyWithdrawMessage args)
+    {
+        if (args.WithdrawEntity is not { } withdrawEntity)
+            return;
+
+        var entity = GetEntity(withdrawEntity);
+        if (!_econAccountQuery.TryComp(entity, out var account))
+            return;
+
+        WithdrawFromAccount((entity, account), args.Amount);
     }
 }

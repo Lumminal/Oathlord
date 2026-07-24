@@ -14,8 +14,10 @@ public sealed partial class EconomyMachineWindow : FancyWindow
     [Dependency] private IEntityManager _entMan = default!;
 
     public Action<NetEntity?, int>? RequestDeposit;
+    public Action<NetEntity?, int>? RequestWithdraw;
 
     private EconomyDepositWindow? _depositWindow;
+    private EconomyWithdrawWindow? _withdrawWindow;
 
     private OathlordEconomySystem? _economy;
     private EntityUid? _owner;
@@ -32,6 +34,7 @@ public sealed partial class EconomyMachineWindow : FancyWindow
 
         _economy = _entMan.System<OathlordEconomySystem>();
 
+        WithdrawButton.OnPressed += WithdrawButtonOnOnPressed;
         DepositButton.OnPressed += DepositButtonPressed;
     }
 
@@ -41,6 +44,7 @@ public sealed partial class EconomyMachineWindow : FancyWindow
 
         CloseOtherWindows();
 
+        WithdrawButton.OnPressed -= WithdrawButtonOnOnPressed;
         DepositButton.OnPressed -= DepositButtonPressed;
     }
 
@@ -96,6 +100,23 @@ public sealed partial class EconomyMachineWindow : FancyWindow
         _depositWindow.OpenCentered();
     }
 
+    private void WithdrawButtonOnOnPressed(BaseButton.ButtonEventArgs obj)
+    {
+        _withdrawWindow?.Close();
+
+        _withdrawWindow = new EconomyWithdrawWindow();
+        _withdrawWindow.OnClose += () => _withdrawWindow = null;
+        _withdrawWindow.AmountWithdrawn += args =>
+        {
+            if (_selectedAccount is not { } selectedAccount)
+                return;
+
+            RequestWithdraw?.Invoke(_entMan.GetNetEntity(selectedAccount.Owner), args);
+        };
+
+        _withdrawWindow.OpenCentered();
+    }
+
     public void SetOwner(EntityUid owner)
     {
         _owner = owner;
@@ -129,6 +150,7 @@ public sealed partial class EconomyMachineWindow : FancyWindow
     private void CloseOtherWindows()
     {
         _depositWindow?.Close();
+        _withdrawWindow?.Close();
     }
 
     /// <summary>
