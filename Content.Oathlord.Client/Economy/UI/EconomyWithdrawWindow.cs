@@ -5,16 +5,17 @@ using Robust.Client.UserInterface.XAML;
 
 namespace Content.Oathlord.Client.Economy.UI;
 
+// TODO: This should support withdrawing different kinds of nar
 [GenerateTypedNameReferences]
-public sealed partial class EconomyDepositWindow : FancyWindow
+public sealed partial class EconomyWithdrawWindow : FancyWindow
 {
-    public Action<int>? AmountDeposited;
+    public Action<int>? AmountWithdrawn;
 
-    public EconomyDepositWindow()
+    public EconomyWithdrawWindow()
     {
         RobustXamlLoader.Load(this);
 
-        DepositAmount.OnTextChanged += DepositAmountOnOnTextChanged;
+        WithdrawAmount.OnTextChanged += DepositAmountOnOnTextChanged;
         ConfirmButton.OnPressed += ConfirmButtonOnOnPressed;
     }
 
@@ -31,11 +32,10 @@ public sealed partial class EconomyDepositWindow : FancyWindow
 
     private void ConfirmButtonOnOnPressed(BaseButton.ButtonEventArgs obj)
     {
-        // the stored amount datafield of the accounts is an int
-        if (!int.TryParse(DepositAmount.Text, out var amount) || amount <= 0)
+        if (!int.TryParse(WithdrawAmount.Text, out var amount) || amount <= 0)
             return;
 
-        AmountDeposited?.Invoke(amount);
+        AmountWithdrawn?.Invoke(amount);
         Close();
     }
 }
