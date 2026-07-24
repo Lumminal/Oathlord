@@ -17,6 +17,13 @@ public sealed partial class EconomyMachineBoundInterface(EntityUid owner, Enum u
        _window.Populate();
 
        _window.RequestDeposit += RequestDeposit;
+       _window.RequestWithdraw += RequestWithdraw;
+    }
+
+    private void RequestWithdraw(NetEntity? entity, int amount)
+    {
+        SendPredictedMessage(new EconomyWithdrawMessage(entity, amount));
+        _window?.UpdateInfo();
     }
 
     private void RequestDeposit(NetEntity? entity, int amount)
