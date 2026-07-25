@@ -1,0 +1,16 @@
+﻿- type: economyCurrency
+  id: Na
+  name: Na
+  value: 1
+
+- type: economyCurrency
+  id: Nar
+  name: Nar
+  value: 100
+
+- type: economyCurrency
+  id: Nara
+  name: Nara
+  value: 1000
+
+

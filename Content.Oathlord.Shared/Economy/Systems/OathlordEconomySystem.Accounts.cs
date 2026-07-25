@@ -1,4 +1,6 @@
 ﻿using Content.Oathlord.Shared.Economy.Components;
+using Content.Oathlord.Shared.Economy.Prototypes;
+using Robust.Shared.Prototypes;
 
 namespace Content.Oathlord.Shared.Economy.Systems;
 
@@ -13,9 +15,9 @@ public sealed partial class OathlordEconomySystem
     /// </summary>
     /// <param name="ent">The account to withdraw from</param>
     /// <param name="amount">The amount to adjust</param>
-    public void AdjustCurrencyFromAccount(Entity<EconomyAccountComponent?> ent, int amount)
+    public void AddCurrencyToAccount(Entity<EconomyAccountComponent?> ent, int amount)
     {
-        if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
+        if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp) || amount <= 0)
             return;
 
         ent.Comp.Stored += amount;
@@ -34,5 +36,36 @@ public sealed partial class OathlordEconomySystem
 
         ent.Comp.Stored = Math.Clamp(ent.Comp.Stored - amount, 0, int.MaxValue); // TODO: There should be a cap instead of int.MaxValue
         Dirty(ent);
+    }
+
+    /// <summary>
+    /// Withdraws a specified amount of currency from the account.
+    /// </summary>
+    /// <param name="ent">The account to withdraw from</param>
+    /// <param name="toGive">The amount of currencies to withdraw from the economy, to give to the player</param>
+    public IEnumerable<KeyValuePair<ProtoId<EconomyCurrencyPrototype>, int>>? WithdrawFromAccount(
+        Entity<EconomyAccountComponent?> ent,
+        Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toGive)
+    {
+        if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
+            return null;
+
+        var total = 0;
+        foreach (var (cur, amount) in toGive)
+        {
+            var curValue = GetCurrencyTotal(cur, amount);
+            total += curValue;
+        }
+
+        if (total > ent.Comp.Stored)
+        {
+            Log.Info($"Tried to withdraw {total}, when we have {ent.Comp.Stored}");
+            return null;
+        }
+
+        ent.Comp.Stored = Math.Clamp(ent.Comp.Stored - total, 0, int.MaxValue);
+        Dirty(ent);
+
+        return toGive;
     }
 }
