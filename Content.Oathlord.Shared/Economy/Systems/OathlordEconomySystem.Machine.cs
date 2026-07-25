@@ -22,13 +22,19 @@ public sealed partial class OathlordEconomySystem
         if (args.DepositEntity is not { } depositEntity)
             return;
 
-        var entity = GetEntity(depositEntity);
-        if (!_econAccountQuery.TryComp(entity, out var account))
+        var user = GetEntity(depositEntity);
+        if (!_econAccountQuery.TryComp(user, out var account))
             return;
 
-        // TODO: Check that the amount was within economy's budget
+        // TODO: Check that we are within the correct economy...?
+        // TODO: Spawn physical currency outside the machine
+        if (GetCurrentEconomy(user) is not { } currentEconomy)
+            return;
 
-        AdjustCurrencyFromAccount((entity, account), args.Amount);
+        if (GetTotalEconomyStored(currentEconomy) < args.Amount) // We tried to input an amount higher than the economy's budget...
+            return;
+
+        AddCurrencyToAccount((user, account), args.Amount);
     }
 
     private void OnWithdraw(Entity<EconomyMachineComponent> ent, ref EconomyWithdrawMessage args)

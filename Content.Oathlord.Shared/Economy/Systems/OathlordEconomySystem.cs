@@ -1,5 +1,8 @@
-﻿using Content.Oathlord.Shared.Economy.Components;
+﻿using System.Linq;
+using Content.Oathlord.Shared.Economy.Components;
+using Content.Oathlord.Shared.Economy.Prototypes;
 using Content.Shared.Station;
+using Robust.Shared.Prototypes;
 
 namespace Content.Oathlord.Shared.Economy.Systems;
 
@@ -12,6 +15,7 @@ namespace Content.Oathlord.Shared.Economy.Systems;
 public sealed partial class OathlordEconomySystem : EntitySystem
 {
     [Dependency] private SharedStationSystem _station = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
 
     [Dependency] private EntityQuery<EconomyMapComponent> _econMapQuery = default!;
     [Dependency] private EntityQuery<EconomyAccountComponent> _econAccountQuery = default!;
@@ -21,13 +25,21 @@ public sealed partial class OathlordEconomySystem : EntitySystem
         base.Initialize();
 
         InitializeMachine();
+        InitializeCurrency();
 
         SubscribeLocalEvent<EconomyAccountComponent, MapInitEvent>(OnMapInit);
+        SubscribeLocalEvent<EconomyMapComponent, MapInitEvent>(OnEconomyMapInit);
     }
 
     private void OnMapInit(Entity<EconomyAccountComponent> ent, ref MapInitEvent args)
     {
         AddAccountToEconomy(ent.Owner);
+    }
+
+    private void OnEconomyMapInit(Entity<EconomyMapComponent> ent, ref MapInitEvent args)
+    {
+        ent.Comp.TotalStored = GetTotalEconomyStored(ent.AsNullable());
+        Dirty(ent);
     }
 
     /// <summary>
@@ -56,5 +68,44 @@ public sealed partial class OathlordEconomySystem : EntitySystem
             return null;
 
         return (station, mapEconomy);
+    }
+
+    /// <summary>
+    /// Returns the total amount of currency this economy has stored
+    /// </summary>
+    public int GetTotalEconomyStored(Entity<EconomyMapComponent?> ent)
+    {
+        if (!_econMapQuery.Resolve(ent.Owner, ref ent.Comp))
+            return 0;
+
+        var total = 0;
+        foreach (var (currency, value) in ent.Comp.StoredCurrencies)
+        {
+            total += GetCurrencyTotal(currency, value);
+        }
+
+        ent.Comp.TotalStored = total;
+        Dirty(ent);
+
+        return total;
+    }
+
+    public bool TryWithdrawFromEconomy(Entity<EconomyMapComponent?> ent, int amount)
+    {
+        if (!_econMapQuery.Resolve(ent.Owner, ref ent.Comp))
+            return false;
+
+        var total = GetTotalEconomyStored(ent.AsNullable());
+        if (total < amount)
+            return false;
+
+        WithdrawFromEconomy(ent.AsNullable(), amount);
+        return true;
+    }
+
+    public void WithdrawFromEconomy(Entity<EconomyMapComponent?> ent, int amount)
+    {
+        if (!_econMapQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
     }
 }

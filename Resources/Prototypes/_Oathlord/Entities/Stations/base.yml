@@ -15,3 +15,7 @@
   id: BaseEconomy
   components:
   - type: EconomyMap
+    storedCurrencies:
+      Na: 498
+      Nar: 19
+      Nara: 7
