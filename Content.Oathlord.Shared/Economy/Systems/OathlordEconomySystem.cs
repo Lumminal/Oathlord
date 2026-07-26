@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Content.Oathlord.Shared.Economy.Components;
+﻿using Content.Oathlord.Shared.Economy.Components;
 using Content.Oathlord.Shared.Economy.Prototypes;
 using Content.Shared.Station;
 using Robust.Shared.Prototypes;
@@ -31,6 +30,8 @@ public sealed partial class OathlordEconomySystem : EntitySystem
         SubscribeLocalEvent<EconomyMapComponent, MapInitEvent>(OnEconomyMapInit);
     }
 
+    #region Event Handlers
+
     private void OnMapInit(Entity<EconomyAccountComponent> ent, ref MapInitEvent args)
     {
         AddAccountToEconomy(ent.Owner);
@@ -42,6 +43,10 @@ public sealed partial class OathlordEconomySystem : EntitySystem
         Dirty(ent);
     }
 
+    #endregion
+
+    #region Public API
+
     /// <summary>
     /// Adds an account to all active economies.
     /// </summary>
@@ -49,7 +54,7 @@ public sealed partial class OathlordEconomySystem : EntitySystem
     {
         // we could use current owning station instead,
         // but we don't know if someone spawns on a different map with no economy component,
-        // so we have to use an entity query
+        // so we have to use an entity query enumerator to get all economies
         var econQuery = EntityQueryEnumerator<EconomyMapComponent>();
         while (econQuery.MoveNext(out var uid, out var mapEconomy))
         {
@@ -90,22 +95,58 @@ public sealed partial class OathlordEconomySystem : EntitySystem
         return total;
     }
 
-    public bool TryWithdrawFromEconomy(Entity<EconomyMapComponent?> ent, int amount)
-    {
-        if (!_econMapQuery.Resolve(ent.Owner, ref ent.Comp))
-            return false;
-
-        var total = GetTotalEconomyStored(ent.AsNullable());
-        if (total < amount)
-            return false;
-
-        WithdrawFromEconomy(ent.AsNullable(), amount);
-        return true;
-    }
-
-    public void WithdrawFromEconomy(Entity<EconomyMapComponent?> ent, int amount)
+    /// <summary>
+    /// Withdraws a specific amount of currencies from the economy.
+    /// Does not accept negative values.
+    /// </summary>
+    public void WithdrawFromEconomy(Entity<EconomyMapComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toWithdraw)
     {
         if (!_econMapQuery.Resolve(ent.Owner, ref ent.Comp))
             return;
+
+        var total = GetTotalFromCurrencies(ent.Comp.TotalStored, toWithdraw);
+        if (total == 0)
+            return;
+
+        foreach (var (cur, _) in ent.Comp.StoredCurrencies)
+        {
+            if (!toWithdraw.TryGetValue(cur, out var value) || value < 0)
+                continue;
+
+            ent.Comp.StoredCurrencies[cur] = Math.Clamp(ent.Comp.StoredCurrencies[cur] - toWithdraw[cur], 0, int.MaxValue);
+        }
+
+        Dirty(ent);
     }
+
+    #endregion
+
+    #region Helpers
+
+    /// <summary>
+    /// Helper to get the total amount from currencies, and check if its enough versus our stored amount.
+    /// Does not accept negative values.
+    /// </summary>
+    /// <param name="stored"></param>The total stored amount we have in our accounts or economy
+    /// <param name="currencies"></param>The currencies to check against
+    /// <returns></returns>
+    private int GetTotalFromCurrencies(int stored, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> currencies)
+    {
+        var total = 0;
+        foreach (var (cur, amount) in currencies)
+        {
+            if (amount < 0)
+                continue;
+
+            var curValue = GetCurrencyTotal(cur, amount);
+            total += curValue;
+        }
+
+        if (total > stored)
+            return 0;
+
+        return total;
+    }
+
+    #endregion
 }

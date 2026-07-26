@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Content.Oathlord.Shared.Economy.Prototypes;
+﻿using Content.Oathlord.Shared.Economy.Prototypes;
 using Robust.Shared.Prototypes;
 
 namespace Content.Oathlord.Shared.Economy.Systems;
@@ -7,8 +6,7 @@ namespace Content.Oathlord.Shared.Economy.Systems;
 public sealed partial class OathlordEconomySystem
 {
     /// <summary>
-    /// Caching the values of the currencies, because economy is gonna use it a lot
-    /// (and we know that they won't change since they are prototypes)
+    /// Caching the values of the currencies, because economy is gonna use them a lot
     /// </summary>
     private Dictionary<ProtoId<EconomyCurrencyPrototype>, int> _allCurrencyValues = new();
 
@@ -19,6 +17,8 @@ public sealed partial class OathlordEconomySystem
         LoadValues();
     }
 
+    #region Event Handlers
+
     private void OnReload(PrototypesReloadedEventArgs args)
     {
         if (!args.WasModified<EconomyCurrencyPrototype>())
@@ -27,24 +27,19 @@ public sealed partial class OathlordEconomySystem
         LoadValues();
     }
 
-    private void LoadValues()
-    {
-        _allCurrencyValues.Clear();
-        foreach (var proto in _proto.EnumeratePrototypes<EconomyCurrencyPrototype>())
-        {
-            _allCurrencyValues.Add(proto, proto.Value);
-        }
-    }
+    #endregion
+
+    #region Public API
 
     /// <summary>
     /// Gets the total amount of the currency, by multiplying the currency's value with a specified amount.
     /// </summary>
     public int GetCurrencyTotal(ProtoId<EconomyCurrencyPrototype> currencyProto, int amount)
     {
-        if (!_proto.Resolve(currencyProto, out var currency))
+        if (!_allCurrencyValues.TryGetValue(currencyProto, out var value))
             return 0;
 
-        return currency.Value * amount;
+        return value * amount;
     }
 
     /// <summary>
@@ -57,4 +52,16 @@ public sealed partial class OathlordEconomySystem
 
         return value;
     }
+
+    #endregion
+
+    private void LoadValues()
+    {
+        _allCurrencyValues.Clear();
+        foreach (var proto in _proto.EnumeratePrototypes<EconomyCurrencyPrototype>())
+        {
+            _allCurrencyValues.Add(proto, proto.Value);
+        }
+    }
+
 }

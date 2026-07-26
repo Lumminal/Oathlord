@@ -19,14 +19,13 @@ public sealed partial class EconomyMapComponent : Component
 
     /// <summary>
     /// The currencies we currently have stored
-    /// For example, the economy may have 5 Gold, 124 Silver and 10298 Copper stored in the bank
-    /// We can get the total stored by calculating with the conversion rates of each currency (Gold -> 10 Silver -> 1000 Copper)
     /// </summary>
     [DataField, AutoNetworkedField]
     public Dictionary<ProtoId<EconomyCurrencyPrototype>, int> StoredCurrencies = new();
 
     /// <summary>
-    /// Because we may want to look this value often (for UIs), we cache it here
+    /// Because we may want to look this value often (for UIs), we cache it here.
+    /// Use <see cref="GetTotalEconomyStored"/> method instead for getting this value.
     /// </summary>
     [AutoNetworkedField]
     public int TotalStored;
