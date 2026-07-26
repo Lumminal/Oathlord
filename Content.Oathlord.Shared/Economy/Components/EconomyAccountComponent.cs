@@ -1,5 +1,4 @@
-﻿using Content.Shared.FixedPoint;
-using Robust.Shared.GameStates;
+﻿using Robust.Shared.GameStates;
 
 namespace Content.Oathlord.Shared.Economy.Components;
 

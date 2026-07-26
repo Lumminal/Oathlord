@@ -6,8 +6,10 @@
     Title="Withdraw">
 
     <BoxContainer Orientation="Vertical">
-        <LineEdit Name="WithdrawAmount" PlaceHolder="Enter the amount you want to withdraw..." VerticalAlignment="Center" VerticalExpand="True" Margin="16"/>
-        <Button Text="Confirm" Name="ConfirmButton" VerticalAlignment="Bottom" VerticalExpand="True" Margin="8" Disabled="True"/>
+        <BoxContainer Name="Currencies"/>
+        <BoxContainer Name="CurrencieNames" HorizontalAlignment="Center" SeparationOverride="35"/>
+        <BoxContainer Orientation="Vertical">
+            <Button Text="Confirm" Name="ConfirmButton" VerticalAlignment="Bottom" VerticalExpand="True" Margin="8" Disabled="True"/>
+        </BoxContainer>
     </BoxContainer>
-
 </controls:FancyWindow>

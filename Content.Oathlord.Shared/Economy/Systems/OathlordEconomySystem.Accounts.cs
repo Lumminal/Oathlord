@@ -9,8 +9,10 @@ namespace Content.Oathlord.Shared.Economy.Systems;
 /// </summary>
 public sealed partial class OathlordEconomySystem
 {
+    #region Public API
+
     /// <summary>
-    /// Adds a specified amount of currency (Nar) to the account
+    /// Adds a specified amount of currency to an account
     /// TODO: if negative, and stored is 0 then it should get added to debt variable
     /// </summary>
     /// <param name="ent">The account to withdraw from</param>
@@ -25,7 +27,7 @@ public sealed partial class OathlordEconomySystem
     }
 
     /// <summary>
-    /// Withdraws a specified amount of currency from the account.
+    /// Withdraws a specified amount of currency to an account.
     /// </summary>
     /// <param name="ent">The account to withdraw from</param>
     /// <param name="amount">The amount to withdraw, make sure its positive as negative values or zero won't work</param>
@@ -39,33 +41,29 @@ public sealed partial class OathlordEconomySystem
     }
 
     /// <summary>
-    /// Withdraws a specified amount of currency from the account.
+    /// Withdraws a specified amount of currencies from an account.
     /// </summary>
     /// <param name="ent">The account to withdraw from</param>
     /// <param name="toGive">The amount of currencies to withdraw from the economy, to give to the player</param>
-    public IEnumerable<KeyValuePair<ProtoId<EconomyCurrencyPrototype>, int>>? WithdrawFromAccount(
-        Entity<EconomyAccountComponent?> ent,
-        Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toGive)
+    public void WithdrawFromAccount(Entity<EconomyAccountComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toGive)
     {
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
-            return null;
+            return;
 
-        var total = 0;
-        foreach (var (cur, amount) in toGive)
-        {
-            var curValue = GetCurrencyTotal(cur, amount);
-            total += curValue;
-        }
+        var total= GetTotalFromCurrencies(ent.Comp.Stored, toGive);
+        if (total == 0)
+            return;
 
-        if (total > ent.Comp.Stored)
-        {
-            Log.Info($"Tried to withdraw {total}, when we have {ent.Comp.Stored}");
-            return null;
-        }
+        if (GetCurrentEconomy(ent.Owner) is not { } economy)
+            return;
+
+        // Accounts don't store individual currencies, only economy does.
+        // So we have to adjust the economy after a withdraw
+        WithdrawFromEconomy(economy.AsNullable(), toGive);
 
         ent.Comp.Stored = Math.Clamp(ent.Comp.Stored - total, 0, int.MaxValue);
         Dirty(ent);
-
-        return toGive;
     }
+
+    #endregion
 }

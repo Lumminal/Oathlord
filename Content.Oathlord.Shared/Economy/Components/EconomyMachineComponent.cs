@@ -1,4 +1,6 @@
-﻿using Robust.Shared.GameStates;
+﻿using Content.Oathlord.Shared.Economy.Prototypes;
+using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
 namespace Content.Oathlord.Shared.Economy.Components;
@@ -7,11 +9,9 @@ namespace Content.Oathlord.Shared.Economy.Components;
 /// Component that is used for objects, to allow withdrawing and depositing money via UI
 /// </summary>
 [RegisterComponent, NetworkedComponent]
-public sealed partial class EconomyMachineComponent : Component
-{
+public sealed partial class EconomyMachineComponent : Component;
 
-}
-
+// TODO: withdraw and deposit message have same variables
 [Serializable, NetSerializable]
 public sealed class EconomyDepositMessage : BoundUserInterfaceMessage
 {
@@ -41,14 +41,14 @@ public sealed class EconomyWithdrawMessage : BoundUserInterfaceMessage
     public NetEntity? WithdrawEntity;
 
     /// <summary>
-    /// The amount to withdraw form the account
+    /// The amount of currencies to withdraw from this account.
     /// </summary>
-    public int Amount;
+    public Dictionary<ProtoId<EconomyCurrencyPrototype>, int> ToWithdraw;
 
-    public EconomyWithdrawMessage(NetEntity? withdrawEntity, int amount)
+    public EconomyWithdrawMessage(NetEntity? withdrawEntity,  Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toWithdraw)
     {
         WithdrawEntity = withdrawEntity;
-        Amount = amount;
+        ToWithdraw = toWithdraw;
     }
 }
 
