@@ -6,6 +6,21 @@ namespace Content.Oathlord.Shared.Economy.Systems;
 
 /// <summary>
 /// Public API for anything related to entities with <see cref="EconomyAccountComponent"/>
+///
+/// Accounts are part of the economy and rely on the bank for money.
+///
+/// Withdrawing will take money out of the bank (and therefore, reduce the amount stored on the user's account)
+/// to give the player a physical version of the money.
+///
+/// Depositing will take money out of the bank and store it in the player's account.
+///
+/// Accounts are their own little "bank", while economy stores the central budget. If the economy needs money, they can
+/// fine people to take back from the accounts, for example. So in general,
+///
+/// Accounts don't store individual coins like the economy's bank, rather they store one value.
+/// Just like euros, as an example. Your account has 5000euros, not 10 * 50 + 9 * 500 euro bills.
+/// But when withdrawing, you can withdraw however many bill types you want. As well when depositing, you can deposit only what you have on you.
+/// The economy holds the physical version of the currencies in their bank (vault/treasury).
 /// </summary>
 public sealed partial class OathlordEconomySystem
 {
@@ -50,19 +65,45 @@ public sealed partial class OathlordEconomySystem
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
             return;
 
+        // We check that we can withdraw that much from our account
+        // If toGive is too much then it doesn't make sense to withdraw...
         var total= GetTotalFromCurrencies(ent.Comp.Stored, toGive);
         if (total == 0)
             return;
 
-        if (GetCurrentEconomy(ent.Owner) is not { } economy)
-            return;
-
         // Accounts don't store individual currencies, only economy does.
         // So we have to adjust the economy after a withdraw
-        WithdrawFromEconomy(economy.AsNullable(), toGive);
+        if (GetCurrentEconomy(ent.Owner) is not { } economy || !TryWithdrawFromEconomy(economy.AsNullable(), toGive))
+            return;
 
         ent.Comp.Stored = Math.Clamp(ent.Comp.Stored - total, 0, int.MaxValue);
         Dirty(ent);
+
+        Log.Info($"Withdrew: {toGive}. New amount is {ent.Comp.Stored}");
+    }
+
+    /// <summary>
+    /// Deposits a specified amount of currencies from an account.
+    /// </summary>
+    /// <param name="ent">The account to deposit to</param>
+    /// <param name="toDeposit">The amount of currencies to withdraw from the economy, to deposit to the account</param>
+    public void DepositToAccount(Entity<EconomyAccountComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toDeposit)
+    {
+        if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
+
+        // Here, unlike withdrawing, we don't have to check for how much we have stored, since it doesn't matter (we're adding up)
+        var total= GetTotalFromCurrencies(toDeposit);
+        if (total == 0)
+            return;
+
+        if (GetCurrentEconomy(ent.Owner) is not { } economy|| !TryWithdrawFromEconomy(economy.AsNullable(), toDeposit))
+            return;
+
+        ent.Comp.Stored = Math.Clamp(ent.Comp.Stored + total, 0, int.MaxValue);
+        Dirty(ent);
+
+        Log.Info($"Deposited: {toDeposit}. New amount is {ent.Comp.Stored}");
     }
 
     #endregion

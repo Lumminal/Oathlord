@@ -23,10 +23,4 @@ public sealed partial class EconomyCurrencyPrototype : IPrototype
     /// </summary>
     [DataField]
     public int Value;
-
-    /// <summary>
-    /// The conversion rate between other currencies (e.g. Gold is worth 10 Silver, and 1000 copper)
-    /// </summary>
-    [DataField]
-    public Dictionary<ProtoId<EconomyCurrencyPrototype>, int> ConversionRate = new();
 }

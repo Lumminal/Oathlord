@@ -1,4 +1,5 @@
 ﻿using Content.Oathlord.Shared.Economy.Prototypes;
+using Content.Oathlord.Shared.Economy.Systems;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
@@ -11,44 +12,29 @@ namespace Content.Oathlord.Shared.Economy.Components;
 [RegisterComponent, NetworkedComponent]
 public sealed partial class EconomyMachineComponent : Component;
 
-// TODO: withdraw and deposit message have same variables
 [Serializable, NetSerializable]
-public sealed class EconomyDepositMessage : BoundUserInterfaceMessage
+public sealed class EconomyTransactionMessage : BoundUserInterfaceMessage
 {
     /// <summary>
-    /// The entity the amount is getting deposited to
+    /// The entity that is the target of this transaction
     /// </summary>
-    public NetEntity? DepositEntity;
-
-    /// <summary>
-    /// The amount to deposit to the account
-    /// </summary>
-    public int Amount;
-
-    public EconomyDepositMessage(NetEntity? depositEntity, int amount)
-    {
-        DepositEntity = depositEntity;
-        Amount = amount;
-    }
-}
-
-[Serializable, NetSerializable]
-public sealed class EconomyWithdrawMessage : BoundUserInterfaceMessage
-{
-    /// <summary>
-    /// The entity the amount is getting withdrawn off
-    /// </summary>
-    public NetEntity? WithdrawEntity;
+    public NetEntity? TransactEntity;
 
     /// <summary>
     /// The amount of currencies to withdraw from this account.
     /// </summary>
-    public Dictionary<ProtoId<EconomyCurrencyPrototype>, int> ToWithdraw;
+    public Dictionary<ProtoId<EconomyCurrencyPrototype>, int> ToTransact;
 
-    public EconomyWithdrawMessage(NetEntity? withdrawEntity,  Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toWithdraw)
+    /// <summary>
+    /// The type of transaction we're commiting (e.g. withdraw, depositing)
+    /// </summary>
+    public EconomyTransaction Type;
+
+    public EconomyTransactionMessage(NetEntity? transactEntity, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toTransact, EconomyTransaction type)
     {
-        WithdrawEntity = withdrawEntity;
-        ToWithdraw = toWithdraw;
+        TransactEntity = transactEntity;
+        ToTransact = toTransact;
+        Type = type;
     }
 }
 

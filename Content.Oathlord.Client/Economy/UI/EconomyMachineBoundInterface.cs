@@ -1,5 +1,6 @@
 ﻿using Content.Oathlord.Shared.Economy.Components;
 using Content.Oathlord.Shared.Economy.Prototypes;
+using Content.Oathlord.Shared.Economy.Systems;
 using Robust.Client.UserInterface;
 
 namespace Content.Oathlord.Client.Economy.UI;
@@ -17,19 +18,12 @@ public sealed partial class EconomyMachineBoundInterface(EntityUid owner, Enum u
 
        _window.Populate();
 
-       _window.RequestDeposit += RequestDeposit;
-       _window.RequestWithdraw += RequestWithdraw;
+       _window.RequestTransaction += RequestTransaction;
     }
 
-    private void RequestWithdraw(NetEntity? entity, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toWithdraw)
+    private void RequestTransaction(NetEntity? entity, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> currencies, EconomyTransaction type)
     {
-        SendPredictedMessage(new EconomyWithdrawMessage(entity, toWithdraw));
-        _window?.UpdateInfo();
-    }
-
-    private void RequestDeposit(NetEntity? entity, int amount)
-    {
-        SendPredictedMessage(new EconomyDepositMessage(entity, amount));
+        SendPredictedMessage(new EconomyTransactionMessage(entity, currencies, type));
         _window?.UpdateInfo();
     }
 }
