@@ -12,43 +12,47 @@ public sealed partial class OathlordEconomySystem
         Subs.BuiEvents<EconomyMachineComponent>(EconomyMachineUiKey.Key,
             subs =>
             {
-                subs.Event<EconomyDepositMessage>(OnDeposit);
-                subs.Event<EconomyWithdrawMessage>(OnWithdraw);
+                subs.Event<EconomyTransactionMessage>(OnTransaction);
             });
     }
 
     #region Event Handlers
 
-    private void OnDeposit(Entity<EconomyMachineComponent> ent, ref EconomyDepositMessage args)
+    private void OnTransaction(Entity<EconomyMachineComponent> ent, ref EconomyTransactionMessage args)
     {
-        if (args.DepositEntity is not { } depositEntity)
-            return;
-
-        var user = GetEntity(depositEntity);
-        if (!_econAccountQuery.TryComp(user, out var account))
-            return;
-
-        if (GetCurrentEconomy(user) is not { } currentEconomy)
-            return;
-
-        if (GetTotalEconomyStored(currentEconomy.AsNullable()) < args.Amount) // We tried to input an amount higher than the economy's budget...
-            return;
-
-        AddCurrencyToAccount((user, account), args.Amount);
-    }
-
-    private void OnWithdraw(Entity<EconomyMachineComponent> ent, ref EconomyWithdrawMessage args)
-    {
-        if (args.WithdrawEntity is not { } withdrawEntity)
-            return;
-
-        var entity = GetEntity(withdrawEntity);
-        if (!_econAccountQuery.TryComp(entity, out var account))
-            return;
-
-        // TODO: Spawn physical currency outside the machine
-        WithdrawFromAccount((entity, account), args.ToWithdraw);
+        // Using a switch statement here for 2 reasons:
+        // 1. It's easy to read and modify for the future
+        // 2. We know that the economy accepts a specific set of transactions.
+        // So, modularizing it by making prototypes (or something similar) is overcomplicating things.
+        switch (args.Type)
+        {
+            case EconomyTransaction.Withdraw:
+                Withdraw(args);
+                break;
+            case EconomyTransaction.Deposit:
+                Deposit(args);
+                break;
+        }
     }
 
     #endregion
+
+    private void Withdraw(EconomyTransactionMessage args)
+    {
+        if (args.TransactEntity is not { } withdrawEntity)
+            return;
+
+        // TODO: Spawn physical currency outside the machine
+        var user = GetEntity(withdrawEntity);
+        WithdrawFromAccount(user, args.ToTransact);
+    }
+
+    private void Deposit(EconomyTransactionMessage args)
+    {
+        if (args.TransactEntity is not { } depositEntity)
+            return;
+
+        var user = GetEntity(depositEntity);
+        DepositToAccount(user, args.ToTransact);
+    }
 }

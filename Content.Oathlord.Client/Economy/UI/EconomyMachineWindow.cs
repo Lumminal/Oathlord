@@ -9,7 +9,6 @@ using Robust.Client.UserInterface.XAML;
 
 namespace Content.Oathlord.Client.Economy.UI;
 
-// TODO: Economy and deposit window should be the same type of window, just raise different events (same with loans in the future)
 [GenerateTypedNameReferences]
 public sealed partial class EconomyMachineWindow : FancyWindow
 {
@@ -17,11 +16,9 @@ public sealed partial class EconomyMachineWindow : FancyWindow
     [Dependency] private IPrototypeManager _protoMan = default!;
     private readonly OathlordEconomySystem _economy;
 
-    public Action<NetEntity?, int>? RequestDeposit;
-    public Action<NetEntity?, Dictionary<ProtoId<EconomyCurrencyPrototype>, int>>? RequestWithdraw;
+    public Action<NetEntity?, Dictionary<ProtoId<EconomyCurrencyPrototype>, int>, EconomyTransaction>? RequestTransaction;
 
-    private EconomyDepositWindow? _depositWindow;
-    private EconomyWithdrawWindow? _withdrawWindow;
+    private EconomyTransactionWindow? _transactionWindow;
 
     private EntityUid _owner;
     private Entity<EconomyAccountComponent>? _selectedAccount;
@@ -37,8 +34,8 @@ public sealed partial class EconomyMachineWindow : FancyWindow
 
         _economy = _entMan.System<OathlordEconomySystem>();
 
-        WithdrawButton.OnPressed += WithdrawButtonOnOnPressed;
-        DepositButton.OnPressed += DepositButtonPressed;
+        WithdrawButton.OnPressed += _ => OpenTransactionMenu(EconomyTransaction.Withdraw);
+        DepositButton.OnPressed += _ => OpenTransactionMenu(EconomyTransaction.Deposit);
     }
 
     public override void Close()
@@ -46,9 +43,6 @@ public sealed partial class EconomyMachineWindow : FancyWindow
         base.Close();
 
         CloseOtherWindows();
-
-        WithdrawButton.OnPressed -= WithdrawButtonOnOnPressed;
-        DepositButton.OnPressed -= DepositButtonPressed;
     }
 
     public void Populate()
@@ -84,38 +78,21 @@ public sealed partial class EconomyMachineWindow : FancyWindow
         SelectInfo.Visible = false;
     }
 
-    private void DepositButtonPressed(BaseButton.ButtonEventArgs obj)
+    private void OpenTransactionMenu(EconomyTransaction type)
     {
-        _depositWindow?.Close();
+        _transactionWindow?.Close();
 
-        _depositWindow = new EconomyDepositWindow();
-        _depositWindow.OnClose += () => _depositWindow = null;
-        _depositWindow.AmountDeposited += args =>
+        _transactionWindow = new EconomyTransactionWindow(_economy, _protoMan, _owner, GetWindowName(type));
+        _transactionWindow?.OnClose += () => _transactionWindow = null;
+        _transactionWindow?.TransactionConfirm += currencies =>
         {
             if (_selectedAccount is not { } selectedAccount)
                 return;
 
-            RequestDeposit?.Invoke(_entMan.GetNetEntity(selectedAccount.Owner), args);
+            RaiseTransaction(_entMan.GetNetEntity(selectedAccount.Owner), currencies, type);
         };
 
-        _depositWindow.OpenCentered();
-    }
-
-    private void WithdrawButtonOnOnPressed(BaseButton.ButtonEventArgs obj)
-    {
-        _withdrawWindow?.Close();
-
-        _withdrawWindow = new EconomyWithdrawWindow(_economy, _protoMan, _owner);
-        _withdrawWindow.OnClose += () => _withdrawWindow = null;
-        _withdrawWindow.AmountWithdrawn += args =>
-        {
-            if (_selectedAccount is not { } selectedAccount)
-                return;
-
-            RequestWithdraw?.Invoke(_entMan.GetNetEntity(selectedAccount.Owner), args);
-        };
-
-        _withdrawWindow.OpenCentered();
+        _transactionWindow?.OpenCentered();
     }
 
     public void SetOwner(EntityUid owner)
@@ -150,8 +127,7 @@ public sealed partial class EconomyMachineWindow : FancyWindow
     /// </summary>
     private void CloseOtherWindows()
     {
-        _depositWindow?.Close();
-        _withdrawWindow?.Close();
+        _transactionWindow?.Close();
     }
 
     /// <summary>
@@ -160,6 +136,23 @@ public sealed partial class EconomyMachineWindow : FancyWindow
     private string StoredText(int stored)
     {
         return $"Stored: {stored}";
+    }
+
+    /// <summary>
+    /// Raises a <see cref="RequestTransaction"/> event
+    /// </summary>
+    private void RaiseTransaction(
+        NetEntity entity,
+        Dictionary<ProtoId<EconomyCurrencyPrototype>, int> currencies,
+        EconomyTransaction type)
+    {
+        RequestTransaction?.Invoke(entity, currencies, type);
+    }
+
+    private string GetWindowName(EconomyTransaction type)
+    {
+        // todo: if we get more types, do switch statement...
+        return type == EconomyTransaction.Deposit ? "Deposit" : "Withdraw";
     }
 }
 

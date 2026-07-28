@@ -99,24 +99,27 @@ public sealed partial class OathlordEconomySystem : EntitySystem
     /// Withdraws a specific amount of currencies from the economy.
     /// Does not accept negative values.
     /// </summary>
-    public void WithdrawFromEconomy(Entity<EconomyMapComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toWithdraw)
+    public bool TryWithdrawFromEconomy(Entity<EconomyMapComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toWithdraw)
     {
         if (!_econMapQuery.Resolve(ent.Owner, ref ent.Comp))
-            return;
+            return false;
 
         var total = GetTotalFromCurrencies(ent.Comp.TotalStored, toWithdraw);
         if (total == 0)
-            return;
+            return false;
 
-        foreach (var (cur, _) in ent.Comp.StoredCurrencies)
+        foreach (var (cur, storedValue) in ent.Comp.StoredCurrencies)
         {
-            if (!toWithdraw.TryGetValue(cur, out var value) || value < 0)
-                continue;
+            if (!toWithdraw.TryGetValue(cur, out var value) || value < 0 || value > storedValue)
+            {
+                return false;
+            }
 
             ent.Comp.StoredCurrencies[cur] = Math.Clamp(ent.Comp.StoredCurrencies[cur] - toWithdraw[cur], 0, int.MaxValue);
         }
 
         Dirty(ent);
+        return true;
     }
 
     #endregion
@@ -148,5 +151,36 @@ public sealed partial class OathlordEconomySystem : EntitySystem
         return total;
     }
 
+    /// <summary>
+    /// Helper to get the total amount from currencies
+    /// Does not accept negative values.
+    /// </summary>
+    /// <param name="currencies">The currencies to check against</param>
+    /// <returns></returns>
+    private int GetTotalFromCurrencies(Dictionary<ProtoId<EconomyCurrencyPrototype>, int> currencies)
+    {
+        var total = 0;
+        foreach (var (cur, amount) in currencies)
+        {
+            if (amount < 0)
+                continue;
+
+            var curValue = GetCurrencyTotal(cur, amount);
+            total += curValue;
+        }
+
+        return total;
+    }
+
     #endregion
+}
+
+/// <summary>
+/// Enum that defines a transaction type.
+/// I have commented the definitions below to explain what each type does.
+/// </summary>
+public enum EconomyTransaction : byte
+{
+    Withdraw,   // Taking money out of an account
+    Deposit,    // Putting money in an account
 }

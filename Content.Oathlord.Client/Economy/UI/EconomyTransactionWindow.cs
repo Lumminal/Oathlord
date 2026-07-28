@@ -8,19 +8,21 @@ using Robust.Client.UserInterface.XAML;
 namespace Content.Oathlord.Client.Economy.UI;
 
 [GenerateTypedNameReferences]
-public sealed partial class EconomyWithdrawWindow : FancyWindow
+public sealed partial class EconomyTransactionWindow : FancyWindow
 {
-    public Action<Dictionary<ProtoId<EconomyCurrencyPrototype>, int>>? AmountWithdrawn;
-
     private Dictionary<ProtoId<EconomyCurrencyPrototype>, int> _currencyAmounts = new();
 
-    public EconomyWithdrawWindow(
+    public Action<Dictionary<ProtoId<EconomyCurrencyPrototype>, int>>? TransactionConfirm;
+
+    public EconomyTransactionWindow(
         OathlordEconomySystem economy,
         IPrototypeManager protoMan,
-        EntityUid owner)
+        EntityUid owner,
+        string windowName)
     {
         RobustXamlLoader.Load(this);
 
+        Title = windowName;
         ConfirmButton.OnPressed += ConfirmButtonOnOnPressed;
 
         if (economy.GetCurrentEconomy(owner) is not { } mapEconomy)
@@ -47,7 +49,7 @@ public sealed partial class EconomyWithdrawWindow : FancyWindow
                 Margin = new Thickness(8)
             };
 
-            CurrencieNames.AddChild(name);
+            CurrenciesNames.AddChild(name);
             Currencies.AddChild(lineEdit);
 
             lineEdit.OnTextChanged += args => DepositAmountOnOnTextChanged(args, cur);
@@ -89,7 +91,7 @@ public sealed partial class EconomyWithdrawWindow : FancyWindow
                 return;
         }
 
-        AmountWithdrawn?.Invoke(_currencyAmounts);
+        TransactionConfirm?.Invoke(_currencyAmounts);
         Close();
     }
 }
