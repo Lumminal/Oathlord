@@ -8,6 +8,7 @@
   <Import Project="../RobustToolbox/Imports/Shared.props" />
   <Import Project="../RobustToolbox/MSBuild/Robust.Properties.targets" />
   <Import Project="../RobustToolbox/MSBuild/Robust.CompNetworkGenerator.targets" />
+  <Import Project="../RobustToolbox/MSBuild/Robust.EntitySystemSubscriptionsGenerator.targets" />
 
   <ItemGroup>
     <ProjectReference Include="../Content.Common/Content.Common.csproj" />
