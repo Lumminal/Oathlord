@@ -52,7 +52,10 @@ trait-french-name = French accent
 trait-french-desc = Your accent seems to have a certain «je ne sais quoi».
 
 trait-spanish-name = Spanish accent
-trait-spanish-desc = Hola señor, donde esta la biblioteca.
+trait-spanish-desc = Hola señor, ¿dónde está la biblioteca?
+
+trait-scottish-name = Scottish accent
+trait-scottish-desc = Ye're speaking like ae proper Scot!
 
 trait-scottish-name = Scottish accent
 trait-scottish-desc = Ye're speaking like ae proper Scot!

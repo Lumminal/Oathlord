@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using Content.Shared.GameTicking.Components; // Oathlord
 using System.Collections.Generic;
 using Content.IntegrationTests.Fixtures.Attributes;
 using Content.IntegrationTests.Utility;
@@ -8,7 +9,6 @@ using Content.Server.GameTicking;
 using Content.Server.Ghost.Roles;
 using Content.Server.Ghost.Roles.Components;
 using Content.Shared.Antag;
-using Content.Shared.GameTicking.Components;
 using Content.Shared.Players;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
@@ -42,7 +42,7 @@ public sealed partial class AntagGhostRoleTest : AntagTest
     public void TestAntagGhostRoles(string ruleId)
     {
         var rule = SProtoMan.Index<EntityPrototype>(ruleId);
-        Assert.That(rule.TryGetComponent<AntagSelectionComponent>(out var antag, SEntMan.ComponentFactory), Is.True);
+        Assert.That(rule.TryComp<AntagSelectionComponent>(out var antag, SEntMan.ComponentFactory), Is.True);
         // <Oathlord> - Skip hidden rules and maps we don't have
         if (rule.TryGetComponent<GameRuleComponent>(out var gameRuleComp, SEntMan.ComponentFactory) && gameRuleComp.Hidden)
             return;
@@ -95,7 +95,7 @@ public sealed partial class AntagGhostRoleTest : AntagTest
         foreach (var ruleId in AntagGameRules)
         {
             var rule = SProtoMan.Index<EntityPrototype>(ruleId);
-            Assert.That(rule.TryGetComponent<AntagSelectionComponent>(out var antag, SEntMan.ComponentFactory), Is.True);
+            Assert.That(rule.TryComp<AntagSelectionComponent>(out var antag, SEntMan.ComponentFactory), Is.True);
             // <Oathlord> - Skipped hidden rules
             if (rule.TryGetComponent<GameRuleComponent>(out var gameRule, SEntMan.ComponentFactory) && gameRule.Hidden)
                 return;

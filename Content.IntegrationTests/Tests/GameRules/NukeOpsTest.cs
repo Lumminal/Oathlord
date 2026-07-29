@@ -32,7 +32,7 @@ namespace Content.IntegrationTests.Tests.GameRules;
 
 [TestFixture]
 public sealed class NukeOpsTest : GameTest
-{/*
+{
     private static readonly ProtoId<NpcFactionPrototype> SyndicateFaction = "Syndicate";
     private static readonly ProtoId<NpcFactionPrototype> NanotrasenFaction = "NanoTrasen";
 
@@ -264,5 +264,5 @@ public sealed class NukeOpsTest : GameTest
         });
 
         ticker.SetGamePreset((GamePresetPrototype?) null);
-    }*/
+    }
 }

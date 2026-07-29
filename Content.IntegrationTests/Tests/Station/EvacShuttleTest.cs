@@ -14,7 +14,7 @@ namespace Content.IntegrationTests.Tests.Station;
 [TestFixture]
 [TestOf(typeof(EmergencyShuttleSystem))]
 public sealed class EvacShuttleTest : GameTest
-{/*
+{
     public override PoolSettings PoolSettings => new PoolSettings()
     {
         DummyTicker = true,
@@ -129,5 +129,5 @@ public sealed class EvacShuttleTest : GameTest
         server.CfgMan.SetCVar(CCVars.EmergencyShuttleDockTime, dockTime);
         pair.Server.CfgMan.SetCVar(CCVars.EmergencyShuttleEnabled, false);
         pair.Server.CfgMan.SetCVar(CCVars.GameMap, gameMap);
-    }*/
+    }
 }

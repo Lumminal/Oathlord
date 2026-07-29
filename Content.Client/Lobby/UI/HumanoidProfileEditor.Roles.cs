@@ -147,7 +147,7 @@ public sealed partial class HumanoidProfileEditor
                 {
                     Orientation = LayoutOrientation.Vertical,
                     Name = department.ID,
-                    ToolTip = Loc.GetString("humanoid-profile-editor-classes-amount-in-department-tooltip", // Oathlord - change loc
+                    ToolTip = Loc.GetString("humanoid-profile-editor-jobs-amount-in-department-tooltip",
                         ("departmentName", departmentName))
                 };
 
@@ -170,7 +170,7 @@ public sealed partial class HumanoidProfileEditor
                         {
                             new Label
                             {
-                                Text = Loc.GetString("humanoid-profile-editor-department-classes-label", // Oathlord - change loc
+                                Text = Loc.GetString("humanoid-profile-editor-department-jobs-label",
                                     ("departmentName", departmentName)),
                                 Margin = new Thickness(5f, 0, 0, 0)
                             }
