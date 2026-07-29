@@ -1,4 +1,7 @@
-using Robust.Shared.Configuration; // Oathlord
+// <Oathlord>
+using Robust.Shared.Configuration;
+using Content.Shared.CCVar;
+// </Oathlord>
 using System.Linq;
 using Content.Client.Guidebook.RichText;
 using Content.Client.UserInterface.ControlExtensions;
