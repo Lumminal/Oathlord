@@ -9,7 +9,12 @@
   </PropertyGroup>
   <Import Project="../MSBuild/Content.props" />
   <ItemGroup>
-    <ProjectReference Include="../Content.Client\Content.Client.csproj" />
+    <PackageReference Include="Nett" />
+    <PackageReference Include="JetBrains.Annotations" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Content.Client/Content.Client.csproj" />
     <ProjectReference Include="../Content.Oathlord.Shared/Content.Oathlord.Shared.csproj" />
   </ItemGroup>
 
@@ -17,4 +22,5 @@
   <Import Project="../RobustToolbox/Imports/Shared.props" />
   <Import Project="../RobustToolbox/MSBuild/Robust.Properties.targets" />
   <Import Project="../RobustToolbox/MSBuild/XamlIL.targets" />
+  <Import Project="../RobustToolbox/MSBuild/Robust.EntitySystemSubscriptionsGenerator.targets" />
 </Project>
