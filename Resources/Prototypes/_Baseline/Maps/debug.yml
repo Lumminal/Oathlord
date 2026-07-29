@@ -12,18 +12,3 @@
         - type: StationJobs
           availableJobs:
             Wretch: [ -1, -1 ]
-
-- type: gameMap
-  id: Dev
-  mapName: Dev
-  mapPath: /Maps/_Baseline/baseline.yml
-  minPlayers: 0
-  stations:
-    Dev:
-      stationProto: StandardNanotrasenStation
-      components:
-        - type: StationNameSetup
-          mapNameTemplate: "Dev"
-        - type: StationJobs
-          availableJobs:
-            Wretch: [ -1, -1 ]
