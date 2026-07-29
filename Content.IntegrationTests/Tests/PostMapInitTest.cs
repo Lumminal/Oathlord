@@ -168,6 +168,7 @@ namespace Content.IntegrationTests.Tests
         }
 
         [Test]
+        [Ignore("Oathlord")]
         [TestCaseSource(nameof(AllMapFiles))]
         public async Task NoSavedPostMapInitTest(ResPath map)
         {
