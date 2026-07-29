@@ -57,9 +57,6 @@ trait-spanish-desc = Hola señor, ¿dónde está la biblioteca?
 trait-scottish-name = Scottish accent
 trait-scottish-desc = Ye're speaking like ae proper Scot!
 
-trait-scottish-name = Scottish accent
-trait-scottish-desc = Ye're speaking like ae proper Scot!
-
 trait-painnumbness-name = Numb
 trait-painnumbness-desc = You lack any sense of feeling pain, being unaware of how hurt you may be.
 
