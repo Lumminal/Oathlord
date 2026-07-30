@@ -1,5 +1,5 @@
 - type: gameMap
-  id: OathlordDev
+  id: Dev
   mapName: Archives
   mapPath: /Maps/_Oathlord/archives.yml
   minPlayers: 0
