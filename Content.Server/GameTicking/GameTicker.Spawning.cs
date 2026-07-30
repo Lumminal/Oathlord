@@ -245,10 +245,6 @@ namespace Content.Server.GameTicking
             // If no job available, stay in lobby, or if no lobby spawn as observer
             if (jobId is null)
             {
-                _sawmill.Warning($"[DEBUG] No job for {player.Name}. " +
-                                 $"Stations={GetSpawnableStations().Count}, " +
-                                 $"Priorities=[{string.Join(",", character.JobPriorities.Select(p => $"{p.Key}:{p.Value}"))}], " +
-                                 $"CurrentPreset={CurrentPreset?.ID}");
                 if (!LobbyEnabled)
                 {
                     JoinAsObserver(player);
