@@ -23,4 +23,10 @@ public sealed partial class EconomyCurrencyPrototype : IPrototype
     /// </summary>
     [DataField]
     public int Value;
+
+    /// <summary>
+    /// The "physical" version of this currency
+    /// </summary>
+    [DataField]
+    public EntProtoId EntityProto;
 }

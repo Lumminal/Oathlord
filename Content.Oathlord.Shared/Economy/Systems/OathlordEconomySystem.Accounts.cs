@@ -60,30 +60,32 @@ public sealed partial class OathlordEconomySystem
     /// </summary>
     /// <param name="ent">The account to withdraw from</param>
     /// <param name="toGive">The amount of currencies to withdraw from the economy, to give to the player</param>
-    public void WithdrawFromAccount(Entity<EconomyAccountComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toGive)
+    /// <returns>If the withdrawing was successful</returns>
+    public bool WithdrawFromAccount(Entity<EconomyAccountComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toGive)
     {
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
-            return;
+            return false;
 
         // We check that we can withdraw that much from our account
         // If toGive is too much then it doesn't make sense to withdraw...
         var total= GetTotalFromCurrencies(ent.Comp.Stored, toGive);
         if (total == 0)
-            return;
+            return false;
 
         // Accounts don't store individual currencies, only economy does.
-        // So we have to adjust the economy after a withdraw
+        // Unlike depositing, withdrawing automatically also withdraws from the vault and gives you the physical coins directly (subject to change).
         if (GetCurrentEconomy(ent.Owner) is not { } economy || !TryWithdrawFromEconomy(economy.AsNullable(), toGive))
-            return;
+            return false;
 
         ent.Comp.Stored = Math.Clamp(ent.Comp.Stored - total, 0, int.MaxValue);
         Dirty(ent);
 
         Log.Info($"Withdrew: {toGive}. New amount is {ent.Comp.Stored}");
+        return true;
     }
 
     /// <summary>
-    /// Deposits a specified amount of currencies from an account.
+    /// Deposits a specified amount of currencies to an account.
     /// </summary>
     /// <param name="ent">The account to deposit to</param>
     /// <param name="toDeposit">The amount of currencies to withdraw from the economy, to deposit to the account</param>
@@ -97,7 +99,10 @@ public sealed partial class OathlordEconomySystem
         if (total == 0)
             return;
 
-        if (GetCurrentEconomy(ent.Owner) is not { } economy|| !TryWithdrawFromEconomy(economy.AsNullable(), toDeposit))
+        // Do note that it is the banker's (or steward's) role to put the deposited amount into the vault.
+        // The interaction should go like this:
+        // Player gives X Na -> Banker puts Na into Vault -> Vault increases in value -> Banker increases account's value by X
+        if (GetCurrentEconomy(ent.Owner) == null)
             return;
 
         ent.Comp.Stored = Math.Clamp(ent.Comp.Stored + total, 0, int.MaxValue);

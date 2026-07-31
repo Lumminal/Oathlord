@@ -1,10 +1,13 @@
 ﻿using Content.Oathlord.Shared.Economy.Prototypes;
+using Content.Shared.Stacks;
 using Robust.Shared.Prototypes;
 
 namespace Content.Oathlord.Shared.Economy.Systems;
 
 public sealed partial class OathlordEconomySystem
 {
+    [Dependency] private SharedStackSystem _stack = default!;
+
     /// <summary>
     /// Caching the values of the currencies, because economy is gonna use them a lot
     /// </summary>
@@ -54,6 +57,25 @@ public sealed partial class OathlordEconomySystem
     }
 
     #endregion
+
+    /// <summary>
+    /// Spawns the physical <see cref="EntProtoId"/> of the currencies provided
+    /// </summary>
+    private void SpawnPhysicalFromCurrencies(EntityUid target, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> currencies)
+    {
+        foreach (var (cur, amount) in currencies)
+        {
+            // todo: if this gets called a lot, we can cache it later
+            if (!ProtoMan.Resolve(cur, out var currency) || amount <= 0)
+                continue;
+
+            PredictedTrySpawnNextTo(currency.EntityProto, target, out var spawned);
+            if (spawned is not { } spawnedCurrency)
+                continue;
+
+            _stack.SetCount(spawnedCurrency, amount);
+        }
+    }
 
     private void LoadValues()
     {

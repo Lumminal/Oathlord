@@ -82,7 +82,14 @@ public sealed partial class EconomyMachineWindow : FancyWindow
     {
         _transactionWindow?.Close();
 
-        _transactionWindow = new EconomyTransactionWindow(_economy, _protoMan, _owner, GetWindowName(type));
+        var showValues = type == EconomyTransaction.Withdraw;
+
+        _transactionWindow = new EconomyTransactionWindow(
+            economy: _economy,
+            protoMan: _protoMan,
+            owner: _owner,
+            windowName: GetWindowName(type),
+            showValues: showValues);
         _transactionWindow?.OnClose += () => _transactionWindow = null;
         _transactionWindow?.TransactionConfirm += currencies =>
         {

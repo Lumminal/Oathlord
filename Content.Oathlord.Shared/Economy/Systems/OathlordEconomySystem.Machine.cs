@@ -27,7 +27,7 @@ public sealed partial class OathlordEconomySystem
         switch (args.Type)
         {
             case EconomyTransaction.Withdraw:
-                Withdraw(args);
+                Withdraw(ent.Owner, args);
                 break;
             case EconomyTransaction.Deposit:
                 Deposit(args);
@@ -37,14 +37,19 @@ public sealed partial class OathlordEconomySystem
 
     #endregion
 
-    private void Withdraw(EconomyTransactionMessage args)
+    private void Withdraw(EntityUid machine, EconomyTransactionMessage args)
     {
         if (args.TransactEntity is not { } withdrawEntity)
             return;
 
-        // TODO: Spawn physical currency outside the machine
+        var toTransact = args.ToTransact;
         var user = GetEntity(withdrawEntity);
-        WithdrawFromAccount(user, args.ToTransact);
+
+        if (!WithdrawFromAccount(user, toTransact))
+            return;
+
+        // TODO: Play sound here
+        SpawnPhysicalFromCurrencies(machine, toTransact);
     }
 
     private void Deposit(EconomyTransactionMessage args)
@@ -52,6 +57,7 @@ public sealed partial class OathlordEconomySystem
         if (args.TransactEntity is not { } depositEntity)
             return;
 
+        // TODO: Play sound here
         var user = GetEntity(depositEntity);
         DepositToAccount(user, args.ToTransact);
     }
