@@ -17,8 +17,11 @@ public sealed partial class EconomyMachineWindow : FancyWindow
     private readonly OathlordEconomySystem _economy;
 
     public Action<NetEntity?, Dictionary<ProtoId<EconomyCurrencyPrototype>, int>, EconomyTransaction>? RequestTransaction;
+    public Action<NetEntity?, LoanData>? RequestGrantLoan;
+    public Action<NetEntity?, LoanData>? RequestPayLoan;
 
     private EconomyTransactionWindow? _transactionWindow;
+    private EconomyLoanWindow? _loanWindow;
 
     private EntityUid _owner;
     private Entity<EconomyAccountComponent>? _selectedAccount;
@@ -36,6 +39,24 @@ public sealed partial class EconomyMachineWindow : FancyWindow
 
         WithdrawButton.OnPressed += _ => OpenTransactionMenu(EconomyTransaction.Withdraw);
         DepositButton.OnPressed += _ => OpenTransactionMenu(EconomyTransaction.Deposit);
+
+        LoansButton.OnPressed += LoansButtonOnOnPressed;
+    }
+
+    private void LoansButtonOnOnPressed(BaseButton.ButtonEventArgs obj)
+    {
+        _loanWindow?.Close();
+        if (_selectedAccount is not { } selectedAccount)
+            return;
+
+        _loanWindow = new EconomyLoanWindow(_economy, _selectedAccount);
+        _loanWindow.OnClose += () => _loanWindow = null;
+
+        var netEnt = _entMan.GetNetEntity(selectedAccount);
+        _loanWindow.GrantLoanRequest += data => RequestGrantLoan?.Invoke(netEnt, data);
+        _loanWindow.PayLoanRequest += data => RequestPayLoan?.Invoke(netEnt, data);
+
+        _loanWindow?.OpenCentered();
     }
 
     public override void Close()
@@ -81,6 +102,8 @@ public sealed partial class EconomyMachineWindow : FancyWindow
     private void OpenTransactionMenu(EconomyTransaction type)
     {
         _transactionWindow?.Close();
+        if (_selectedAccount is not { } selectedAccount)
+            return;
 
         var showValues = type == EconomyTransaction.Withdraw;
 
@@ -91,13 +114,7 @@ public sealed partial class EconomyMachineWindow : FancyWindow
             windowName: GetWindowName(type),
             showValues: showValues);
         _transactionWindow?.OnClose += () => _transactionWindow = null;
-        _transactionWindow?.TransactionConfirm += currencies =>
-        {
-            if (_selectedAccount is not { } selectedAccount)
-                return;
-
-            RaiseTransaction(_entMan.GetNetEntity(selectedAccount.Owner), currencies, type);
-        };
+        _transactionWindow?.TransactionConfirm += currencies => RaiseTransaction(_entMan.GetNetEntity(selectedAccount), currencies, type);
 
         _transactionWindow?.OpenCentered();
     }
@@ -127,6 +144,11 @@ public sealed partial class EconomyMachineWindow : FancyWindow
             return;
 
         AccountStored.Text = StoredText(selectedAccount.Comp.Stored);
+
+        if (_loanWindow is { } loanWindow)
+        {
+            loanWindow.Populate();
+        }
     }
 
     /// <summary>
@@ -135,6 +157,7 @@ public sealed partial class EconomyMachineWindow : FancyWindow
     private void CloseOtherWindows()
     {
         _transactionWindow?.Close();
+        _loanWindow?.Close();
     }
 
     /// <summary>

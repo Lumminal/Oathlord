@@ -112,4 +112,56 @@ public sealed partial class OathlordEconomySystem
     }
 
     #endregion
+
+    #region Loan API
+
+    public IEnumerable<LoanData>? GetLoans(Entity<EconomyAccountComponent?> ent)
+    {
+        if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
+            return null;
+
+        return ent.Comp.Loans;
+    }
+
+    public void AddLoan(Entity<EconomyAccountComponent?> ent, LoanData loan)
+    {
+        if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
+
+        ent.Comp.Loans.Add(loan);
+
+        // we update our account with this loan
+        AddCurrencyToAccount(ent, loan.Amount); // todo: MINUS THE INTEREST!!
+
+        Dirty(ent);
+    }
+
+    public bool TryPayLoan(Entity<EconomyAccountComponent?> ent, LoanData loan)
+    {
+        if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp) || GetCurrentEconomy(ent.Owner) is not { } economy)
+            return false;
+
+        var loanIndex = ent.Comp.Loans.IndexOf(loan);
+        if (loanIndex == -1)
+            return false;
+
+        var storedLoan = ent.Comp.Loans[loanIndex];
+        var interest = GetLoanInterest(economy.AsNullable());
+
+        var toPay = storedLoan.Amount + (int)(interest * storedLoan.Amount);
+
+        // Check if we have enough in our bank, or if the loan was already paid...
+        if (toPay > ent.Comp.Stored || storedLoan.Paid)
+            return false;
+
+        storedLoan.Paid = true;
+        ent.Comp.Loans[loanIndex] = storedLoan;
+
+        WithdrawFromAccount(ent, toPay);
+        Dirty(ent);
+
+        return true;
+    }
+
+    #endregion
 }

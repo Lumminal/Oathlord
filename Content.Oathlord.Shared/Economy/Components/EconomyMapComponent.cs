@@ -1,4 +1,5 @@
 ﻿using Content.Oathlord.Shared.Economy.Prototypes;
+using Content.Oathlord.Shared.Economy.Systems;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -7,7 +8,7 @@ namespace Content.Oathlord.Shared.Economy.Components;
 /// <summary>
 /// Component applied to the map to store information about accounts, and anything related to the economy.
 /// </summary>
-[RegisterComponent, NetworkedComponent]
+[RegisterComponent, NetworkedComponent, Access(typeof(OathlordEconomySystem))]
 [AutoGenerateComponentState]
 public sealed partial class EconomyMapComponent : Component
 {
@@ -29,4 +30,11 @@ public sealed partial class EconomyMapComponent : Component
     /// </summary>
     [AutoNetworkedField]
     public int TotalStored;
+
+    /// <summary>
+    /// How much interest does the economy get from loans.
+    /// This can be increased throughout the round via the bank machine... TODO: use it later
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public float LoanInterest = 0.1f;
 }

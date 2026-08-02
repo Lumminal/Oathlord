@@ -1,4 +1,5 @@
 ﻿using Robust.Shared.GameStates;
+using Robust.Shared.Serialization;
 
 namespace Content.Oathlord.Shared.Economy.Components;
 
@@ -20,4 +21,23 @@ public sealed partial class EconomyAccountComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public int Stored;
+
+    [DataField, AutoNetworkedField]
+    public List<LoanData> Loans = new();
+}
+
+[Serializable, NetSerializable, DataRecord]
+public partial record struct LoanData
+{
+    [DataField]
+    public TimeSpan DueTime;
+
+    [DataField]
+    public int Amount;
+
+    [DataField]
+    public bool Paid;
+
+    [DataField]
+    public string? Reason;
 }

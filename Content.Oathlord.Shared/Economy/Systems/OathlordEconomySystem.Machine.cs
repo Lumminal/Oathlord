@@ -13,6 +13,8 @@ public sealed partial class OathlordEconomySystem
             subs =>
             {
                 subs.Event<EconomyTransactionMessage>(OnTransaction);
+                subs.Event<EconomyAddLoanMessage>(OnAddLoan);
+                subs.Event<EconomyPayLoanMessage>(OnPayLoan);
             });
     }
 
@@ -35,16 +37,40 @@ public sealed partial class OathlordEconomySystem
         }
     }
 
+    private void OnAddLoan(Entity<EconomyMachineComponent> ent, ref EconomyAddLoanMessage args)
+    {
+        if (GetTransactEntity(args.TransactEntity) is not { } user)
+            return;
+
+        // validate loan in case of bad input...
+        var loan = args.Loan;
+        if (loan.Paid || loan.Amount <= 0 || loan.DueTime.TotalMinutes <= 0)
+            return;
+
+        AddLoan(user, args.Loan);
+    }
+
+    private void OnPayLoan(Entity<EconomyMachineComponent> ent, ref EconomyPayLoanMessage args)
+    {
+        if (GetTransactEntity(args.TransactEntity) is not { } user)
+            return;
+
+        // again, validate the loan
+        var loan = args.Loan;
+        if (loan.Paid || loan.Amount <= 0) // loan is already paid, or loan is negative (somehow)
+            return;
+
+        TryPayLoan(user, loan);
+    }
+
     #endregion
 
     private void Withdraw(EntityUid machine, EconomyTransactionMessage args)
     {
-        if (args.TransactEntity is not { } withdrawEntity)
+        if (GetTransactEntity(args.TransactEntity) is not { } user)
             return;
 
         var toTransact = args.ToTransact;
-        var user = GetEntity(withdrawEntity);
-
         if (!WithdrawFromAccount(user, toTransact))
             return;
 
@@ -54,11 +80,18 @@ public sealed partial class OathlordEconomySystem
 
     private void Deposit(EconomyTransactionMessage args)
     {
-        if (args.TransactEntity is not { } depositEntity)
+        if (GetTransactEntity(args.TransactEntity) is not { } user)
             return;
 
         // TODO: Play sound here
-        var user = GetEntity(depositEntity);
         DepositToAccount(user, args.ToTransact);
+    }
+
+    private EntityUid? GetTransactEntity(NetEntity? entity)
+    {
+        if (entity is not { } withdrawEntity)
+            return null;
+
+        return GetEntity(withdrawEntity);
     }
 }

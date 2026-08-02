@@ -39,6 +39,47 @@ public sealed class EconomyTransactionMessage : BoundUserInterfaceMessage
 }
 
 [Serializable, NetSerializable]
+public sealed class EconomyAddLoanMessage : BoundUserInterfaceMessage
+{
+    /// <summary>
+    /// The entity that is the target of this transaction
+    /// </summary>
+    public NetEntity? TransactEntity;
+
+    /// <summary>
+    /// The loan to add to this account
+    /// </summary>
+    public LoanData Loan;
+
+    public EconomyAddLoanMessage(LoanData loan, NetEntity? transactEntity)
+    {
+        TransactEntity = transactEntity;
+        Loan = loan;
+    }
+}
+
+[Serializable, NetSerializable]
+public sealed class EconomyPayLoanMessage : BoundUserInterfaceMessage
+{
+    /// <summary>
+    /// The entity that is the target of this transaction
+    /// </summary>
+    public NetEntity? TransactEntity;
+
+    /// <summary>
+    /// The loan to pay from this account
+    /// </summary>
+    public LoanData Loan;
+
+    public EconomyPayLoanMessage(LoanData loan, NetEntity? transactEntity)
+    {
+        TransactEntity = transactEntity;
+        Loan = loan;
+    }
+}
+
+
+[Serializable, NetSerializable]
 public enum EconomyMachineUiKey : byte
 {
     Key,

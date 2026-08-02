@@ -122,6 +122,29 @@ public sealed partial class OathlordEconomySystem : EntitySystem
         return true;
     }
 
+    /// <summary>
+    /// Gets the loan interest specified by the economy
+    /// </summary>
+    public float GetLoanInterest(Entity<EconomyMapComponent?> ent)
+    {
+        if (!_econMapQuery.Resolve(ent.Owner, ref ent.Comp))
+            return 0f;
+
+        return ent.Comp.LoanInterest;
+    }
+
+    /// <summary>
+    /// Gets the loan interest specified by the economy
+    /// </summary>
+    /// <param name="user">A user to get the economy from</param>
+    public float GetLoanInterest(EntityUid user)
+    {
+        if (GetCurrentEconomy(user) is not { } economy)
+            return 0f;
+
+        return economy.Comp.LoanInterest;
+    }
+
     #endregion
 
     #region Helpers

@@ -19,6 +19,21 @@ public sealed partial class EconomyMachineBoundInterface(EntityUid owner, Enum u
        _window.Populate();
 
        _window.RequestTransaction += RequestTransaction;
+
+       _window.RequestGrantLoan += RequestGrantLoan;
+       _window.RequestPayLoan += RequestPayLoan;
+    }
+
+    private void RequestPayLoan(NetEntity? entity, LoanData loan)
+    {
+        SendPredictedMessage(new EconomyPayLoanMessage(loan, entity));
+        _window?.UpdateInfo();
+    }
+
+    private void RequestGrantLoan(NetEntity? entity, LoanData loan)
+    {
+        SendPredictedMessage(new EconomyAddLoanMessage(loan, entity));
+        _window?.UpdateInfo();
     }
 
     private void RequestTransaction(NetEntity? entity, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> currencies, EconomyTransaction type)
