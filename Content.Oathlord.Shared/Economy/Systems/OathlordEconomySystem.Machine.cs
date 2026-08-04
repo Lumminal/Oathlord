@@ -70,11 +70,11 @@ public sealed partial class OathlordEconomySystem
 
     private void Deposit(EconomyTransactionMessage args)
     {
-        if (GetTransactEntity(args.TransactEntity) is not { } user)
+        if (GetTransactEntity(args.TransactEntity) is not { } user || args.Actor is not { Valid: true } actor)
             return;
 
         // TODO: Play sound here
-        DepositToAccount(user, args.ToTransact);
+        DepositToAccount(user, args.ToTransact, actor);
     }
 
     private EntityUid? GetTransactEntity(NetEntity? entity)

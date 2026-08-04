@@ -28,6 +28,12 @@ public sealed partial class EconomyAccountComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public List<LoanData> Loans = new();
+
+    /// <summary>
+    /// A list of transactions this entity has done. Used as a way to track their transaction history.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public List<string> Transactions = new();
 }
 
 /// <summary>

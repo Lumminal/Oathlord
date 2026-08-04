@@ -89,7 +89,19 @@ public sealed partial class OathlordEconomySystem
     /// </summary>
     /// <param name="ent">The account to deposit to</param>
     /// <param name="toDeposit">The amount of currencies to withdraw from the economy, to deposit to the account</param>
-    public void DepositToAccount(Entity<EconomyAccountComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toDeposit)
+    public void DepositToAccount(Entity<EconomyAccountComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toDeposit) =>
+        DepositToAccount(ent, toDeposit, null);
+
+    /// <summary>
+    /// Deposits a specified amount of currencies to an account.
+    /// </summary>
+    /// <param name="ent">The account to deposit to</param>
+    /// <param name="toDeposit">The amount of currencies to withdraw from the economy, to deposit to the account</param>
+    /// <param name="depositee">The entity that initiated this deposit (usually the operator of the bank machine)</param>
+    public void DepositToAccount(
+        Entity<EconomyAccountComponent?> ent,
+        Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toDeposit,
+        EntityUid? depositee)
     {
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
             return;
@@ -108,7 +120,10 @@ public sealed partial class OathlordEconomySystem
         ent.Comp.Stored = Math.Clamp(ent.Comp.Stored + total, 0, int.MaxValue);
         Dirty(ent);
 
-        Log.Info($"Deposited: {toDeposit}. New amount is {ent.Comp.Stored}");
+        if (depositee is not { } depositeeEnt)
+            return;
+
+        AddTransaction(ent, EconomyTransaction.Deposit, total, depositeeEnt);
     }
 
     #endregion
@@ -181,6 +196,31 @@ public sealed partial class OathlordEconomySystem
         Dirty(ent);
 
         return true;
+    }
+
+    #endregion
+
+    #region Transaction API
+
+    /// <summary>
+    /// Adds a transaction to this account's transaction history
+    /// </summary>
+    /// <param name="ent">The account</param>
+    /// <param name="type">The type of transaction</param>
+    /// <param name="amount">The amount that played in this transaction</param>
+    /// <param name="initiator">The initiator of this transaction</param>
+    public void AddTransaction(Entity<EconomyAccountComponent?> ent, EconomyTransaction type, int amount, EntityUid initiator)
+    {
+        if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
+
+        var loc = Loc.GetString(
+            $"economy-transaction-{type.ToString().ToLower()}",
+            ("amount", amount),
+            ("target", initiator));
+
+        ent.Comp.Transactions.Add(loc);
+        Dirty(ent);
     }
 
     #endregion

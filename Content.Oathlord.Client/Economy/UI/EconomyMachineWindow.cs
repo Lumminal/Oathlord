@@ -129,8 +129,16 @@ public sealed partial class EconomyMachineWindow : FancyWindow
     /// </summary>
     private void SetupAccount(Entity<EconomyAccountComponent> ent, string name)
     {
+        TransactionHistory.Children.Clear();
+
         AccountName.Text = $"Name: {name}";
         AccountStored.Text = StoredText(ent.Comp.Stored);
+
+        foreach (var transaction in ent.Comp.Transactions)
+        {
+            var historyControl = new TransactionHistoryControl(transaction);
+            TransactionHistory.AddChild(historyControl);
+        }
 
         AccountInfo.Visible = true;
     }

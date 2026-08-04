@@ -2,6 +2,7 @@
 using Content.Oathlord.Shared.Economy.Prototypes;
 using Content.Shared.Station;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization;
 
 namespace Content.Oathlord.Shared.Economy.Systems;
 
@@ -202,8 +203,9 @@ public sealed partial class OathlordEconomySystem : EntitySystem
 /// Enum that defines a transaction type.
 /// I have commented the definitions below to explain what each type does.
 /// </summary>
+[Serializable, NetSerializable]
 public enum EconomyTransaction : byte
 {
-    Withdraw,   // Taking money out of an account
-    Deposit,    // Putting money in an account
+    Withdraw,
+    Deposit,
 }
