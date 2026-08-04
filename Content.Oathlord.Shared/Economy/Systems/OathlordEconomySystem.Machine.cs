@@ -42,11 +42,6 @@ public sealed partial class OathlordEconomySystem
         if (GetTransactEntity(args.TransactEntity) is not { } user)
             return;
 
-        // validate loan in case of bad input...
-        var loan = args.Loan;
-        if (loan.Paid || loan.Amount <= 0 || loan.DueTime.TotalMinutes <= 0)
-            return;
-
         AddLoan(user, args.Loan);
     }
 
@@ -55,12 +50,7 @@ public sealed partial class OathlordEconomySystem
         if (GetTransactEntity(args.TransactEntity) is not { } user)
             return;
 
-        // again, validate the loan
-        var loan = args.Loan;
-        if (loan.Paid || loan.Amount <= 0) // loan is already paid, or loan is negative (somehow)
-            return;
-
-        TryPayLoan(user, loan);
+        TryPayLoan(user, args.Loan);
     }
 
     #endregion

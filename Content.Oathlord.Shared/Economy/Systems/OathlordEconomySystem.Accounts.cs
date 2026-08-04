@@ -115,6 +115,9 @@ public sealed partial class OathlordEconomySystem
 
     #region Loan API
 
+    /// <summary>
+    /// Fetches all loans in a specified account
+    /// </summary>
     public IEnumerable<LoanData>? GetLoans(Entity<EconomyAccountComponent?> ent)
     {
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
@@ -123,22 +126,40 @@ public sealed partial class OathlordEconomySystem
         return ent.Comp.Loans;
     }
 
+    /// <summary>
+    /// Validates and adds a loan to an account
+    /// </summary>
+    /// <param name="ent">The account</param>
+    /// <param name="loan">The loan to add to the account</param>
     public void AddLoan(Entity<EconomyAccountComponent?> ent, LoanData loan)
     {
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
             return;
 
+        if (loan.Paid || loan.Amount <= 0 || loan.DueTime <= TimeSpan.Zero)
+            return;
+
         ent.Comp.Loans.Add(loan);
 
         // we update our account with this loan
-        AddCurrencyToAccount(ent, loan.Amount); // todo: MINUS THE INTEREST!!
+        AddCurrencyToAccount(ent, loan.Amount);
 
         Dirty(ent);
     }
 
+    /// <summary>
+    /// Attempts to pay a loan with the account's stored amount.
+    /// It uses the economy's current interest rate to calculate the final price
+    /// </summary>
+    /// <param name="ent">The account</param>
+    /// <param name="loan">The loan to pay from the entity's account</param>
+    /// <returns></returns>True if the loan was paid, false otherwise
     public bool TryPayLoan(Entity<EconomyAccountComponent?> ent, LoanData loan)
     {
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp) || GetCurrentEconomy(ent.Owner) is not { } economy)
+            return false;
+
+        if (loan.Paid || loan.Amount <= 0)
             return false;
 
         var loanIndex = ent.Comp.Loans.IndexOf(loan);
@@ -150,7 +171,6 @@ public sealed partial class OathlordEconomySystem
 
         var toPay = storedLoan.Amount + (int)(interest * storedLoan.Amount);
 
-        // Check if we have enough in our bank, or if the loan was already paid...
         if (toPay > ent.Comp.Stored || storedLoan.Paid)
             return false;
 

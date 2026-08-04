@@ -22,22 +22,48 @@ public sealed partial class EconomyAccountComponent : Component
     [DataField, AutoNetworkedField]
     public int Stored;
 
+    /// <summary>
+    /// A list of loans this account owns.
+    /// Check <see cref="LoanData"/> for more information about what is considered a loan in the economy.
+    /// </summary>
     [DataField, AutoNetworkedField]
     public List<LoanData> Loans = new();
 }
 
+/// <summary>
+/// A loan can be granted by the economy in order to gain extra money, however they must be paid within a specified timeframe.
+/// The final loan to be paid is calculated like this:
+///
+/// <see cref="Amount"/> + (<see cref="Amount"/> * <see cref="EconomyMapComponent.LoanInterest"/>)
+/// </summary>
 [Serializable, NetSerializable, DataRecord]
 public partial record struct LoanData
 {
+    /// <summary>
+    /// todo: this should be an in-game day once we add those, not timespan
+    /// Specifies a timeframe in which we should pay this loan
+    /// This does not really have any use case, but in-game it should act as a crime to not pay your loans in time
+    /// </summary>
     [DataField]
     public TimeSpan DueTime;
 
+    /// <summary>
+    /// How much this loan is in the economy's main currency
+    /// This does not include the final amount with the interest rate
+    /// </summary>
     [DataField]
     public int Amount;
 
+    /// <summary>
+    /// Whether this loan is paid, or not
+    /// </summary>
     [DataField]
     public bool Paid;
 
+    /// <summary>
+    /// The reason as to why this loan exists. Appears on the bank machine's UI for the specified account
+    /// It can be nullable because it is optional to specify one
+    /// </summary>
     [DataField]
     public string? Reason;
 }

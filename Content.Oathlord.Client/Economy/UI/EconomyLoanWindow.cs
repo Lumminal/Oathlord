@@ -15,6 +15,8 @@ public sealed partial class EconomyLoanWindow : FancyWindow
 
     private Entity<EconomyAccountComponent> _account;
 
+    private EconomyGrantLoanWindow? _grantLoanWindow;
+
     public Action<LoanData>? GrantLoanRequest;
     public Action<LoanData>? PayLoanRequest;
 
@@ -36,13 +38,20 @@ public sealed partial class EconomyLoanWindow : FancyWindow
 
     private void AddLoanButtonOnOnPressed(BaseButton.ButtonEventArgs obj)
     {
-        // todo: this is for testing
-        var loanData = new LoanData();
-        loanData.Amount = 200;
-        loanData.DueTime = TimeSpan.FromMinutes(5);
-        loanData.Reason = "This is a test reason!";
+        _grantLoanWindow?.Close();
 
-        GrantLoanRequest?.Invoke(loanData);
+        _grantLoanWindow = new EconomyGrantLoanWindow();
+        _grantLoanWindow.OnClose += () => _grantLoanWindow = null;
+        _grantLoanWindow.GrantLoanRequest += data => GrantLoanRequest?.Invoke(data);
+
+        _grantLoanWindow.OpenCentered();
+    }
+
+    public override void Close()
+    {
+        base.Close();
+
+        _grantLoanWindow?.Close();
     }
 
     public void Populate()
@@ -55,10 +64,7 @@ public sealed partial class EconomyLoanWindow : FancyWindow
         foreach (var loan in loanIterator)
         {
             var loanControl = new LoanControl(loan, _economy.GetLoanInterest(_account));
-            loanControl.PayLoanRequest += data =>
-            {
-                PayLoanRequest?.Invoke(data);
-            };
+            loanControl.PayLoanRequest += data => PayLoanRequest?.Invoke(data);
 
             Loans.AddChild(loanControl);
         }
