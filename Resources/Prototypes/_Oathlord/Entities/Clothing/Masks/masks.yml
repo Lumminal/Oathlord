@@ -112,26 +112,26 @@
 
 - type: entity
   parent: ClothingMaskBase
-  id: ClothingMaskExoticSilk
-  name: exotic silk mask
+  id: ClothingMaskSilkVeil
+  name:  silk veil
   categories: [ ForkFiltered ]
   components:
   - type: Sprite
-    sprite: _Oathlord/Clothing/Mask/exoticsilkmask.rsi
+    sprite: _Oathlord/Clothing/Mask/silkveil.rsi
   - type: Clothing
-    sprite: _Oathlord/Clothing/Mask/exoticsilkmask.rsi
+    sprite: _Oathlord/Clothing/Mask/silkveil.rsi
 
 - type: entity
-  parent: ClothingMaskExoticSilk
-  id: ClothingMaskExoticSilkToggled
-  name: exotic silk mask
+  parent: ClothingMaskSilkVeil
+  id: ClothingMaskSilkVeilToggled
+  name: silk veil
   suffix: Toggled
   categories: [ ForkFiltered ]
   components:
   - type: Sprite
-    sprite: _Oathlord/Clothing/Mask/exoticsilkmask_t.rsi
+    sprite: _Oathlord/Clothing/Mask/silkveil_t.rsi
   - type: Clothing
-    sprite: _Oathlord/Clothing/Mask/exoticsilkmask_t.rsi
+    sprite: _Oathlord/Clothing/Mask/silkveil_t.rsi
 
 - type: entity
   parent: ClothingMaskBase
