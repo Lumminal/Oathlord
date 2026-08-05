@@ -24,8 +24,7 @@ public sealed partial class LoanControl : Control
 
         DueTimeLabel.Text = $"Due Time: {loan.DueTime.TotalMinutes} minutes"; // todo: once we get day system, convert to days and "in-game" hours...
         AmountLabel.Text = $"To Pay: {loan.Amount} (+{interestAmount} interest)";
-        if (loan.Reason is { } reason)
-            ReasonLabel.Text = $"Reason: {reason}";
+        ReasonLabel.Text = loan.Reason is { } reason ? $"Reason: {reason}" : "No reason.";
 
         PaidLabel.Text = loan.Paid ? "Paid" : "Not Paid";
         PaidLabel.FontColorOverride = loan.Paid ? Color.Green : Color.Red;

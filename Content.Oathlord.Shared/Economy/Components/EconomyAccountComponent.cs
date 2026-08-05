@@ -1,4 +1,5 @@
-﻿using Robust.Shared.GameStates;
+﻿using Content.Oathlord.Shared.Economy.Systems;
+using Robust.Shared.GameStates;
 using Robust.Shared.Serialization;
 
 namespace Content.Oathlord.Shared.Economy.Components;
@@ -33,7 +34,7 @@ public sealed partial class EconomyAccountComponent : Component
     /// A list of transactions this entity has done. Used as a way to track their transaction history.
     /// </summary>
     [DataField, AutoNetworkedField]
-    public List<string> Transactions = new();
+    public List<TransactionData> Transactions = new();
 }
 
 /// <summary>
@@ -50,26 +51,41 @@ public partial record struct LoanData
     /// Specifies a timeframe in which we should pay this loan
     /// This does not really have any use case, but in-game it should act as a crime to not pay your loans in time
     /// </summary>
-    [DataField]
     public TimeSpan DueTime;
 
     /// <summary>
     /// How much this loan is in the economy's main currency
     /// This does not include the final amount with the interest rate
     /// </summary>
-    [DataField]
     public int Amount;
 
     /// <summary>
     /// Whether this loan is paid, or not
     /// </summary>
-    [DataField]
     public bool Paid;
 
     /// <summary>
     /// The reason as to why this loan exists. Appears on the bank machine's UI for the specified account
     /// It can be nullable because it is optional to specify one
     /// </summary>
-    [DataField]
     public string? Reason;
+}
+
+[Serializable, NetSerializable, DataRecord]
+public partial record struct TransactionData
+{
+    /// <summary>
+    /// The amount that was present in this transaction
+    /// </summary>
+    public int Amount;
+
+    /// <summary>
+    /// The entity that initiated this transaction
+    /// </summary>
+    public string Initiator = "Unknown";
+
+    /// <summary>
+    /// The type of transaction it was
+    /// </summary>
+    public EconomyTransaction Type = EconomyTransaction.Deposit;
 }

@@ -5,7 +5,6 @@
     Margin="6">
 
     <BoxContainer Orientation="Vertical">
-        <controls:HLine StyleClasses="highlight" Thickness="2"/>
         <Label Name="TransactionLabel" Align="Center" Margin="6"/>
         <controls:HLine StyleClasses="highlight" Thickness="2"/>
     </BoxContainer>

@@ -43,9 +43,7 @@ public sealed partial class EconomyTransactionWindow : FancyWindow
                 Margin = new Thickness(16)
             };
 
-            // As an example for why this exists, depositing does not care about how much money we have in the vault.
-            // It only increases the stored "ownership" of that money. Players won't get confused this way. At least I hope so!
-            // On the other hand, withdrawing cares, because we take physical money from the vault directly...
+            // We don't care about values in depositing
             var currencyValue = showValues ? $"{value} {currencyPrototype.Name}" : $"{currencyPrototype.Name}";
             var name = new Label
             {

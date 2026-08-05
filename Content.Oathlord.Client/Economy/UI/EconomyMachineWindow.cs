@@ -144,7 +144,7 @@ public sealed partial class EconomyMachineWindow : FancyWindow
     }
 
     /// <summary>
-    /// Updates any relevant info related to the current selected account (e.g. stored money)
+    /// Updates the UI controls (and subwindows) to show the updated values.
     /// </summary>
     public void UpdateInfo()
     {
@@ -156,6 +156,13 @@ public sealed partial class EconomyMachineWindow : FancyWindow
         if (_loanWindow is { } loanWindow)
         {
             loanWindow.Populate();
+        }
+
+        TransactionHistory.Children.Clear();
+        foreach (var transaction in selectedAccount.Comp.Transactions)
+        {
+            var historyControl = new TransactionHistoryControl(transaction);
+            TransactionHistory.AddChild(historyControl);
         }
     }
 

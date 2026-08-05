@@ -57,11 +57,11 @@ public sealed partial class OathlordEconomySystem
 
     private void Withdraw(EntityUid machine, EconomyTransactionMessage args)
     {
-        if (GetTransactEntity(args.TransactEntity) is not { } user)
+        if (GetTransactEntity(args.TransactEntity) is not { } user || args.Actor is not { Valid: true } actor)
             return;
 
         var toTransact = args.ToTransact;
-        if (!WithdrawFromAccount(user, toTransact))
+        if (!WithdrawFromAccount(user, toTransact, actor))
             return;
 
         // TODO: Play sound here

@@ -1,5 +1,6 @@
 ﻿using Content.Oathlord.Shared.Economy.Components;
 using Content.Oathlord.Shared.Economy.Prototypes;
+using Content.Shared.IdentityManagement;
 using Robust.Shared.Prototypes;
 
 namespace Content.Oathlord.Shared.Economy.Systems;
@@ -30,7 +31,7 @@ public sealed partial class OathlordEconomySystem
     /// Adds a specified amount of currency to an account
     /// TODO: if negative, and stored is 0 then it should get added to debt variable
     /// </summary>
-    /// <param name="ent">The account to withdraw from</param>
+    /// <param name="ent">The account to deposit to</param>
     /// <param name="amount">The amount to adjust</param>
     public void AddCurrencyToAccount(Entity<EconomyAccountComponent?> ent, int amount)
     {
@@ -42,32 +43,27 @@ public sealed partial class OathlordEconomySystem
     }
 
     /// <summary>
-    /// Withdraws a specified amount of currency to an account.
-    /// </summary>
-    /// <param name="ent">The account to withdraw from</param>
-    /// <param name="amount">The amount to withdraw, make sure its positive as negative values or zero won't work</param>
-    public void WithdrawFromAccount(Entity<EconomyAccountComponent?> ent, int amount)
-    {
-        if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp) || amount <= 0)
-            return;
-
-        ent.Comp.Stored = Math.Clamp(ent.Comp.Stored - amount, 0, int.MaxValue); // TODO: There should be a cap instead of int.MaxValue
-        Dirty(ent);
-    }
-
-    /// <summary>
     /// Withdraws a specified amount of currencies from an account.
     /// </summary>
     /// <param name="ent">The account to withdraw from</param>
     /// <param name="toGive">The amount of currencies to withdraw from the economy, to give to the player</param>
     /// <returns>If the withdrawing was successful</returns>
-    public bool WithdrawFromAccount(Entity<EconomyAccountComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toGive)
+    public bool WithdrawFromAccount(Entity<EconomyAccountComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toGive) =>
+        WithdrawFromAccount(ent, toGive, null);
+
+    /// <summary>
+    /// Withdraws a specified amount of currency to an account.
+    /// </summary>
+    /// <param name="ent">The account to withdraw from</param>
+    /// <param name="amount">The amount to withdraw, make sure its positive as negative values or zero won't work</param>
+    public void WithdrawFromAccount(Entity<EconomyAccountComponent?> ent, int amount) =>
+        WithdrawFromAccount(ent, amount, null);
+
+    public bool WithdrawFromAccount(Entity<EconomyAccountComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toGive, EntityUid? initiator)
     {
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
             return false;
 
-        // We check that we can withdraw that much from our account
-        // If toGive is too much then it doesn't make sense to withdraw...
         var total= GetTotalFromCurrencies(ent.Comp.Stored, toGive);
         if (total == 0)
             return false;
@@ -77,11 +73,23 @@ public sealed partial class OathlordEconomySystem
         if (GetCurrentEconomy(ent.Owner) is not { } economy || !TryWithdrawFromEconomy(economy.AsNullable(), toGive))
             return false;
 
-        ent.Comp.Stored = Math.Clamp(ent.Comp.Stored - total, 0, int.MaxValue);
+        WithdrawFromAccount(ent, total, initiator);
+
+        return true;
+    }
+
+    public void WithdrawFromAccount(Entity<EconomyAccountComponent?> ent, int amount, EntityUid? initiator)
+    {
+        if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp) || amount <= 0)
+            return;
+
+        ent.Comp.Stored = Math.Clamp(ent.Comp.Stored - amount, 0, int.MaxValue); // TODO: There should be a cap instead of int.MaxValue
         Dirty(ent);
 
-        Log.Info($"Withdrew: {toGive}. New amount is {ent.Comp.Stored}");
-        return true;
+        if (initiator is not { } initiatorEnt)
+            return;
+
+        AddTransaction(ent, EconomyTransaction.Withdraw, amount, initiatorEnt);
     }
 
     /// <summary>
@@ -111,10 +119,8 @@ public sealed partial class OathlordEconomySystem
         if (total == 0)
             return;
 
-        // Do note that it is the banker's (or steward's) role to put the deposited amount into the vault.
-        // The interaction should go like this:
-        // Player gives X Na -> Banker puts Na into Vault -> Vault increases in value -> Banker increases account's value by X
-        if (GetCurrentEconomy(ent.Owner) == null)
+        // Prevents depositing insanely large amounts of coins. We just make the cap be the economy's total stored...
+        if (GetCurrentEconomy(ent.Owner) is not { } economy || total > GetTotalEconomyStored(economy))
             return;
 
         ent.Comp.Stored = Math.Clamp(ent.Comp.Stored + total, 0, int.MaxValue);
@@ -155,11 +161,10 @@ public sealed partial class OathlordEconomySystem
             return;
 
         ent.Comp.Loans.Add(loan);
+        Dirty(ent);
 
         // we update our account with this loan
         AddCurrencyToAccount(ent, loan.Amount);
-
-        Dirty(ent);
     }
 
     /// <summary>
@@ -214,12 +219,8 @@ public sealed partial class OathlordEconomySystem
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
             return;
 
-        var loc = Loc.GetString(
-            $"economy-transaction-{type.ToString().ToLower()}",
-            ("amount", amount),
-            ("target", initiator));
-
-        ent.Comp.Transactions.Add(loc);
+        var data = new TransactionData { Amount = amount, Initiator = Identity.Name(initiator, EntityManager), Type =  type };
+        ent.Comp.Transactions.Add(data);
         Dirty(ent);
     }
 

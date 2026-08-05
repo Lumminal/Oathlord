@@ -48,9 +48,10 @@
             <ScrollContainer VerticalAlignment="Center"
                              VerticalExpand="True"
                              HScrollEnabled="False"
-                             MinSize="150 400"
-                             VScrollEnabled="True">
-                <PanelContainer VerticalExpand="True" VerticalAlignment="Center">
+                             MinSize="150 250"
+                             VScrollEnabled="True"
+                             Margin="0 24">
+                <PanelContainer VerticalExpand="True" VerticalAlignment="Center" ReservesSpace="True">
                     <PanelContainer.PanelOverride>
                         <graphics:StyleBoxFlat BackgroundColor="#3B3B3B" BorderThickness="5" BorderColor="#191d1e"/>
                     </PanelContainer.PanelOverride>
