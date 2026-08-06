@@ -1,0 +1,32 @@
+{
+    "version": 1,
+    "license": null,
+    "copyright": null,
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "states": [
+        {
+            "name": "copper"
+        },
+        {
+            "name": "copper_2"
+        },
+        {
+            "name": "copper_3"
+        },
+        {
+            "name": "copper_4"
+        },
+        {
+            "name": "copper_5"
+        },
+        {
+            "name": "copper_6"
+        },
+        {
+            "name": "copper_7"
+        }
+    ]
+}

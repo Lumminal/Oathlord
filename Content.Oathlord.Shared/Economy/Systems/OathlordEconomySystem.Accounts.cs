@@ -38,6 +38,24 @@ public sealed partial class OathlordEconomySystem
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp) || amount <= 0)
             return;
 
+        if (GetCurrentEconomy(ent.Owner) is not { } economy || amount > GetTotalEconomyStored(economy.AsNullable()))
+            return;
+
+        ent.Comp.Stored += amount;
+        Dirty(ent);
+    }
+
+    /// <summary>
+    /// Adds a specified amount of currency to an account, with the economy specified
+    /// </summary>
+    public void AddCurrencyToAccount(Entity<EconomyAccountComponent?> ent, int amount, EntityUid economy)
+    {
+        if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp) || amount <= 0)
+            return;
+
+        if (amount > GetTotalEconomyStored(economy))
+            return;
+
         ent.Comp.Stored += amount;
         Dirty(ent);
     }
@@ -120,7 +138,7 @@ public sealed partial class OathlordEconomySystem
             return;
 
         // Prevents depositing insanely large amounts of coins. We just make the cap be the economy's total stored...
-        if (GetCurrentEconomy(ent.Owner) is not { } economy || total > GetTotalEconomyStored(economy))
+        if (GetCurrentEconomy(ent.Owner) is not { } economy || total > GetTotalEconomyStored(economy.AsNullable()))
             return;
 
         ent.Comp.Stored = Math.Clamp(ent.Comp.Stored + total, 0, int.MaxValue);

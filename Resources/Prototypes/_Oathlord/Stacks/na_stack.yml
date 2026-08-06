@@ -1,0 +1,17 @@
+﻿- type: stack
+  id: BaseNaStack
+  icon: { sprite: /Textures/_Oathlord/Objects/Economy/copper.rsi, state: copper }
+  spawn: Na
+  maxCount: 60
+
+- type: stack
+  id: BaseNarStack
+  icon: { sprite: /Textures/_Oathlord/Objects/Economy/silver.rsi, state: silver }
+  spawn: Nar
+  maxCount: 60
+
+- type: stack
+  id: BaseNaraStack
+  icon: { sprite: /Textures/_Oathlord/Objects/Economy/gold.rsi, state: gold }
+  spawn: Nara
+  maxCount: 60

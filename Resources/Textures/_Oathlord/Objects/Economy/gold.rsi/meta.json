@@ -1,0 +1,32 @@
+{
+    "version": 1,
+    "license": null,
+    "copyright": null,
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "states": [
+        {
+            "name": "gold"
+        },
+        {
+            "name": "gold_2"
+        },
+        {
+            "name": "gold_3"
+        },
+        {
+            "name": "gold_4"
+        },
+        {
+            "name": "gold_5"
+        },
+        {
+            "name": "gold_6"
+        },
+        {
+            "name": "gold_7"
+        }
+    ]
+}

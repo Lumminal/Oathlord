@@ -69,11 +69,21 @@ public sealed partial class OathlordEconomySystem
             if (!ProtoMan.Resolve(cur, out var currency) || amount <= 0)
                 continue;
 
-            PredictedTrySpawnNextTo(currency.EntityProto, target, out var spawned);
-            if (spawned is not { } spawnedCurrency)
-                continue;
+            var remaining = amount;
+            var maxCount = _stack.GetMaxCount(currency.EntityProto);
 
-            _stack.SetCount(spawnedCurrency, amount);
+            // Since coins have maximum of 30 coins per stack,
+            // we need to spawn more stack entities than usual if the machine requests 30+ coins
+            while (remaining > 0)
+            {
+                PredictedTrySpawnNextTo(currency.EntityProto, target, out var spawned);
+                if (spawned is not { } spawnedCurrency)
+                    break;
+
+                var stackAmount = Math.Min(remaining, maxCount);
+                _stack.SetCount(spawnedCurrency, stackAmount);
+                remaining -= stackAmount;
+            }
         }
     }
 

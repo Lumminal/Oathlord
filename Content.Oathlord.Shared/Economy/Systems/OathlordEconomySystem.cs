@@ -146,6 +146,15 @@ public sealed partial class OathlordEconomySystem : EntitySystem
         return economy.Comp.LoanInterest;
     }
 
+    public void SetStoredCurrencies(Entity<EconomyMapComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> currencies)
+    {
+        if (!_econMapQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
+
+        ent.Comp.StoredCurrencies = currencies;
+        Dirty(ent);
+    }
+
     #endregion
 
     #region Helpers
