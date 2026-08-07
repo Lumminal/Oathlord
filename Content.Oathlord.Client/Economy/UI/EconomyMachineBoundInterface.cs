@@ -1,10 +1,12 @@
 ﻿using Content.Oathlord.Shared.Economy.Components;
 using Content.Oathlord.Shared.Economy.Prototypes;
 using Content.Oathlord.Shared.Economy.Systems;
+using JetBrains.Annotations;
 using Robust.Client.UserInterface;
 
 namespace Content.Oathlord.Client.Economy.UI;
 
+[UsedImplicitly]
 public sealed partial class EconomyMachineBoundInterface(EntityUid owner, Enum uiKey) : BoundUserInterface(owner, uiKey)
 {
     private EconomyMachineWindow? _window;

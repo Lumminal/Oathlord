@@ -5,11 +5,11 @@ using Robust.Shared.Serialization;
 namespace Content.Oathlord.Shared.Economy.Components;
 
 /// <summary>
-/// Component that is applied to the player once they spawn.
-/// Allows them to be part of the economy, by initializing a new bank account in the economy system.
+/// Component that is applied to the player once they spawn as a job.
+/// Allows them to be part of the economy, by initializing a new bank account in all maps with <see cref="EconomyMapComponent"/>.
 /// </summary>
 [RegisterComponent, NetworkedComponent]
-[AutoGenerateComponentState]
+[AutoGenerateComponentState(fieldDeltas: true)]
 public sealed partial class EconomyAccountComponent : Component
 {
     /// <summary>
@@ -47,7 +47,7 @@ public sealed partial class EconomyAccountComponent : Component
 public partial record struct LoanData
 {
     /// <summary>
-    /// todo: this should be an in-game day once we add those, not timespan
+    /// todo: this should be an in-game day once we add those, not timespan...
     /// Specifies a timeframe in which we should pay this loan
     /// This does not really have any use case, but in-game it should act as a crime to not pay your loans in time
     /// </summary>

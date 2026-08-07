@@ -4,6 +4,9 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Oathlord.Shared.Economy.Systems;
 
+/// <summary>
+/// Public API for anything related to <see cref="EconomyCurrencyPrototype"/>
+/// </summary>
 public sealed partial class OathlordEconomySystem
 {
     [Dependency] private SharedStackSystem _stack = default!;
@@ -15,13 +18,12 @@ public sealed partial class OathlordEconomySystem
 
     private void InitializeCurrency()
     {
-        SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnReload);
-
         LoadValues();
     }
 
     #region Event Handlers
 
+    [SubscribeLocalEvent]
     private void OnReload(PrototypesReloadedEventArgs args)
     {
         if (!args.WasModified<EconomyCurrencyPrototype>())
@@ -37,7 +39,7 @@ public sealed partial class OathlordEconomySystem
     /// <summary>
     /// Gets the total amount of the currency, by multiplying the currency's value with a specified amount.
     /// </summary>
-    public int GetCurrencyTotal(ProtoId<EconomyCurrencyPrototype> currencyProto, int amount)
+    public int GetCurrencyTotal([ForbidLiteral] ProtoId<EconomyCurrencyPrototype> currencyProto, int amount)
     {
         if (!_allCurrencyValues.TryGetValue(currencyProto, out var value))
             return 0;
@@ -48,7 +50,7 @@ public sealed partial class OathlordEconomySystem
     /// <summary>
     /// Gets the value of a currency prototype
     /// </summary>
-    public int GetCurrencyValue(ProtoId<EconomyCurrencyPrototype> currencyProto)
+    public int GetCurrencyValue([ForbidLiteral] ProtoId<EconomyCurrencyPrototype> currencyProto)
     {
         if (!_allCurrencyValues.TryGetValue(currencyProto, out var value))
             return 0;
@@ -72,8 +74,8 @@ public sealed partial class OathlordEconomySystem
             var remaining = amount;
             var maxCount = _stack.GetMaxCount(currency.EntityProto);
 
-            // Since coins have maximum of 30 coins per stack,
-            // we need to spawn more stack entities than usual if the machine requests 30+ coins
+            // Since coins have maximum of X (where X is the maxCount) coins per stack,
+            // we need to spawn more stack entities than usual if the machine requests more than X coins
             while (remaining > 0)
             {
                 PredictedTrySpawnNextTo(currency.EntityProto, target, out var spawned);
@@ -90,10 +92,9 @@ public sealed partial class OathlordEconomySystem
     private void LoadValues()
     {
         _allCurrencyValues.Clear();
-        foreach (var proto in _proto.EnumeratePrototypes<EconomyCurrencyPrototype>())
+        foreach (var proto in ProtoMan.EnumeratePrototypes<EconomyCurrencyPrototype>())
         {
             _allCurrencyValues.Add(proto, proto.Value);
         }
     }
-
 }

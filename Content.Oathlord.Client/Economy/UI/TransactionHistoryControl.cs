@@ -5,6 +5,10 @@ using Robust.Client.UserInterface.XAML;
 
 namespace Content.Oathlord.Client.Economy.UI;
 
+/// <summary>
+/// Control that displays a simple label which is taken from <see cref="TransactionData"/>.
+/// This is shown on Transaction History container on <see cref="EconomyMachineWindow"/>
+/// </summary>
 [GenerateTypedNameReferences]
 public sealed partial class TransactionHistoryControl : Control
 {

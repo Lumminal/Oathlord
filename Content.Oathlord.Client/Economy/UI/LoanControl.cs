@@ -6,6 +6,9 @@ using Robust.Client.UserInterface.XAML;
 
 namespace Content.Oathlord.Client.Economy.UI;
 
+/// <summary>
+/// Control that holds loan related stuff to be displayed on <see cref="EconomyLoanWindow"/>
+/// </summary>
 [GenerateTypedNameReferences]
 public sealed partial class LoanControl : Control
 {

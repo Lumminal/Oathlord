@@ -176,7 +176,7 @@ public sealed partial class EconomyMachineWindow : FancyWindow
     }
 
     /// <summary>
-    /// Returns a re-usable text for stored text, as we prefer to not use locstrings for our codebase
+    /// Returns a re-usable text for stored text
     /// </summary>
     private string StoredText(int stored)
     {
@@ -196,7 +196,6 @@ public sealed partial class EconomyMachineWindow : FancyWindow
 
     private string GetWindowName(EconomyTransaction type)
     {
-        // todo: if we get more types, do switch statement...
         return type == EconomyTransaction.Deposit ? "Deposit" : "Withdraw";
     }
 }

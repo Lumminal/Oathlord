@@ -1,5 +1,7 @@
 ﻿using Content.Oathlord.Shared.Economy.Components;
 using Content.Oathlord.Shared.Economy.Prototypes;
+using Content.Shared.GameTicking;
+using Content.Shared.Popups;
 using Content.Shared.Station;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
@@ -11,14 +13,23 @@ namespace Content.Oathlord.Shared.Economy.Systems;
 ///
 /// Oathlord has one main currency, Nar, which is used for the central economy.
 /// In most cases, there can only be one economy (on the main map).
+///
+/// This is split into partial classes so it's not one big file with tons of methods.
+/// Check the individual classes for what you need.
 /// </summary>
 public sealed partial class OathlordEconomySystem : EntitySystem
 {
     [Dependency] private SharedStationSystem _station = default!;
-    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
 
     [Dependency] private EntityQuery<EconomyMapComponent> _econMapQuery = default!;
     [Dependency] private EntityQuery<EconomyAccountComponent> _econAccountQuery = default!;
+
+    /// <summary>
+    /// All active economies loaded, when a round restarts
+    /// </summary>
+    [ViewVariables]
+    private HashSet<Entity<EconomyMapComponent>> _activeEconomies = new();
 
     public override void Initialize()
     {
@@ -26,25 +37,28 @@ public sealed partial class OathlordEconomySystem : EntitySystem
 
         InitializeMachine();
         InitializeCurrency();
-
-        SubscribeLocalEvent<EconomyAccountComponent, MapInitEvent>(OnMapInit);
-        SubscribeLocalEvent<EconomyMapComponent, MapInitEvent>(OnEconomyMapInit);
     }
 
-    #region Event Handlers
-
-    private void OnMapInit(Entity<EconomyAccountComponent> ent, ref MapInitEvent args)
+    public override void Shutdown()
     {
-        AddAccountToEconomy(ent.Owner);
+        base.Shutdown();
+        _activeEconomies.Clear();
     }
 
+    [SubscribeLocalEvent]
     private void OnEconomyMapInit(Entity<EconomyMapComponent> ent, ref MapInitEvent args)
     {
         ent.Comp.TotalStored = GetTotalEconomyStored(ent.AsNullable());
-        Dirty(ent);
+        DirtyField(ent.AsNullable(), nameof(EconomyMapComponent.TotalStored));
+
+        _activeEconomies.Add(ent);
     }
 
-    #endregion
+    [SubscribeLocalEvent]
+    private void OnReset(RoundRestartCleanupEvent ev)
+    {
+        _activeEconomies.Clear();
+    }
 
     #region Public API
 
@@ -54,13 +68,11 @@ public sealed partial class OathlordEconomySystem : EntitySystem
     public void AddAccountToEconomy(EntityUid account)
     {
         // we could use current owning station instead,
-        // but we don't know if someone spawns on a different map with no economy component,
-        // so we have to use an entity query enumerator to get all economies
-        var econQuery = EntityQueryEnumerator<EconomyMapComponent>();
-        while (econQuery.MoveNext(out var uid, out var mapEconomy))
+        // but we don't know if someone spawns on a different map with no economy component
+        foreach (var econ in _activeEconomies)
         {
-            mapEconomy.ActiveAccounts.Add(account);
-            Dirty(uid, mapEconomy);
+            econ.Comp.ActiveAccounts.Add(account);
+            DirtyField(econ.AsNullable(), nameof(EconomyMapComponent.ActiveAccounts));
         }
     }
 
@@ -91,7 +103,7 @@ public sealed partial class OathlordEconomySystem : EntitySystem
         }
 
         ent.Comp.TotalStored = total;
-        Dirty(ent);
+        DirtyField(ent, nameof(EconomyMapComponent.TotalStored));
 
         return total;
     }
@@ -119,7 +131,7 @@ public sealed partial class OathlordEconomySystem : EntitySystem
             ent.Comp.StoredCurrencies[cur] = Math.Clamp(ent.Comp.StoredCurrencies[cur] - toWithdraw[cur], 0, int.MaxValue);
         }
 
-        Dirty(ent);
+        DirtyField(ent, nameof(EconomyMapComponent.StoredCurrencies));
         return true;
     }
 
@@ -146,13 +158,18 @@ public sealed partial class OathlordEconomySystem : EntitySystem
         return economy.Comp.LoanInterest;
     }
 
+    /// <summary>
+    /// Sets the stored currencies of the map's currency to a specific amount
+    /// </summary>
+    /// <param name="ent">The map economy</param>
+    /// <param name="currencies">The currencies to set them to</param>
     public void SetStoredCurrencies(Entity<EconomyMapComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> currencies)
     {
         if (!_econMapQuery.Resolve(ent.Owner, ref ent.Comp))
             return;
 
         ent.Comp.StoredCurrencies = currencies;
-        Dirty(ent);
+        DirtyField(ent, nameof(EconomyMapComponent.StoredCurrencies));
     }
 
     #endregion
@@ -163,8 +180,8 @@ public sealed partial class OathlordEconomySystem : EntitySystem
     /// Helper to get the total amount from currencies, and check if its enough versus our stored amount.
     /// Does not accept negative values.
     /// </summary>
-    /// <param name="stored"></param>The total stored amount we have in our accounts or economy
-    /// <param name="currencies"></param>The currencies to check against
+    /// <param name="stored">The total stored amount we have in our accounts or economy</param>
+    /// <param name="currencies">The currencies to check against</param>
     /// <returns></returns>
     private int GetTotalFromCurrencies(int stored, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> currencies)
     {
@@ -210,7 +227,6 @@ public sealed partial class OathlordEconomySystem : EntitySystem
 
 /// <summary>
 /// Enum that defines a transaction type.
-/// I have commented the definitions below to explain what each type does.
 /// </summary>
 [Serializable, NetSerializable]
 public enum EconomyTransaction : byte

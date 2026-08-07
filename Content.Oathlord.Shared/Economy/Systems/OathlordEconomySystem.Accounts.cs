@@ -13,23 +13,26 @@ namespace Content.Oathlord.Shared.Economy.Systems;
 /// Withdrawing will take money out of the bank (and therefore, reduce the amount stored on the user's account)
 /// to give the player a physical version of the money.
 ///
-/// Depositing will take money out of the bank and store it in the player's account.
-///
-/// Accounts are their own little "bank", while economy stores the central budget. If the economy needs money, they can
-/// fine people to take back from the accounts, for example. So in general,
+/// Depositing will increase the account's stored money.
 ///
 /// Accounts don't store individual coins like the economy's bank, rather they store one value.
 /// Just like euros, as an example. Your account has 5000euros, not 10 * 50 + 9 * 500 euro bills.
-/// But when withdrawing, you can withdraw however many bill types you want. As well when depositing, you can deposit only what you have on you.
+/// But when withdrawing, you can withdraw however many bill types you want.
+///
 /// The economy holds the physical version of the currencies in their bank (vault/treasury).
 /// </summary>
 public sealed partial class OathlordEconomySystem
 {
+    [SubscribeLocalEvent]
+    private void OnMapInit(Entity<EconomyAccountComponent> ent, ref MapInitEvent args)
+    {
+        AddAccountToEconomy(ent.Owner);
+    }
+
     #region Public API
 
     /// <summary>
     /// Adds a specified amount of currency to an account
-    /// TODO: if negative, and stored is 0 then it should get added to debt variable
     /// </summary>
     /// <param name="ent">The account to deposit to</param>
     /// <param name="amount">The amount to adjust</param>
@@ -42,7 +45,7 @@ public sealed partial class OathlordEconomySystem
             return;
 
         ent.Comp.Stored += amount;
-        Dirty(ent);
+        DirtyField(ent, nameof(EconomyAccountComponent.Stored));
     }
 
     /// <summary>
@@ -57,7 +60,7 @@ public sealed partial class OathlordEconomySystem
             return;
 
         ent.Comp.Stored += amount;
-        Dirty(ent);
+        DirtyField(ent, nameof(EconomyAccountComponent.Stored));
     }
 
     /// <summary>
@@ -77,6 +80,7 @@ public sealed partial class OathlordEconomySystem
     public void WithdrawFromAccount(Entity<EconomyAccountComponent?> ent, int amount) =>
         WithdrawFromAccount(ent, amount, null);
 
+    /// <inheritdoc cref="WithdrawFromAccount(Entity{EconomyAccountComponent?}, Dictionary{ProtoId{EconomyCurrencyPrototype}, int})"/>
     public bool WithdrawFromAccount(Entity<EconomyAccountComponent?> ent, Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toGive, EntityUid? initiator)
     {
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
@@ -96,13 +100,14 @@ public sealed partial class OathlordEconomySystem
         return true;
     }
 
+    /// <inheritdoc cref="WithdrawFromAccount(Entity{EconomyAccountComponent?}, int)"/>
     public void WithdrawFromAccount(Entity<EconomyAccountComponent?> ent, int amount, EntityUid? initiator)
     {
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp) || amount <= 0)
             return;
 
         ent.Comp.Stored = Math.Clamp(ent.Comp.Stored - amount, 0, int.MaxValue); // TODO: There should be a cap instead of int.MaxValue
-        Dirty(ent);
+        DirtyField(ent, nameof(EconomyAccountComponent.Stored));
 
         if (initiator is not { } initiatorEnt)
             return;
@@ -124,30 +129,31 @@ public sealed partial class OathlordEconomySystem
     /// <param name="ent">The account to deposit to</param>
     /// <param name="toDeposit">The amount of currencies to withdraw from the economy, to deposit to the account</param>
     /// <param name="depositee">The entity that initiated this deposit (usually the operator of the bank machine)</param>
-    public void DepositToAccount(
+    public bool DepositToAccount(
         Entity<EconomyAccountComponent?> ent,
         Dictionary<ProtoId<EconomyCurrencyPrototype>, int> toDeposit,
         EntityUid? depositee)
     {
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp))
-            return;
+            return false;
 
         // Here, unlike withdrawing, we don't have to check for how much we have stored, since it doesn't matter (we're adding up)
         var total= GetTotalFromCurrencies(toDeposit);
         if (total == 0)
-            return;
+            return false;
 
         // Prevents depositing insanely large amounts of coins. We just make the cap be the economy's total stored...
         if (GetCurrentEconomy(ent.Owner) is not { } economy || total > GetTotalEconomyStored(economy.AsNullable()))
-            return;
+            return false;
 
         ent.Comp.Stored = Math.Clamp(ent.Comp.Stored + total, 0, int.MaxValue);
-        Dirty(ent);
+        DirtyField(ent, nameof(EconomyAccountComponent.Stored));
 
         if (depositee is not { } depositeeEnt)
-            return;
+            return false;
 
         AddTransaction(ent, EconomyTransaction.Deposit, total, depositeeEnt);
+        return true;
     }
 
     #endregion
@@ -179,9 +185,9 @@ public sealed partial class OathlordEconomySystem
             return;
 
         ent.Comp.Loans.Add(loan);
-        Dirty(ent);
+        DirtyField(ent, nameof(EconomyAccountComponent.Loans));
 
-        // we update our account with this loan
+        // Now we own the loan's amount to our account
         AddCurrencyToAccount(ent, loan.Amount);
     }
 
@@ -191,7 +197,7 @@ public sealed partial class OathlordEconomySystem
     /// </summary>
     /// <param name="ent">The account</param>
     /// <param name="loan">The loan to pay from the entity's account</param>
-    /// <returns></returns>True if the loan was paid, false otherwise
+    /// <returns>True if the loan was paid, false otherwise</returns>
     public bool TryPayLoan(Entity<EconomyAccountComponent?> ent, LoanData loan)
     {
         if (!_econAccountQuery.Resolve(ent.Owner, ref ent.Comp) || GetCurrentEconomy(ent.Owner) is not { } economy)
@@ -214,10 +220,9 @@ public sealed partial class OathlordEconomySystem
 
         storedLoan.Paid = true;
         ent.Comp.Loans[loanIndex] = storedLoan;
+        DirtyField(ent, nameof(EconomyAccountComponent.Loans));
 
         WithdrawFromAccount(ent, toPay);
-        Dirty(ent);
-
         return true;
     }
 
@@ -239,7 +244,7 @@ public sealed partial class OathlordEconomySystem
 
         var data = new TransactionData { Amount = amount, Initiator = Identity.Name(initiator, EntityManager), Type =  type };
         ent.Comp.Transactions.Add(data);
-        Dirty(ent);
+        DirtyField(ent, nameof(EconomyAccountComponent.Transactions));
     }
 
     #endregion

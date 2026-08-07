@@ -50,14 +50,16 @@
                              HScrollEnabled="False"
                              MinSize="150 250"
                              VScrollEnabled="True"
-                             Margin="0 24">
-                <PanelContainer VerticalExpand="True" VerticalAlignment="Center" ReservesSpace="True">
+                             Margin="0 48">
+                <PanelContainer ReservesSpace="True">
                     <PanelContainer.PanelOverride>
                         <graphics:StyleBoxFlat BackgroundColor="#3B3B3B" BorderThickness="5" BorderColor="#191d1e"/>
                     </PanelContainer.PanelOverride>
 
-                    <Label Text="Transaction History" Align="Center" VerticalAlignment="Top" StyleClasses="LabelHeadingBigger"/>
-                    <BoxContainer Name="TransactionHistory" Orientation="Vertical" Margin="16 40 16 16"/>
+                    <BoxContainer Orientation="Vertical" Margin="16">
+                        <Label Text="Transaction History" Align="Center" VerticalAlignment="Top" StyleClasses="LabelHeadingBigger"/>
+                        <BoxContainer Name="TransactionHistory" Orientation="Vertical" Margin="0 24 0 0"/>
+                    </BoxContainer>
                 </PanelContainer>
             </ScrollContainer>
 

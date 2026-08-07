@@ -8,6 +8,9 @@ using Robust.Client.UserInterface.XAML;
 
 namespace Content.Oathlord.Client.Economy.UI;
 
+/// <summary>
+/// Window that displays all loans of a given account with info about them, and allows you to pay them
+/// </summary>
 [GenerateTypedNameReferences]
 public sealed partial class EconomyLoanWindow : FancyWindow
 {

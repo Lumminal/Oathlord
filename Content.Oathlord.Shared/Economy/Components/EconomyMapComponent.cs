@@ -9,7 +9,7 @@ namespace Content.Oathlord.Shared.Economy.Components;
 /// Component applied to the map to store information about accounts, and anything related to the economy.
 /// </summary>
 [RegisterComponent, NetworkedComponent, Access(typeof(OathlordEconomySystem))]
-[AutoGenerateComponentState]
+[AutoGenerateComponentState(fieldDeltas: true)]
 public sealed partial class EconomyMapComponent : Component
 {
     /// <summary>
@@ -27,6 +27,7 @@ public sealed partial class EconomyMapComponent : Component
     /// <summary>
     /// Because we may want to look this value often (for UIs), we cache it here.
     /// Use <see cref="GetTotalEconomyStored"/> method instead for getting this value.
+    /// todo: use this sometime...
     /// </summary>
     [AutoNetworkedField]
     public int TotalStored;

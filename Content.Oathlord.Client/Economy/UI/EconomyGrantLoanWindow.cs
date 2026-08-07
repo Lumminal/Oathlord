@@ -6,6 +6,10 @@ using Robust.Client.UserInterface.XAML;
 
 namespace Content.Oathlord.Client.Economy.UI;
 
+/// <summary>
+/// Window that gives you the ability to add a loan to an account
+/// Relies on <see cref="EconomyLoanWindow"/>
+/// </summary>
 [GenerateTypedNameReferences]
 public sealed partial class EconomyGrantLoanWindow : FancyWindow
 {

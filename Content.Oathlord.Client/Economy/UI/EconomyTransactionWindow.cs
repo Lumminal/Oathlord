@@ -7,6 +7,9 @@ using Robust.Client.UserInterface.XAML;
 
 namespace Content.Oathlord.Client.Economy.UI;
 
+/// <summary>
+/// Window that gives you the ability to do a generic transaction (depositing/withdrawing) on an account
+/// </summary>
 [GenerateTypedNameReferences]
 public sealed partial class EconomyTransactionWindow : FancyWindow
 {
