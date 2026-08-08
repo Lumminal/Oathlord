@@ -66,26 +66,6 @@ public sealed partial class EconomyMachineWindow : FancyWindow
         CloseOtherWindows();
     }
 
-    public void Populate()
-    {
-        Accounts.Children.Clear();
-
-        if (_economy.GetCurrentEconomy(_owner) is not { } mapEconomy)
-            return;
-
-        foreach (var account in mapEconomy.Comp.ActiveAccounts)
-        {
-            var name = Identity.Name(account, _entMan);
-            var btn = new Button
-            {
-                Text = name,
-            };
-            Accounts.AddChild(btn);
-
-            btn.OnPressed += args => BtnOnOnPressed(args, account, name);
-        }
-    }
-
     private void BtnOnOnPressed(BaseButton.ButtonEventArgs _, EntityUid account, string accountName)
     {
         if (!_accountQuery.TryComp(account, out var econ))
@@ -117,6 +97,25 @@ public sealed partial class EconomyMachineWindow : FancyWindow
         _transactionWindow?.TransactionConfirm += currencies => RaiseTransaction(_entMan.GetNetEntity(selectedAccount), currencies, type);
 
         _transactionWindow?.OpenCentered();
+    }
+
+    public void Populate()
+    {
+        Accounts.Children.Clear();
+        if (_economy.GetCurrentEconomy(_owner) is not { } mapEconomy)
+            return;
+
+        foreach (var account in mapEconomy.Comp.ActiveAccounts)
+        {
+            var name = Identity.Name(account, _entMan);
+            var btn = new Button
+            {
+                Text = name,
+            };
+            Accounts.AddChild(btn);
+
+            btn.OnPressed += args => BtnOnOnPressed(args, account, name);
+        }
     }
 
     public void SetOwner(EntityUid owner)

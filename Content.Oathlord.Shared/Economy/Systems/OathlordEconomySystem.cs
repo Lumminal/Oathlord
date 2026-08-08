@@ -3,6 +3,7 @@ using Content.Oathlord.Shared.Economy.Prototypes;
 using Content.Shared.GameTicking;
 using Content.Shared.Popups;
 using Content.Shared.Station;
+using Robust.Shared.Audio.Systems;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
@@ -19,6 +20,7 @@ namespace Content.Oathlord.Shared.Economy.Systems;
 /// </summary>
 public sealed partial class OathlordEconomySystem : EntitySystem
 {
+    [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private SharedStationSystem _station = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
 

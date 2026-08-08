@@ -1,7 +1,7 @@
 {
     "version": 1,
-    "license": null,
-    "copyright": null,
+    "license": "CC-BY-SA-3.0",
+    "copyright": "Taken from: https://github.com/Monkestation/Vanderlin/blob/c0550c7744ec87add778ec832573543c0718df9b/icons/roguetown/items/valuable.dmi",
     "size": {
         "x": 32,
         "y": 32

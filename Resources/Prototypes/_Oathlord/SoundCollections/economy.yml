@@ -1,0 +1,12 @@
+﻿- type: soundCollection
+  id: WithdrawSounds
+  files:
+  - /Audio/_Oathlord/Economy/withdraw_1.ogg
+  - /Audio/_Oathlord/Economy/withdraw_2.ogg
+  - /Audio/_Oathlord/Economy/withdraw_3.ogg
+
+- type: soundCollection
+  id: CoinLandSounds
+  files:
+  - /Audio/_Oathlord/Economy/na_land.ogg
+  - /Audio/_Oathlord/Economy/na_land_alt.ogg

@@ -9,7 +9,6 @@
             <Label Text="Due Time" Margin="0 8"/>
             <Label Text="Reason" Margin="0 8"/>
         </BoxContainer>
-
         <BoxContainer Orientation="Vertical" Margin="8 0 0 0" HorizontalExpand="True">
             <LineEdit
                 Name="AmountLoanEdit"
@@ -28,7 +27,6 @@
                 Margin="0 6"/>
         </BoxContainer>
     </BoxContainer>
-
     <Button Text="Confirm"
             Name="ConfirmLoanButton"
             VerticalExpand="True"

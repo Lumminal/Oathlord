@@ -38,6 +38,7 @@ public sealed partial class EconomyGrantLoanWindow : FancyWindow
         };
 
         GrantLoanRequest?.Invoke(loanData);
+        Close();
     }
 }
 

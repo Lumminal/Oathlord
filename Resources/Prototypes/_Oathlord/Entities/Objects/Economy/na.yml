@@ -8,8 +8,9 @@
     layers:
     - state: copper
       map: [ "base" ]
-  - type: Item
-    # sprite: _Oathlord/Objects/Economy/copper.rsi
+  - type: EmitSoundOnLand
+    sound:
+      collection: CoinLandSounds
   - type: Stack
     stackType: BaseNaStack
     count: 1

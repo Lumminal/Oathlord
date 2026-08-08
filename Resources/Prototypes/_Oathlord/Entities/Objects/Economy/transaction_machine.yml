@@ -1,0 +1,21 @@
+﻿# Handles most operations
+- type: entity
+  parent: BaseStructure
+  id: EconomyMachine
+  name: Transaction Machine
+  suffix: Prototype
+  description: This machine is used for doing transaction operations on individual accounts.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: Structures/Furniture/chairs.rsi
+    state: chair # placeholder
+    noRot: true
+  - type: EconomyMachine
+  - type: InteractionOutline
+  - type: UserInterface
+    interfaces:
+      enum.EconomyMachineUiKey.Key:
+        type: EconomyMachineBoundInterface
+  - type: ActivatableUI
+    key: enum.EconomyMachineUiKey.Key

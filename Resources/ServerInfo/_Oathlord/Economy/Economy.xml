@@ -1,0 +1,72 @@
+﻿<Document>
+  # The Economy of Oathlord
+
+  This feature is: [color=red]Heavily In-Progress[/color].
+
+  ## Currencies
+
+  The currency which is used to buy and sell objects in Oathlord is called "Na".
+
+  At this moment, there are 3 variations of Na, each having a different value.
+
+  - Na: It has a copper form, and a value of 1. Most payments are measured in Na.
+  - Nar: It has a silver form, and a value of 100 Na.
+  - Nara: It has a gold form, and a value of 1000 Na, or 10 Nar.
+
+  <Box>
+    <GuideEntityEmbed Entity="Na" Caption="Na"/>
+    <GuideEntityEmbed Entity="Nar" Caption="Nar"/>
+    <GuideEntityEmbed Entity="Nara" Caption="Nara"/>
+  </Box>
+
+  ## Accounts
+
+  All players have an account in the economy, where their stored Na can be seen.
+  An account is automatically created once a player spawns with their job.
+
+  In order to get access to information regarding your account, you must interact with the Transaction Machine,
+  which holds data about all active accounts in the economy.
+
+  ## Transaction Machine
+
+  <Box>
+    <GuideEntityEmbed Entity="EconomyMachine" Caption="The Machine"/>
+  </Box>
+
+  The transaction machine is the main machine used to do operations on individual accounts. Those operations can be:
+  - Depositing money on an account.
+  - Withdrawing money from an account.
+  - Adding a loan to an account.
+  - Paying a loan from an account.
+
+  You may open the machine's UI by clicking on it, or via right-click -> Toggle UI.
+
+  Once it's open, look to the left.
+  As you have noticed, the machine has a Ledger, which automatically shows you all accounts registered in the economy.
+  By clicking on an account, the UI will change to represent information about the current selected account.
+
+  Such information can be:
+  - How much money the current account owns
+  - The name of the account owner
+  - The transaction history of said account
+
+  The transaction history is an important part in validating transactions.
+  It ensures people who try to do illegal operations are logged and seen.
+
+  ## Vault/Treasury
+
+  There's no physical vault as of now, however the economy stores a specific set of currencies which can be used for transactions.
+  This means you have to be careful when handling transactions, in order to not make the economy go bankrupt.
+
+  ## Loans
+
+  A loan can be requested by a player in order to get temporary Na on their name.
+  Loans have their own separate history on the machine's UI, of which it mentions if the given loans are paid, and when they are due to be paid.
+
+  It is up to the player operating the machine to decide if the other player is worthy of getting a loan.
+
+  Loans, aside from giving access to Na, also have an interest which is set and managed by the economy.
+  By default, the player will have to re-pay extra 10% interest, however that can change throughout the round.
+
+  E.g. Giving a 200 Na loan means the player will have to pay 220 Na to the bank later.
+</Document>

@@ -10,7 +10,6 @@
                          VScrollEnabled="True">
             <BoxContainer Name="Loans" Margin="8" VerticalExpand="True" HorizontalExpand="True" Orientation="Vertical"/>
         </ScrollContainer>
-
         <Button Margin="8"
                 VerticalAlignment="Bottom"
                 Name="AddLoanButton"
