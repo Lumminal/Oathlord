@@ -10,7 +10,6 @@ using Robust.Shared.Prototypes;
 
 namespace Content.IntegrationTests.Tests._Oathlord;
 
-[TestFixture]
 public sealed class EconomyTest : GameTest
 {
     [SidedDependency(Side.Server)] private OathlordEconomySystem _economy = default!;

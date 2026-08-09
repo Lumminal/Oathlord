@@ -57,6 +57,12 @@ public sealed partial class OathlordEconomySystem : EntitySystem
     }
 
     [SubscribeLocalEvent]
+    private void OnEconomyShutdown(Entity<EconomyMapComponent> ent, ref ComponentShutdown args)
+    {
+        _activeEconomies.Remove(ent);
+    }
+
+    [SubscribeLocalEvent]
     private void OnReset(RoundRestartCleanupEvent ev)
     {
         _activeEconomies.Clear();
