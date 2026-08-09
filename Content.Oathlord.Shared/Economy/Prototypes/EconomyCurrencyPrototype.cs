@@ -21,12 +21,12 @@ public sealed partial class EconomyCurrencyPrototype : IPrototype
     /// <summary>
     /// How much value this currency has, in the lowest form possible. E.g. gold has 1000 value
     /// </summary>
-    [DataField]
+    [DataField(required: true)]
     public int Value;
 
     /// <summary>
     /// The "physical" version of this currency
     /// </summary>
-    [DataField]
+    [DataField(required: true)]
     public EntProtoId EntityProto;
 }

@@ -21,7 +21,7 @@ public sealed partial class EconomyMapComponent : Component
     /// <summary>
     /// The currencies we currently have stored
     /// </summary>
-    [DataField, AutoNetworkedField]
+    [DataField(required: true), AutoNetworkedField]
     public Dictionary<ProtoId<EconomyCurrencyPrototype>, int> StoredCurrencies = new();
 
     /// <summary>

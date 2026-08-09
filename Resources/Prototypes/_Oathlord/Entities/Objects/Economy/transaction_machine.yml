@@ -1,5 +1,4 @@
-﻿# Handles most operations
-- type: entity
+﻿- type: entity
   parent: BaseStructure
   id: EconomyMachine
   name: Transaction Machine
@@ -8,8 +7,8 @@
   categories: [ ForkFiltered ]
   components:
   - type: Sprite
-    sprite: Structures/Furniture/chairs.rsi
-    state: chair # placeholder
+    sprite: _Oathlord/Machines/transaction_machine.rsi
+    state: transaction_machine
     noRot: true
   - type: EconomyMachine
   - type: InteractionOutline

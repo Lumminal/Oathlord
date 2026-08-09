@@ -69,11 +69,21 @@ public sealed partial class OathlordEconomySystem : EntitySystem
     /// </summary>
     public void AddAccountToEconomy(EntityUid account)
     {
-        // we could use current owning station instead,
-        // but we don't know if someone spawns on a different map with no economy component
         foreach (var econ in _activeEconomies)
         {
             econ.Comp.ActiveAccounts.Add(account);
+            DirtyField(econ.AsNullable(), nameof(EconomyMapComponent.ActiveAccounts));
+        }
+    }
+
+    /// <summary>
+    /// Removes an account from all active economies
+    /// </summary>
+    public void RemoveAccountFromEconomy(EntityUid account)
+    {
+        foreach (var econ in _activeEconomies)
+        {
+            econ.Comp.ActiveAccounts.Remove(account);
             DirtyField(econ.AsNullable(), nameof(EconomyMapComponent.ActiveAccounts));
         }
     }

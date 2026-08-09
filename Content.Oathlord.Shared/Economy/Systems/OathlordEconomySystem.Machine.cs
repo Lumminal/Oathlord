@@ -50,12 +50,12 @@ public sealed partial class OathlordEconomySystem
         if (!TryPayLoan(user, args.Loan))
         {
             _popup.PopupCursor("Denied loan payment. Is there enough money in the account?", actor, PopupType.SmallCaution);
-            _audio.PlayPredicted(ent.Comp.FailSound, actor, actor);
+            _audio.PlayPredicted(ent.Comp.FailSound, ent, actor);
 
             return;
         }
 
-        _audio.PlayPredicted(ent.Comp.SuccessSound, actor, actor);
+        _audio.PlayPredicted(ent.Comp.SuccessSound, ent, actor);
         _popup.PopupCursor("The loan has been successfully paid!", actor, PopupType.Medium);
     }
 
@@ -70,7 +70,7 @@ public sealed partial class OathlordEconomySystem
         if (!WithdrawFromAccount(user, toTransact, actor))
         {
             _popup.PopupCursor("Transaction denied. Invalid input, or not enough money in the bank.", actor, PopupType.SmallCaution);
-            _audio.PlayPredicted(ent.Comp.FailSound, actor, actor);
+            _audio.PlayPredicted(ent.Comp.FailSound, ent, actor);
 
             return;
         }
@@ -78,7 +78,7 @@ public sealed partial class OathlordEconomySystem
         SpawnPhysicalFromCurrencies(ent.Owner, toTransact);
 
         _popup.PopupCursor("Transaction successful. The currencies should appear on the ground!", actor, PopupType.Medium);
-        _audio.PlayPredicted(ent.Comp.WithdrawSound, actor, actor);
+        _audio.PlayPredicted(ent.Comp.WithdrawSound, ent, actor);
     }
 
     private void Deposit(Entity<EconomyMachineComponent> ent, EconomyTransactionMessage args)
@@ -89,13 +89,13 @@ public sealed partial class OathlordEconomySystem
         if (!DepositToAccount(user, args.ToTransact, actor))
         {
             _popup.PopupCursor("Transaction denied. Invalid input, or not enough money in the bank.", actor, PopupType.SmallCaution);
-            _audio.PlayPredicted(ent.Comp.FailSound, actor, actor);
+            _audio.PlayPredicted(ent.Comp.FailSound, ent, actor);
 
             return;
         }
 
         _popup.PopupCursor("Transaction successful. The account has been updated!", actor, PopupType.Medium);
-        _audio.PlayPredicted(ent.Comp.SuccessSound, actor, actor);
+        _audio.PlayPredicted(ent.Comp.SuccessSound, ent, actor);
     }
 
     /// <summary>

@@ -23,10 +23,20 @@ namespace Content.Oathlord.Shared.Economy.Systems;
 /// </summary>
 public sealed partial class OathlordEconomySystem
 {
+    /*
+        P.S. I am not sure if accounts should be components tied to entities, but too lazy to refactor it now
+    */
+
     [SubscribeLocalEvent]
     private void OnMapInit(Entity<EconomyAccountComponent> ent, ref MapInitEvent args)
     {
         AddAccountToEconomy(ent.Owner);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnShutdown(Entity<EconomyAccountComponent> ent, ref ComponentShutdown args)
+    {
+        RemoveAccountFromEconomy(ent.Owner);
     }
 
     #region Public API

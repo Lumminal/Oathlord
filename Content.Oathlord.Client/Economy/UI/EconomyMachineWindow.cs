@@ -69,7 +69,10 @@ public sealed partial class EconomyMachineWindow : FancyWindow
     private void BtnOnOnPressed(BaseButton.ButtonEventArgs _, EntityUid account, string accountName)
     {
         if (!_accountQuery.TryComp(account, out var econ))
+        {
+            Close();
             return;
+        }
 
         CloseOtherWindows();
 

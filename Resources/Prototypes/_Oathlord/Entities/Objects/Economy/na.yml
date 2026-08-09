@@ -12,17 +12,8 @@
     sound:
       collection: CoinLandSounds
   - type: Stack
-    stackType: BaseNaStack
     count: 1
     baseLayer: base
-    layerStates:
-    - copper
-    - copper_2
-    - copper_3
-    - copper_4
-    - copper_5
-    - copper_6
-    - copper_7
   - type: Appearance
 
 - type: entity
@@ -31,6 +22,17 @@
   name: Na
   description: The coin that is used by the economy.
   categories: [ ForkFiltered ]
+  components:
+  - type: Stack
+    stackType: BaseNaStack
+    layerStates:
+    - copper
+    - copper_2
+    - copper_3
+    - copper_4
+    - copper_5
+    - copper_6
+    - copper_7
 
 - type: entity
   parent: BaseNa
