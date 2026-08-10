@@ -10,13 +10,13 @@ using Robust.Shared.Prototypes;
 
 namespace Content.IntegrationTests.Tests._Oathlord;
 
+/// TODO: Add loan support sometime
 public sealed class EconomyTest : GameTest
 {
     [SidedDependency(Side.Server)] private OathlordEconomySystem _economy = default!;
 
     /// <summary>
     /// The starting currencies of the economy we're gonna test against.
-    /// todo: do unhardcode the prototypes lol
     /// </summary>
     private static readonly Dictionary<ProtoId<EconomyCurrencyPrototype>, int> StartingEconomy = new()
     {
@@ -27,12 +27,12 @@ public sealed class EconomyTest : GameTest
 
     /// <summary>
     /// Tests that transactions work on a given entity with an account
-    /// TODO: Add loan support sometime
     /// Tests include:
     /// - Depositing
     /// - Withdrawing
     /// </summary>
     [Test]
+    [Description("Tests that depositing and withdrawing work on an account within a given economy")]
     public async Task TransactionsTest()
     {
         var map = await Pair.CreateTestMap();
@@ -75,11 +75,13 @@ public sealed class EconomyTest : GameTest
             _economy.TryWithdrawFromEconomy(econMap.AsNullable(),
                 new Dictionary<ProtoId<EconomyCurrencyPrototype>, int>
             {
-                { "Nara", 10000 } // todo: do unhardcode this sometime
+                { "Nara", 10000 }
             });
             Assert.That(econMap.Comp.TotalStored, Is.EqualTo(previousStored)); // should stay the same
 
             SDeleteNow(uid);
         });
+
+        await Server.WaitPost(() => SEntMan.DeleteEntity(map.MapUid));
     }
 }
