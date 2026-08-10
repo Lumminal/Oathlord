@@ -25,17 +25,12 @@ public sealed class EconomyTest : GameTest
         { "Nara", 20},
     };
 
-    /// <summary>
-    /// Tests that transactions work on a given entity with an account
-    /// Tests include:
-    /// - Depositing
-    /// - Withdrawing
-    /// </summary>
     [Test]
     [Description("Tests that depositing and withdrawing work on an account within a given economy")]
     public async Task TransactionsTest()
     {
-        var map = await Pair.CreateTestMap();
+        var pair = Pair;
+        var map = await pair.CreateTestMap();
 
         var uid = EntityUid.Invalid;
         var mapUid = map.MapUid;
@@ -53,7 +48,7 @@ public sealed class EconomyTest : GameTest
 
             _economy.SetStoredCurrencies(econMap.AsNullable(), StartingEconomy);
         });
-        Server.RunTicks(5);
+        await pair.RunTicksSync(5);
 
         await Server.WaitAssertion(() =>
         {
@@ -78,10 +73,14 @@ public sealed class EconomyTest : GameTest
                 { "Nara", 10000 }
             });
             Assert.That(econMap.Comp.TotalStored, Is.EqualTo(previousStored)); // should stay the same
-
-            SDeleteNow(uid);
         });
 
-        await Server.WaitPost(() => SEntMan.DeleteEntity(map.MapUid));
+        await Server.WaitPost(() =>
+        {
+            SEntMan.DeleteEntity(uid);
+            SEntMan.DeleteEntity(map.MapUid);
+        });
+
+        await pair.RunTicksSync(5);
     }
 }
