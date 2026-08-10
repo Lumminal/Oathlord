@@ -18,7 +18,7 @@ public sealed class EconomyTest : GameTest
     /// The starting currencies of the economy we're gonna test against.
     /// todo: do unhardcode the prototypes lol
     /// </summary>
-    public static readonly Dictionary<ProtoId<EconomyCurrencyPrototype>, int> StartingEconomy = new()
+    private static readonly Dictionary<ProtoId<EconomyCurrencyPrototype>, int> StartingEconomy = new()
     {
         { "Na", 100 },
         { "Nar", 2},
@@ -78,6 +78,8 @@ public sealed class EconomyTest : GameTest
                 { "Nara", 10000 } // todo: do unhardcode this sometime
             });
             Assert.That(econMap.Comp.TotalStored, Is.EqualTo(previousStored)); // should stay the same
+
+            SDeleteNow(uid);
         });
     }
 }
