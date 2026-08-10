@@ -44,12 +44,12 @@ public sealed class EconomyTest : GameTest
 
         await Server.WaitPost(() =>
         {
-            SEntMan.EnsureComponent<EconomyMapComponent>(mapUid);
+            var econMapComp = SEntMan.EnsureComponent<EconomyMapComponent>(mapUid);
             uid = SEntMan.SpawnAtPosition(null, map.GridCoords);
-            var acc = SEntMan.EnsureComponent<EconomyAccountComponent>(uid);
+            var accComp = SEntMan.EnsureComponent<EconomyAccountComponent>(uid);
 
-            econMap = (mapUid, econMap);
-            accEnt = (uid, acc);
+            econMap = (mapUid, econMapComp);
+            accEnt = (uid, accComp);
 
             _economy.SetStoredCurrencies(econMap.AsNullable(), StartingEconomy);
         });
