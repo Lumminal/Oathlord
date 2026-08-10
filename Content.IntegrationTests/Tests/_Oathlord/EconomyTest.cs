@@ -33,24 +33,29 @@ public sealed class EconomyTest : GameTest
     /// - Withdrawing
     /// </summary>
     [Test]
-    [Ignore("todo")]
     public async Task TransactionsTest()
     {
         var map = await Pair.CreateTestMap();
 
-        // Setup the economy with default currencies, and test operations against an account
-        await Server.WaitAssertion(() =>
-        {
-            var econ = SEntMan.EnsureComponent<EconomyMapComponent>(map.MapUid);
-            var ent = SEntMan.SpawnEntity(null, new MapCoordinates());
-            var account = SEntMan.EnsureComponent<EconomyAccountComponent>(ent);
+        var uid = EntityUid.Invalid;
+        Entity<EconomyAccountComponent> accEnt = default!;
+        Entity<EconomyMapComponent> econMap = default!;
 
-            Entity<EconomyAccountComponent> accEnt = (ent, account);
-            Entity<EconomyMapComponent> econMap = (map.MapUid, econ);
+        _economy.SetStoredCurrencies(econMap.AsNullable(), StartingEconomy);
+
+        await Server.WaitPost(() =>
+        {
+            SEntMan.EnsureComponent<EconomyMapComponent>(map.MapUid);
+            uid = SEntMan.SpawnAtPosition(null, map.GridCoords);
+            SEntMan.EnsureComponent<EconomyAccountComponent>(uid);
 
             _economy.SetStoredCurrencies(econMap.AsNullable(), StartingEconomy);
-            Server.RunTicks(5);
+        });
 
+        Server.RunTicks(5);
+
+        await Server.WaitAssertion(() =>
+        {
             // Test depositing on an account
             _economy.AddCurrencyToAccount(accEnt.AsNullable(), 10, map.MapUid);
             Assert.That(accEnt.Comp.Stored, Is.EqualTo(10));
