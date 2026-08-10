@@ -28,7 +28,7 @@ public sealed partial class OathlordEconomySystem : EntitySystem
     [Dependency] private EntityQuery<EconomyAccountComponent> _econAccountQuery = default!;
 
     /// <summary>
-    /// All active economies loaded, when a round restarts
+    /// All active economies loaded, gets cleared when a round restarts
     /// </summary>
     [ViewVariables]
     private HashSet<Entity<EconomyMapComponent>> _activeEconomies = new();
