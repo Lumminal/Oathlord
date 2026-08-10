@@ -41,8 +41,6 @@ public sealed class EconomyTest : GameTest
         Entity<EconomyAccountComponent> accEnt = default!;
         Entity<EconomyMapComponent> econMap = default!;
 
-        _economy.SetStoredCurrencies(econMap.AsNullable(), StartingEconomy);
-
         await Server.WaitPost(() =>
         {
             SEntMan.EnsureComponent<EconomyMapComponent>(map.MapUid);
