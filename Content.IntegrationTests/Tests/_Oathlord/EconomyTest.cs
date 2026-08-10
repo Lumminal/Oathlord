@@ -44,7 +44,6 @@ public sealed class EconomyTest : GameTest
 
         await Server.WaitPost(() =>
         {
-
             SEntMan.EnsureComponent<EconomyMapComponent>(mapUid);
             uid = SEntMan.SpawnAtPosition(null, map.GridCoords);
             var acc = SEntMan.EnsureComponent<EconomyAccountComponent>(uid);
