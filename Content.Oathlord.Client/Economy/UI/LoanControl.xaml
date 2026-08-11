@@ -1,0 +1,17 @@
+﻿<Control
+    xmlns="https://spacestation14.io"
+    xmlns:graphics="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client">
+    <PanelContainer Margin="8" HorizontalExpand="True" VerticalAlignment="Center">
+        <PanelContainer.PanelOverride>
+            <graphics:StyleBoxFlat BackgroundColor="#191d1e"/>
+        </PanelContainer.PanelOverride>
+
+        <BoxContainer Orientation="Vertical" HorizontalAlignment="Center">
+            <Label Name="DueTimeLabel"/>
+            <Label Name="AmountLabel"/>
+            <Label Name="PaidLabel"/>
+            <Label Name="ReasonLabel"/>
+            <Button Name="PayLoanButton" Text="Pay Loan"/>
+        </BoxContainer>
+    </PanelContainer>
+</Control>

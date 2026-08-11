@@ -1,0 +1,14 @@
+- files: ["na_land.ogg", "na_land_alt.ogg", "withdraw_1.ogg", "withdraw_2.ogg", "withdraw_3.ogg"]
+  license: "CC0-1.0"
+  copyright: "Created by OwlishMedia, converted to ogg by Luminal"
+  source: "https://opengameart.org/content/202-more-sound-effects"
+
+- files: ["fail_transaction.ogg"]
+  license: "CC-BY-SA-3.0"
+  copyright: "Created by dorkster"
+  source: "https://opengameart.org/content/bow-arrow-shot"
+
+- files: ["success_transaction.ogg"]
+  license: "CC-BY-3.0"
+  copyright: "Created by Blender Foundation, converted to ogg by Luminal"
+  source: "https://opengameart.org/content/life-pickup-yo-frankie"

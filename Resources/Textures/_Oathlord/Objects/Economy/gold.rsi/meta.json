@@ -1,0 +1,32 @@
+{
+    "version": 1,
+    "license": "CC-BY-SA-3.0",
+    "copyright": "Taken from: https://github.com/Monkestation/Vanderlin/blob/c0550c7744ec87add778ec832573543c0718df9b/icons/roguetown/items/valuable.dmi",
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "states": [
+        {
+            "name": "gold"
+        },
+        {
+            "name": "gold_2"
+        },
+        {
+            "name": "gold_3"
+        },
+        {
+            "name": "gold_4"
+        },
+        {
+            "name": "gold_5"
+        },
+        {
+            "name": "gold_6"
+        },
+        {
+            "name": "gold_7"
+        }
+    ]
+}

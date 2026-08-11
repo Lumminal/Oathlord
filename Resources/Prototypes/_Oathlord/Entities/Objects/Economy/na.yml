@@ -1,0 +1,81 @@
+﻿- type: entity
+  abstract: true
+  parent: BaseItem
+  id: BaseNa
+  components:
+  - type: Sprite
+    sprite: _Oathlord/Objects/Economy/copper.rsi
+    layers:
+    - state: copper
+      map: [ "base" ]
+  - type: EmitSoundOnLand
+    sound:
+      collection: CoinLandSounds
+  - type: Stack
+    count: 1
+    baseLayer: base
+  - type: Appearance
+
+- type: entity
+  parent: BaseNa
+  id: Na
+  name: Na
+  description: The coin that is used by the economy.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Stack
+    stackType: BaseNaStack
+    layerStates:
+    - copper
+    - copper_2
+    - copper_3
+    - copper_4
+    - copper_5
+    - copper_6
+    - copper_7
+
+- type: entity
+  parent: BaseNa
+  id: Nar
+  name: Nar
+  description: A shiny silver coin.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _Oathlord/Objects/Economy/silver.rsi
+    layers:
+    - state: silver
+      map: [ "base" ]
+  - type: Stack
+    stackType: BaseNarStack
+    layerStates:
+    - silver
+    - silver_2
+    - silver_3
+    - silver_4
+    - silver_5
+    - silver_6
+    - silver_7
+
+- type: entity
+  parent: BaseNa
+  id: Nara
+  name: Nara
+  description: A gold coin.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _Oathlord/Objects/Economy/gold.rsi
+    layers:
+    - state: gold
+      map: [ "base" ]
+  - type: Stack
+    stackType: BaseNaraStack
+    layerStates:
+    - gold
+    - gold_2
+    - gold_3
+    - gold_4
+    - gold_5
+    - gold_6
+    - gold_7

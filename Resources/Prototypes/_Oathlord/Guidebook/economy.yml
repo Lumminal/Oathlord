@@ -1,0 +1,6 @@
+﻿- type: guideEntry
+  hidden: false
+  locFilter: "en-US"
+  id: OathlordEconomy
+  name: guidebook-oathlord-economy-name
+  text: "/ServerInfo/_Oathlord/Economy/Economy.xml"

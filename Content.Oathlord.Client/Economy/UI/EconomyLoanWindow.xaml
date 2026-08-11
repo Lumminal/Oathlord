@@ -1,0 +1,19 @@
+﻿<controls:FancyWindow
+    xmlns="https://spacestation14.io"
+    xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls;assembly=Content.Client"
+    Title="Loans"
+    MinSize="400 400">
+    <BoxContainer HorizontalExpand="True" Orientation="Vertical">
+        <ScrollContainer HScrollEnabled="False"
+                         VerticalExpand="True"
+                         HorizontalExpand="True"
+                         VScrollEnabled="True">
+            <BoxContainer Name="Loans" Margin="8" VerticalExpand="True" HorizontalExpand="True" Orientation="Vertical"/>
+        </ScrollContainer>
+        <Button Margin="8"
+                VerticalAlignment="Bottom"
+                Name="AddLoanButton"
+                Text="Grant Loan"
+                HorizontalAlignment="Center"/>
+    </BoxContainer>
+</controls:FancyWindow>

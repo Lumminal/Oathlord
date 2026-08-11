@@ -1,0 +1,32 @@
+{
+    "version": 1,
+    "license": "CC-BY-SA-3.0",
+    "copyright": "Taken from: https://github.com/Monkestation/Vanderlin/blob/c0550c7744ec87add778ec832573543c0718df9b/icons/roguetown/items/valuable.dmi",
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "states": [
+        {
+            "name": "copper"
+        },
+        {
+            "name": "copper_2"
+        },
+        {
+            "name": "copper_3"
+        },
+        {
+            "name": "copper_4"
+        },
+        {
+            "name": "copper_5"
+        },
+        {
+            "name": "copper_6"
+        },
+        {
+            "name": "copper_7"
+        }
+    ]
+}

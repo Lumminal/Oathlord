@@ -1,0 +1,35 @@
+﻿<controls:FancyWindow
+    xmlns="https://spacestation14.io"
+    xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls;assembly=Content.Client"
+    Title="Grant Loan"
+    MinSize="300 250">
+    <BoxContainer Margin="16">
+        <BoxContainer Orientation="Vertical">
+            <Label Text="Amount" Margin="0 8"/>
+            <Label Text="Due Time" Margin="0 8"/>
+            <Label Text="Reason" Margin="0 8"/>
+        </BoxContainer>
+        <BoxContainer Orientation="Vertical" Margin="8 0 0 0" HorizontalExpand="True">
+            <LineEdit
+                Name="AmountLoanEdit"
+                Text="0"
+                HorizontalExpand="True"
+                Margin="0 6"/>
+            <LineEdit
+                Name="DueTimeLoanEdit"
+                Text="0"
+                HorizontalExpand="True"
+                Margin="0 6"/>
+            <LineEdit
+                Name="ReasonLoanEdit"
+                PlaceHolder="Provide a reason..."
+                HorizontalExpand="True"
+                Margin="0 6"/>
+        </BoxContainer>
+    </BoxContainer>
+    <Button Text="Confirm"
+            Name="ConfirmLoanButton"
+            VerticalExpand="True"
+            VerticalAlignment="Bottom"
+            Margin="8 0 8 16"/>
+</controls:FancyWindow>
