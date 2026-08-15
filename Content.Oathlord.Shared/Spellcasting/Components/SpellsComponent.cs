@@ -26,7 +26,7 @@ public sealed partial class SpellsComponent : Component
     /// The spell slots we have. Each slot holds a spell
     /// </summary>
     [DataField, AutoNetworkedField]
-    public HashSet<EntityUid?> Slots = new();
+    public HashSet<EntityUid> Slots = new();
 
     /// <summary>
     /// How many slots we currently have

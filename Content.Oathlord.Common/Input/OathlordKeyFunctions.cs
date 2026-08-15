@@ -5,5 +5,9 @@ namespace Content.Oathlord.Common.Input;
 [KeyFunctions]
 public static class OathlordKeyFunctions
 {
+    // Activation
     public static readonly BoundKeyFunction SpecialItemAction = "SpecialItemAction";
+
+    // Spellcasting
+    public static readonly BoundKeyFunction OpenSpellsMenu = "OpenSpellsMenu";
 }

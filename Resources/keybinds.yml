@@ -5,6 +5,9 @@ binds:
   type: State
   key: MouseMiddle
   priority: 10 # this should fire before rotation and others
+- function: OpenSpellsMenu
+  type: State
+  key: L
 # </Oathlrod>
 - function: UIClick
   type: State

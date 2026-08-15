@@ -7,6 +7,9 @@ public static class OathlordInputContexts
 {
     public static void SetupContexts(IInputContextContainer contexts)
     {
+        var common = contexts.GetContext("common");
+        common.AddFunction(OathlordKeyFunctions.OpenSpellsMenu);
+
         var human = contexts.GetContext("human");
         human.AddFunction(OathlordKeyFunctions.SpecialItemAction);
     }

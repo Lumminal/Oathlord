@@ -2,6 +2,9 @@ using Content.Client.UserInterface.Screens;
 using Content.Client.UserInterface.Systems.Gameplay;
 using Content.Oathlord.Client.UserInterface.Systems.Mana;
 using Content.Oathlord.Client.UserInterface.Systems.Mana.Widgets;
+using Content.Oathlord.Client.UserInterface.Systems.Spells;
+using Content.Oathlord.Client.UserInterface.Systems.Spells.Widgets;
+using JetBrains.Annotations;
 using Robust.Client.UserInterface.Controllers;
 using Robust.Client.UserInterface.Controls;
 
@@ -17,10 +20,14 @@ namespace Content.Oathlord.Client.Screens;
 ///
 /// ps: I'd prefer doing an all gwyn ds1 run than working with ss14 ui
 /// </summary>
+[UsedImplicitly]
 public sealed partial class OathlordScreenUIController : UIController
 {
+    [Dependency] private ManaUIController _mana = default!;
+    [Dependency] private SpellsUIController _spells = default!;
+
     private ManaBar? _manaBar;
-    private ManaUIController? _manaUIController;
+    private SpellsButton? _spellsButton;
 
     public override void Initialize()
     {
@@ -29,21 +36,22 @@ public sealed partial class OathlordScreenUIController : UIController
         var gameplayStateLoad = UIManager.GetUIController<GameplayStateLoadController>();
         gameplayStateLoad.OnScreenLoad += OnScreenLoad;
         gameplayStateLoad.OnScreenUnload += OnScreenUnload;
-
-        _manaUIController = UIManager.GetUIController<ManaUIController>();
     }
 
     private void OnScreenUnload()
     {
         _manaBar = null;
+        _spellsButton = null;
+
+        _spells.UnloadButton();
 
         switch (UIManager.ActiveScreen)
         {
             case DefaultGameScreen screen:
-                screen.RemoveWidget<ManaBar>();
+                ClearWidgets(screen);
                 break;
             case SeparatedChatGameScreen separated:
-                separated.RemoveWidget<ManaBar>();
+                ClearWidgets(separated);
                 break;
         }
     }
@@ -53,18 +61,58 @@ public sealed partial class OathlordScreenUIController : UIController
         switch (UIManager.ActiveScreen)
         {
             case DefaultGameScreen screen:
-                _manaBar = screen.GetOrAddWidget<ManaBar>();
-                _manaUIController?.SyncMana(); // forcing a sync here cuz it doesn't sync otherwise
-
-                LayoutContainer.SetAnchorAndMarginPreset(_manaBar, LayoutContainer.LayoutPreset.BottomWide, margin: 40);
+                SetupMana(screen, false);
+                SetupSpells(screen, false);
                 break;
             case SeparatedChatGameScreen separated:
-                _manaBar = separated.GetOrAddWidget<ManaBar>();
-                _manaUIController?.SyncMana(); // same as above
-
-                LayoutContainer.SetAnchorAndMarginPreset(_manaBar, LayoutContainer.LayoutPreset.BottomWide, margin: 40);
-                LayoutContainer.SetMarginLeft(_manaBar, -460);
+                SetupMana(separated, true);
+                SetupSpells(separated, true);
                 break;
         }
+
+        // Registering events for widgets in the hud must be done in here, and not in the respective UI controllers
+        // because the UI controllers usually request the active widget, which may not exist at that time.
+        //
+        // e.g. You can't click a button widget because ui controller couldn't register the event handler bcuz it was null at that time
+        _spells.LoadButton();
+    }
+
+    #region Widget Setup
+
+    private void SetupMana(InGameScreen screen, bool separated)
+    {
+        _manaBar = screen.GetOrAddWidget<ManaBar>();
+        _mana.SyncMana();
+
+        if (!separated)
+        {
+            LayoutContainer.SetAnchorAndMarginPreset(_manaBar, LayoutContainer.LayoutPreset.BottomWide, margin: 40);
+            return;
+        }
+
+        LayoutContainer.SetAnchorAndMarginPreset(_manaBar, LayoutContainer.LayoutPreset.BottomWide, margin: 40);
+        LayoutContainer.SetMarginLeft(_manaBar, -460);
+    }
+
+    private void SetupSpells(InGameScreen screen, bool separated)
+    {
+        _spellsButton = screen.GetOrAddWidget<SpellsButton>();
+
+        if (!separated)
+        {
+            LayoutContainer.SetAnchorAndMarginPreset(_spellsButton, LayoutContainer.LayoutPreset.BottomLeft, margin: 40);
+            return;
+        }
+
+        LayoutContainer.SetAnchorAndMarginPreset(_spellsButton, LayoutContainer.LayoutPreset.BottomLeft, margin: 40);
+        LayoutContainer.SetMarginLeft(_spellsButton, -50);
+    }
+
+    #endregion
+
+    private void ClearWidgets(InGameScreen screen)
+    {
+        screen.RemoveWidget<ManaBar>();
+        screen.RemoveWidget<SpellsButton>();
     }
 }

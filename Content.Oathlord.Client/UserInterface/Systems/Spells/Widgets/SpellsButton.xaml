@@ -1,0 +1,6 @@
+﻿<widgets:SpellsButton
+    xmlns="https://spacestation14.io"
+    xmlns:widgets="clr-namespace:Content.Oathlord.Client.UserInterface.Systems.Spells.Widgets"
+    MinSize="64 64">
+    <Button Text="Spells" Name="OpenSpellsButton" Access="Public"/>
+</widgets:SpellsButton>
