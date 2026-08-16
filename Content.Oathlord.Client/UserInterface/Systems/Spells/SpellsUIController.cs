@@ -3,7 +3,10 @@ using Content.Client.UserInterface.Systems.Gameplay;
 using Content.Oathlord.Client.UserInterface.Systems.Spells.Widgets;
 using Content.Oathlord.Client.UserInterface.Systems.Spells.Windows;
 using Content.Oathlord.Common.Input;
+using Content.Oathlord.Shared.Spellcasting.Components;
 using JetBrains.Annotations;
+using Robust.Client.Graphics;
+using Robust.Client.Player;
 using Robust.Client.UserInterface.Controllers;
 using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Input.Binding;
@@ -13,6 +16,10 @@ namespace Content.Oathlord.Client.UserInterface.Systems.Spells;
 [UsedImplicitly]
 public sealed partial class SpellsUIController : UIController, IOnStateEntered<GameplayState>, IOnStateExited<GameplayState>
 {
+    [Dependency] private IPlayerManager _player = default!;
+
+    private EntityQuery<SpellsComponent> _spellsQuery = default!;
+
     private SpellsWindow? _window;
     private SpellsButton? UI => UIManager.GetActiveUIWidgetOrNull<SpellsButton>();
 
@@ -43,6 +50,8 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
     {
         base.Initialize();
 
+        _spellsQuery = EntityManager.GetEntityQuery<SpellsComponent>();
+
         var gameplayStateLoad = UIManager.GetUIController<GameplayStateLoadController>();
         gameplayStateLoad.OnScreenLoad += LoadButton;
         gameplayStateLoad.OnScreenUnload += UnloadButton;
@@ -69,6 +78,49 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
         ToggleWindow();
     }
 
+    public void UpdateWindow()
+    {
+        // todo: this is temporarily until I add client systems to update stuff
+        if (_window == null || _player.LocalEntity is not { } player || !_spellsQuery.TryComp(player, out var spells))
+            return;
+
+        var maxLearned = spells.MaxLearned;
+        var currentSlots = spells.CurrentSlots;
+
+        var learnedSpellContainer = _window.LearnedSpellsContainer;
+        var activeSpellContainer = _window.ActiveSpellsContainer;
+
+        learnedSpellContainer.Children.Clear();
+        activeSpellContainer.Children.Clear();
+
+        var panelSize = new Vector2(32, 32);
+        var styleBox = new StyleBoxFlat(backgroundColor: Color.DeepSkyBlue);
+
+        // Setup how many learned spells we can have at a time
+        for (int i = 0; i < maxLearned; i++)
+        {
+            var panel = new PanelContainer
+            {
+                MinSize = panelSize,
+                PanelOverride = styleBox,
+            };
+
+            learnedSpellContainer.AddChild(panel);
+        }
+
+        // Setup how many active spell slots we can have
+        for (int i = 0; i < currentSlots; i++)
+        {
+            var panel = new PanelContainer
+            {
+                MinSize = panelSize,
+                PanelOverride = styleBox,
+            };
+
+            activeSpellContainer.AddChild(panel);
+        }
+    }
+
     private void ToggleWindow()
     {
         if (_window == null)
@@ -81,6 +133,9 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
             _window.Close();
             return;
         }
+
+        _window = new SpellsWindow(); // todo: temporarily for hot-reload xaml
+        UpdateWindow();
 
         _window.Open();
     }

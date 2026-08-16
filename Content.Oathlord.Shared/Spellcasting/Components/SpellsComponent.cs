@@ -1,5 +1,5 @@
-﻿using Robust.Shared.GameStates;
-using Robust.Shared.Serialization;
+﻿using Robust.Shared.Containers;
+using Robust.Shared.GameStates;
 
 namespace Content.Oathlord.Shared.Spellcasting.Components;
 
@@ -39,10 +39,10 @@ public sealed partial class SpellsComponent : Component
     /// </summary>
     [DataField]
     public int MaxLearned = 10;
-}
 
-[Serializable, NetSerializable]
-public enum SpellsUiKey : byte
-{
-    Key,
+    // todo: seperate it to different component like actions...?
+    public const string ContainerId = "spells";
+
+    [ViewVariables]
+    public Container Container = default!;
 }

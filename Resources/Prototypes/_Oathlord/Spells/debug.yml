@@ -1,0 +1,8 @@
+﻿- type: entity
+  parent: ActionBlink
+  id: SpellDebug
+  name: Spell Debug
+  description: Debug
+  components:
+  - type: Spell
+

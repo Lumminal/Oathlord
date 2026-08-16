@@ -188,7 +188,10 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(ContentKeyFunctions.AltUseItemInHand);
             AddButton(ContentKeyFunctions.ActivateItemInWorld);
             AddButton(ContentKeyFunctions.AltActivateItemInWorld);
-            AddButton(OathlordKeyFunctions.SpecialItemAction); // Oathlord
+            // </Oathlord>
+            AddButton(OathlordKeyFunctions.SpecialItemAction);
+            AddButton(OathlordKeyFunctions.OpenSpellsMenu);
+            // <Oathlord>
             AddButton(ContentKeyFunctions.Drop);
             AddButton(ContentKeyFunctions.ExamineEntity);
             AddButton(ContentKeyFunctions.SwapHands);
