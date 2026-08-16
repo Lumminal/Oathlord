@@ -20,7 +20,7 @@ public sealed partial class SpellsComponent : Component
     /// The current selected spell
     /// </summary>
     [DataField, AutoNetworkedField]
-    public EntityUid? ActiveSpell;
+    public int ActiveSpell;
 
     /// <summary>
     /// The spell slots we have. Each slot holds a spell

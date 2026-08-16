@@ -1,5 +1,6 @@
 ﻿using Content.Client.Gameplay;
 using Content.Client.UserInterface.Systems.Gameplay;
+using Content.Oathlord.Client.UserInterface.Systems.Spells.Controls;
 using Content.Oathlord.Client.UserInterface.Systems.Spells.Widgets;
 using Content.Oathlord.Client.UserInterface.Systems.Spells.Windows;
 using Content.Oathlord.Common.Input;
@@ -93,31 +94,30 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
         learnedSpellContainer.Children.Clear();
         activeSpellContainer.Children.Clear();
 
-        var panelSize = new Vector2(32, 32);
-        var styleBox = new StyleBoxFlat(backgroundColor: Color.DeepSkyBlue);
-
         // Setup how many learned spells we can have at a time
         for (int i = 0; i < maxLearned; i++)
         {
-            var panel = new PanelContainer
-            {
-                MinSize = panelSize,
-                PanelOverride = styleBox,
-            };
-
-            learnedSpellContainer.AddChild(panel);
+            var spell = new SpellSlot();
+            learnedSpellContainer.AddChild(spell);
         }
 
         // Setup how many active spell slots we can have
         for (int i = 0; i < currentSlots; i++)
         {
-            var panel = new PanelContainer
-            {
-                MinSize = panelSize,
-                PanelOverride = styleBox,
-            };
+            var spell = new SpellSlot();
+            activeSpellContainer.AddChild(spell);
+        }
 
-            activeSpellContainer.AddChild(panel);
+        foreach (var learnedSpell in spells.LearnedSpells)
+        {
+            foreach (var learnedSpellSlot in learnedSpellContainer.Children)
+            {
+                if (learnedSpellSlot is not SpellSlot spellSlot || spellSlot.HasSpell)
+                    continue;
+
+                spellSlot.AddSpell(learnedSpell);
+                break;
+            }
         }
     }
 
@@ -134,7 +134,7 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
             return;
         }
 
-        _window = new SpellsWindow(); // todo: temporarily for hot-reload xaml
+        _window = UIManager.CreateWindow<SpellsWindow>();
         UpdateWindow();
 
         _window.Open();
