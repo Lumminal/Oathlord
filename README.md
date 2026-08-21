@@ -1,5 +1,5 @@
 <div class="header" align="center">
-<img alt="Oathlord" width="880" height="300" src="https://github.com/Oathlord-Team/Oathlord/blob/master/Resources/Textures/Logo/logo.png">
+<img alt="Oathlord" width="450" height="300" src="https://github.com/Oathlord-Team/Oathlord/blob/master/Resources/Textures/Logo/logo.png">
 </div>
 
 Oathlord is a fork of [Space Station 14](https://github.com/space-wizards/space-station-14).
