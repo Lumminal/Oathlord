@@ -1,11 +1,11 @@
 <div class="header" align="center">
-<img alt="Space Station 14" width="880" height="300" src="https://raw.githubusercontent.com/space-wizards/asset-dump/de329a7898bb716b9d5ba9a0cd07f38e61f1ed05/github-logo.svg">
+<img alt="Oathlord" width="880" height="300" src="https://github.com/Oathlord-Team/Oathlord/blob/master/Resources/Textures/Logo/logo.png">
 </div>
 
 Oathlord is a fork of [Space Station 14](https://github.com/space-wizards/space-station-14).
 
 > [!WARNING]
-> This fork is under heavy development. 
+> This fork is under heavy development.
 
 ## Links
 
