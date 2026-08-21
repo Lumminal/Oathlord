@@ -5,6 +5,8 @@ For the basics and anything not listed here, read [SS14's upstream documentation
 ## Core guidelines
 
 1. Do not rely on language models to do everything for you. You will be ridiculed for this.
+2. Do not make new core systems (e.g. alchemy) without talking us through it in our discord server, or via contacting the lead maintainer. We are happy to help you get a new system into our fork, but we can not accept something without reviewing it's concept first.
+3. Be respectful in PRs/Issues.
 
 ## Making a PR
 
@@ -27,6 +29,7 @@ Remember to test your PR again after making changes to it! Not doing so is one o
 4. If you are adding new methods, fields, etc. in upstream files make a partial class with the same filename but with `.Oathlord.cs`. If it isn't partial already, make it partial with a comment.
 5. Do not add new event handlers to upstream systems, make your own system in `Content.Oathlord.*` instead.
 6. Always use proxy methods when they are available, e.g. `TryComp` instead of `EntityManager.TryGetComponent`. This also means don't depend on `EntityManager` when you are in a `EntitySystem` or a BUI.
+7. Always use the most updated methods the engine offers. Older ways of doing things will no longer be allowed, such as using `SubscribeLocalEvent<T, TEvent>()` instead of the `[SubscribeLocalEvent]` attribute. 
 
 ### Resources
 
@@ -49,7 +52,7 @@ Your fields only need to be networked if either:
 1. You change them in your code
 2. You add the component with modified fields in e.g. a ComponentRegistry. These need to be networked or clients may only get the default values.
 
-If you have many fields, use `fieldDeltas: true` and `DirtyField(ent, ent.Comp, nameof(MyComponent.MyField))` after changing `MyField`.
+If you have more than 2-3 fields, use `fieldDeltas: true` and `DirtyField(ent, ent.Comp, nameof(MyComponent.MyField))` after changing `MyField`.
 This minimizes bandwidth usage compared to sending the entire component state for a tiny change.
 
 ### Sounds
@@ -161,6 +164,13 @@ using Content.Shared.Actions; // upstream's imports follow...
 This causes less conflicts with upstream for 2 reasons:
 1. Having all additions in 1 block means there is only 1 place it can conflict, as opposed to placing them randomly
 2. When new additions are slapped onto existing prototypes etc, it's almost always added to the bottom or alphabetically sorted etc. It's extremely rare that someone would put it at the top to spite you.
+
+## Integration Tests
+
+Test coverage for new core systems are *mandatory*. 
+If you do not know how to write integration tests, then you can contact a maintainer to help you setup one.
+
+Tests help reduce game-breaking bugs that you may not notice at first, and help contributors who work with your systems (e.g. in yaml) to not fuck up.
 
 ## Changelogs
 
