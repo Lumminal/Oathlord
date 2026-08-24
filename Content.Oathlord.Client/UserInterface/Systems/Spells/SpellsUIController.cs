@@ -6,8 +6,8 @@ using Content.Oathlord.Client.UserInterface.Systems.Spells.Windows;
 using Content.Oathlord.Common.Input;
 using Content.Oathlord.Shared.Spellcasting.Components;
 using JetBrains.Annotations;
-using Robust.Client.Graphics;
 using Robust.Client.Player;
+using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controllers;
 using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Input.Binding;
@@ -23,6 +23,11 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
 
     private SpellsWindow? _window;
     private SpellsButton? UI => UIManager.GetActiveUIWidgetOrNull<SpellsButton>();
+
+    /// <summary>
+    /// Event that gets triggered when the user clicks on a spell slot, in order to transfer it to active or learned slots.
+    /// </summary>
+    public Action<EntityUid, int>? TransferSpellRequest;
 
     public void OnStateEntered(GameplayState state)
     {
@@ -87,35 +92,31 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
 
         var maxLearned = spells.MaxLearned;
         var currentSlots = spells.CurrentSlots;
-
         var learnedSpellContainer = _window.LearnedSpellsContainer;
         var activeSpellContainer = _window.ActiveSpellsContainer;
 
-        learnedSpellContainer.Children.Clear();
-        activeSpellContainer.Children.Clear();
-
-        // Setup how many learned spells we can have at a time
-        for (int i = 0; i < maxLearned; i++)
-        {
-            var spell = new SpellSlot();
-            learnedSpellContainer.AddChild(spell);
-        }
-
-        // Setup how many active spell slots we can have
-        for (int i = 0; i < currentSlots; i++)
-        {
-            var spell = new SpellSlot();
-            activeSpellContainer.AddChild(spell);
-        }
-
+        SetupSpells(learnedSpellContainer, maxLearned);
+        SetupSpells(activeSpellContainer, currentSlots, true);
         foreach (var learnedSpell in spells.LearnedSpells)
         {
             foreach (var learnedSpellSlot in learnedSpellContainer.Children)
             {
-                if (learnedSpellSlot is not SpellSlot spellSlot || spellSlot.HasSpell)
+                if (learnedSpellSlot is not SpellSlot spellSlot || spellSlot.Spell != null)
                     continue;
 
                 spellSlot.AddSpell(learnedSpell);
+                break;
+            }
+        }
+
+        foreach (var activeSpell in spells.Slots)
+        {
+            foreach (var activeSpellSlot in activeSpellContainer.Children)
+            {
+                if (activeSpellSlot is not SpellSlot spellSlot || spellSlot.Spell != null)
+                    continue;
+
+                spellSlot.AddSpell(activeSpell);
                 break;
             }
         }
@@ -138,5 +139,67 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
         UpdateWindow();
 
         _window.Open();
+    }
+
+    private void SetupSpells(Control parent, int amount, bool active = false)
+    {
+        parent.Children.Clear();
+        for (int i = 0; i < amount; i++)
+        {
+            var spell = new SpellSlot();
+            spell.Active = active;
+            parent.AddChild(spell);
+
+            spell.SpellTexButton.OnPressed += _ => SpellTexButtonOnOnPressed(spell);
+        }
+    }
+
+    /// <summary>
+    /// Moves a spell from learned to active, and vice-versa
+    /// </summary>
+    private void SpellTexButtonOnOnPressed(SpellSlot slot)
+    {
+        if (_window is not { } window)
+            return;
+
+        // If the spell is learned, we move it to the active section
+        if (!slot.Active)
+        {
+            TransferSpell(slot, window.ActiveSpellsContainer, SpellTransfer.Active);
+            return;
+        }
+
+        // If the spell is active, we move it to learned...
+        TransferSpell(slot, window.LearnedSpellsContainer, SpellTransfer.Learned);
+    }
+
+    /// <summary>
+    /// Transfers a <see cref="SpellSlot"/>'s spell from the first available spell slot in another container.
+    /// The other spell slot must not have a spell.
+    /// </summary>
+    private void TransferSpell(SpellSlot from, Control container, SpellTransfer type)
+    {
+        if (from.Spell is not { } fromSpell|| _player.LocalEntity is not { } player)
+            return;
+
+        SpellSlot? selected = null;
+        foreach (var child in container.Children)
+        {
+            // We don't want to overwrite the spell on this slot, so just skip
+            if (child is not SpellSlot spellSlot || spellSlot.Spell != null)
+                continue;
+
+            selected = spellSlot;
+            break;
+        }
+
+        if (selected is not { } selectedSlot)
+            return;
+
+        selectedSlot.AddSpell(fromSpell);
+        from.RemoveSpell();
+
+        var ev = new RequestSpellTransferEvent(fromSpell, type);
+        EntityManager.EventBus.RaiseLocalEvent(player, ref ev);
     }
 }

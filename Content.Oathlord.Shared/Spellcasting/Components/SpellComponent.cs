@@ -6,7 +6,4 @@ namespace Content.Oathlord.Shared.Spellcasting.Components;
 /// Component used on actions to mark it as a spell
 /// </summary>
 [RegisterComponent, NetworkedComponent]
-public sealed partial class SpellComponent : Component
-{
-    // implement
-}
+public sealed partial class SpellComponent : Component;

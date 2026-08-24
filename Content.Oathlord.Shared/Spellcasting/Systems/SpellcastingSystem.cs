@@ -1,25 +1,165 @@
 ﻿using Content.Oathlord.Shared.Spellcasting.Components;
+using Content.Shared.Popups;
 using Robust.Shared.Containers;
+using Robust.Shared.Prototypes;
 
 namespace Content.Oathlord.Shared.Spellcasting.Systems;
 
 /// <summary>
 /// Handles anything related to spellcasting, and provides a public api
 /// </summary>
-public sealed partial class SpellcastingSystem : EntitySystem
+public abstract partial class SpellcastingSystem : EntitySystem
 {
     [Dependency] private SharedContainerSystem _container = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+
+    [Dependency] private EntityQuery<SpellsComponent> _spellsQuery = default!;
+    [Dependency] private EntityQuery<SpellComponent> _spellQuery = default!;
+
+    /// <summary>
+    /// List of every spell prototype loaded in the game
+    /// </summary>
+    [ViewVariables]
+    public List<EntProtoId> AllSpells = new();
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        SubscribeAllEvent<SpellTransferEvent>(OnTransfer);
+
+        LoadSpells();
+    }
+
+    [SubscribeLocalEvent]
+    public void OnCompInit(Entity<SpellsComponent> ent, ref ComponentInit args)
+    {
+        ent.Comp.Container = _container.EnsureContainer<Container>(ent, SpellsComponent.ContainerId);
+    }
 
     [SubscribeLocalEvent]
     public void OnMapInit(Entity<SpellsComponent> ent, ref MapInitEvent args)
     {
-        ent.Comp.Container = _container.EnsureContainer<Container>(ent, SpellsComponent.ContainerId);
-
         // debug shit
         var debug = Spawn("SpellDebug");
         _container.Insert(debug, ent.Comp.Container);
 
+        var debug2 = Spawn("SpellDebug");
+        _container.Insert(debug2, ent.Comp.Container);
+
         ent.Comp.LearnedSpells.Add(debug);
+        ent.Comp.LearnedSpells.Add(debug2);
         DirtyField(ent.AsNullable(), nameof(SpellsComponent.LearnedSpells));
+    }
+
+    public void OnTransfer(SpellTransferEvent msg, EntitySessionEventArgs args)
+    {
+        var attached = args.SenderSession.AttachedEntity;
+        if (attached is not { } entity)
+            return;
+
+        var spell = GetEntity(msg.Spell);
+        var transferTo = msg.Type;
+
+        if (TryTransferSpell(entity, spell, transferTo))
+            return;
+
+        _popup.PopupCursor($"You can not transfer this spell to the {transferTo.ToString()} category", entity, PopupType.MediumCaution);
+    }
+
+    [SubscribeLocalEvent]
+    public void OnPrototypesReload(PrototypesReloadedEventArgs args)
+    {
+        if (!args.WasModified<EntityPrototype>())
+            return;
+
+        LoadSpells();
+    }
+
+    #region Public API
+
+    /// <summary>
+    /// Tries to transfer a spell from one category to another.
+    ///
+    /// You probably shouldn't be using this, as it's for UI purposes mostly, but don't tell me I didn't warn you
+    /// </summary>
+    /// <param name="ent">The spellcaster</param>
+    /// <param name="spell">The spell to transfer</param>
+    /// <param name="spellTransferType">In which category to transfer to; either learned spells or active spells</param>
+    /// <returns>False if the transferring was canceled, true otherwise</returns>
+    public bool TryTransferSpell(Entity<SpellsComponent?> ent, EntityUid spell, SpellTransfer spellTransferType)
+    {
+        if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
+            return false;
+
+        if (!_spellQuery.HasComp(spell) || !ent.Comp.Container.Contains(spell))
+            return false;
+
+        switch (spellTransferType)
+        {
+            case SpellTransfer.Active:
+            {
+                if (ent.Comp.Slots.Contains(spell) || ent.Comp.Slots.Count >= ent.Comp.CurrentSlots)
+                    return false;
+                break;
+            }
+            case SpellTransfer.Learned:
+            {
+                if (ent.Comp.LearnedSpells.Contains(spell) || ent.Comp.LearnedSpells.Count >= ent.Comp.MaxLearned)
+                    return false;
+                break;
+            }
+        }
+
+        TransferSpell(ent, spell, spellTransferType);
+        return true;
+    }
+
+    /// <summary>
+    /// Transfers a spell from one category to another
+    /// </summary>
+    /// <param name="ent">The spellcaster</param>
+    /// <param name="spell">The spell to transfer</param>
+    /// <param name="spellTransferType">In which category to transfer to; either learned spells or active spells</param>
+    public void TransferSpell(Entity<SpellsComponent?> ent, EntityUid spell, SpellTransfer spellTransferType)
+    {
+        if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
+
+        switch (spellTransferType)
+        {
+            case SpellTransfer.Active:
+            {
+                ent.Comp.LearnedSpells.Remove(spell);
+                ent.Comp.Slots.Add(spell);
+                break;
+            }
+            case SpellTransfer.Learned:
+            {
+                ent.Comp.Slots.Remove(spell);
+                ent.Comp.LearnedSpells.Add(spell);
+                break;
+            }
+        }
+
+        DirtyFields(ent, null, nameof(SpellsComponent.Slots), nameof(SpellsComponent.LearnedSpells));
+
+        // UpdateUi here...
+    }
+
+    #endregion
+
+    private void LoadSpells()
+    {
+        AllSpells.Clear();
+        var name = Factory.CompName<SpellComponent>();
+        foreach (var proto in ProtoMan.EnumeratePrototypes<EntityPrototype>())
+        {
+            if (!proto.HasComp(name))
+                return;
+
+            var id = proto.ID;
+            AllSpells.Add(id);
+        }
     }
 }
