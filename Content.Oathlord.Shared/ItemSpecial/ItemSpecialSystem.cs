@@ -1,6 +1,7 @@
 ﻿using Content.Oathlord.Common.Input;
 using Content.Shared.Hands.EntitySystems;
 using Robust.Shared.Input.Binding;
+using Robust.Shared.Map;
 using Robust.Shared.Player;
 
 namespace Content.Oathlord.Shared.ItemSpecial;
@@ -20,16 +21,17 @@ public sealed partial class ItemSpecialSystem : EntitySystem
         base.Initialize();
 
         CommandBinds.Builder
-            .Bind(OathlordKeyFunctions.SpecialItemAction, InputCmdHandler.FromDelegate(HandleSpecialAction, handle: false, outsidePrediction: false))
+            .Bind(OathlordKeyFunctions.SpecialItemAction, new PointerInputCmdHandler(HandleSpecialAction))
             .Register<ItemSpecialSystem>();
     }
 
-    private void HandleSpecialAction(ICommonSession? session)
+    private bool HandleSpecialAction(ICommonSession? playerSession, EntityCoordinates coordinates, EntityUid entity)
     {
-        if (session?.AttachedEntity is not { } player)
-            return;
+        if (playerSession?.AttachedEntity is not {Valid: true} player || !Exists(player) || !coordinates.IsValid(EntityManager))
+            return true;
 
-        TryItemSpecial(player);
+        TryItemSpecial(player, coordinates, entity);
+        return false;
     }
 
     #region Public Api
@@ -38,13 +40,15 @@ public sealed partial class ItemSpecialSystem : EntitySystem
     /// Tries to do an item special interaction
     /// </summary>
     /// <param name="uid">The user of the interaction</param>
-    public void TryItemSpecial(EntityUid uid)
+    /// <param name="coords">The coordinates where the click interaction happened</param>
+    /// <param name="target">The target of this interaction</param>
+    public void TryItemSpecial(EntityUid uid, EntityCoordinates coords, EntityUid target)
     {
         if (!_hands.TryGetActiveItem(uid, out var item) || item is not { } activeItem)
             return;
 
         // todo: check for other blockers (probably not use delay?)
-        DoItemSpecial(uid, activeItem);
+        DoItemSpecial(uid, activeItem, coords, target);
     }
 
     /// <summary>
@@ -52,12 +56,14 @@ public sealed partial class ItemSpecialSystem : EntitySystem
     /// </summary>
     /// <param name="user">The user of the interaction</param>
     /// <param name="used">The item that is part of the interaction</param>
-    public void DoItemSpecial(EntityUid user, EntityUid used)
+    /// <param name="coords">The coordinates where the click interaction happened</param>
+    /// <param name="target">The target of this interaction</param>
+    public void DoItemSpecial(EntityUid user, EntityUid used, EntityCoordinates coords, EntityUid target)
     {
         if (TerminatingOrDeleted(user) || TerminatingOrDeleted(used))
             return;
 
-        var ev = new ItemSpecialEvent(user);
+        var ev = new ItemSpecialEvent(user, coords, target);
         RaiseLocalEvent(used, ref ev);
     }
 
@@ -68,4 +74,4 @@ public sealed partial class ItemSpecialSystem : EntitySystem
 /// Raised on the item when the user triggers the keybind for doing an item special
 /// </summary>
 [ByRefEvent]
-public record struct ItemSpecialEvent(EntityUid User);
+public record struct ItemSpecialEvent(EntityUid User, EntityCoordinates Coords, EntityUid Target);

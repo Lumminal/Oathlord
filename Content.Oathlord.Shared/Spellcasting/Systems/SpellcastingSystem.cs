@@ -1,6 +1,9 @@
 ﻿using Content.Oathlord.Shared.Spellcasting.Components;
+using Content.Shared.Actions;
+using Content.Shared.Actions.Components;
 using Content.Shared.Popups;
 using Robust.Shared.Containers;
+using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 
 namespace Content.Oathlord.Shared.Spellcasting.Systems;
@@ -12,9 +15,11 @@ public abstract partial class SpellcastingSystem : EntitySystem
 {
     [Dependency] private SharedContainerSystem _container = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedActionsSystem _actions = default!;
 
     [Dependency] private EntityQuery<SpellsComponent> _spellsQuery = default!;
     [Dependency] private EntityQuery<SpellComponent> _spellQuery = default!;
+    [Dependency] private EntityQuery<WorldTargetActionComponent> _worldActionQuery = default!;
 
     /// <summary>
     /// List of every spell prototype loaded in the game
@@ -42,13 +47,11 @@ public abstract partial class SpellcastingSystem : EntitySystem
     {
         // debug shit
         var debug = Spawn("SpellDebug");
-        _container.Insert(debug, ent.Comp.Container);
-
         var debug2 = Spawn("SpellDebug");
-        _container.Insert(debug2, ent.Comp.Container);
 
-        ent.Comp.LearnedSpells.Add(debug);
-        ent.Comp.LearnedSpells.Add(debug2);
+        InsertSpell(ent.AsNullable(), debug);
+        InsertSpell(ent.AsNullable(), debug2);
+
         DirtyField(ent.AsNullable(), nameof(SpellsComponent.LearnedSpells));
     }
 
@@ -145,6 +148,71 @@ public abstract partial class SpellcastingSystem : EntitySystem
         DirtyFields(ent, null, nameof(SpellsComponent.Slots), nameof(SpellsComponent.LearnedSpells));
 
         // UpdateUi here...
+    }
+
+    /// <summary>
+    /// Casts the active spell
+    /// </summary>
+    public void CastSpell(Entity<SpellsComponent?> ent, EntityUid target, EntityCoordinates coords)
+    {
+        if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
+
+        var spell = GetActiveSpell(ent);
+        if (_actions.GetAction(spell) is not { } action)
+            return;
+
+        // This function is usually called by item special (because that's how you cast spells)
+        // Item special has a PointerInputCmdHandler, which returns an entity.
+        // Although that entity is not null, it can be invalid (meaning its id is 0).
+        // todo: make it nullable instead?
+        if (target.Valid)
+            _actions.SetEventTarget(action, target);
+
+        // for world actions, we have to set the coordinates manually
+        if (_worldActionQuery.TryComp(action, out var worldAction) && worldAction.Event is { } worldEv)
+        {
+            worldEv.Target = coords;
+            worldEv.Entity = target.Valid ? target : null;
+        }
+
+        _actions.PerformAction(ent.Owner, action);
+    }
+
+    /// <summary>
+    /// Gets the active spell
+    /// </summary>
+    public EntityUid? GetActiveSpell(Entity<SpellsComponent?> ent)
+    {
+        if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
+            return null;
+
+        if (ent.Comp.ActiveSpell >= ent.Comp.Slots.Count || ent.Comp.ActiveSpell < 0)
+            return null;
+
+        return ent.Comp.Slots[ent.Comp.ActiveSpell];
+    }
+
+    /// <summary>
+    /// Inserts a spell into the learned spells of the user
+    /// </summary>
+    public void InsertSpell(Entity<SpellsComponent?> ent, EntityUid spell)
+    {
+        if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
+
+        if (_actions.GetAction(spell) is not { } action)
+            return;
+
+        action.Comp.AttachedEntity = ent.Owner;
+        DirtyField(action.AsNullable(), nameof(ActionComponent.AttachedEntity));
+
+        _container.Insert(spell, ent.Comp.Container);
+
+        Log.Info("Spell inserted into the container");
+
+        ent.Comp.LearnedSpells.Add(spell);
+        DirtyField(ent, nameof(SpellsComponent.LearnedSpells));
     }
 
     #endregion

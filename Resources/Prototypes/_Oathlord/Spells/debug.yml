@@ -6,3 +6,14 @@
   components:
   - type: Spell
 
+- type: entity
+  parent: BaseItem
+  id: SpellcastingDebug
+  name: Spellcasting Staff
+  description: Debug
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: Objects/Fun/pai.rsi
+    state: pai-base
+  - type: CastOnSpecial
