@@ -10,6 +10,17 @@ namespace Content.Oathlord.Shared.Spellcasting.Systems;
 
 /// <summary>
 /// Handles anything related to spellcasting, and provides a public api
+///
+/// Spells are wrappers around actions (for flexibility purposes), but are bound by their own rules.
+///
+/// Some of the important ones being:
+/// - You can have only 1 spell active at a time to use
+/// - Spells usually require a catalyst in order to be casted (usually an item on the user's hand)
+/// - You have a limited amount of spells you can switch to
+/// - You have a limited amount of spells you can learn
+///
+/// The purpose of spells is to eliminate the management of tons of actions on the user's hotbar,
+/// and instead make them be usable only within certain contexts.
 /// </summary>
 public abstract partial class SpellcastingSystem : EntitySystem
 {
@@ -46,11 +57,9 @@ public abstract partial class SpellcastingSystem : EntitySystem
     public void OnMapInit(Entity<SpellsComponent> ent, ref MapInitEvent args)
     {
         // debug shit
-        var debug = Spawn("SpellDebug");
-        var debug2 = Spawn("SpellDebug");
-
-        InsertSpell(ent.AsNullable(), debug);
-        InsertSpell(ent.AsNullable(), debug2);
+        AddSpell(ent.AsNullable(), "SpellDebug");
+        AddSpell(ent.AsNullable(), "SpellDebug");
+        AddSpell(ent.AsNullable(), "SpellDebug");
 
         DirtyField(ent.AsNullable(), nameof(SpellsComponent.LearnedSpells));
     }
@@ -146,8 +155,6 @@ public abstract partial class SpellcastingSystem : EntitySystem
         }
 
         DirtyFields(ent, null, nameof(SpellsComponent.Slots), nameof(SpellsComponent.LearnedSpells));
-
-        // UpdateUi here...
     }
 
     /// <summary>
@@ -176,6 +183,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
             worldEv.Entity = target.Valid ? target : null;
         }
 
+        // todo: needs a proper tryperform
         _actions.PerformAction(ent.Owner, action);
     }
 
@@ -194,11 +202,33 @@ public abstract partial class SpellcastingSystem : EntitySystem
     }
 
     /// <summary>
+    /// Adds a spell to the entity's learned spells category
+    /// </summary>
+    /// <param name="ent">The entity to add the spell to</param>
+    /// <param name="spell">The spell prototype to add</param>
+    public void AddSpell(Entity<SpellsComponent?> ent, EntProtoId spell) // todo: forbid literal
+    {
+        // todo: check against AllSpells that the spell is valid
+        if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
+
+        var spellSpawn = Spawn(spell);
+        InsertSpell(ent, spellSpawn);
+
+        // if insertion failed, the spawned spell must be deleted
+        if (!ent.Comp.Container.Contains(spellSpawn))
+            PredictedQueueDel(spellSpawn);
+    }
+
+    /// <summary>
     /// Inserts a spell into the learned spells of the user
     /// </summary>
     public void InsertSpell(Entity<SpellsComponent?> ent, EntityUid spell)
     {
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
+
+        if (ent.Comp.LearnedSpells.Count >= ent.Comp.MaxLearned)
             return;
 
         if (_actions.GetAction(spell) is not { } action)
