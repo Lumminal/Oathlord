@@ -1,7 +1,7 @@
 <widgets:ManaBar
     xmlns="https://spacestation14.io"
-    xmlns:widgets="clr-namespace:Content.Oathlord.Client.UserInterface.Systems.Mana.Widgets"
-    xmlns:graphics="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
+    xmlns:widgets="using:Content.Oathlord.Client.UserInterface.Systems.Mana.Widgets"
+    xmlns:graphics="using:Robust.Client.Graphics"
     Align="Center"
     Margin="0 40">
     <BoxContainer HorizontalAlignment="Center" MinSize="180 16">

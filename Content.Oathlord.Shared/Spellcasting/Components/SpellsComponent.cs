@@ -8,29 +8,14 @@ namespace Content.Oathlord.Shared.Spellcasting.Components;
 /// Component that handles spellcasting. It holds all learned spells, and active spells.
 /// </summary>
 [RegisterComponent, NetworkedComponent]
-[AutoGenerateComponentState(fieldDeltas: true)]
+[AutoGenerateComponentState]
 public sealed partial class SpellsComponent : Component
 {
     /// <summary>
-    /// All the spells this entity has learned, and therefore will appear in the UI, so far.
-    /// Does not include active spells.
-    /// List so we can preserve order.
+    /// The current selected spell
     /// </summary>
     [DataField, AutoNetworkedField]
-    public List<EntityUid> LearnedSpells = new();
-
-    /// <summary>
-    /// The index of the current selected spell, to be used with <see cref="Slots"/>
-    /// </summary>
-    [DataField, AutoNetworkedField]
-    public int ActiveSpell;
-
-    /// <summary>
-    /// The active spell slots we have. Active spells can be activated by the user, as opposed to <see cref="LearnedSpells"/>.
-    /// Same as before, list for preserving order
-    /// </summary>
-    [DataField, AutoNetworkedField]
-    public List<EntityUid> Slots = new();
+    public int SelectedSpell;
 
     /// <summary>
     /// How many slots we currently have
@@ -44,7 +29,6 @@ public sealed partial class SpellsComponent : Component
     [DataField]
     public int MaxLearned = 10;
 
-    // todo: seperate it to different component like actions...?
     public const string ContainerId = "spells";
 
     [ViewVariables]
@@ -52,13 +36,14 @@ public sealed partial class SpellsComponent : Component
 }
 
 [ByRefEvent]
-public record struct RequestSpellTransferEvent(EntityUid Spell, SpellTransfer Type);
+public record struct RequestSpellTransferEvent(EntityUid Spell, SpellTransfer Type, bool Cancelled = false);
 
 [Serializable, NetSerializable]
-public sealed class SpellTransferEvent(NetEntity spell, SpellTransfer type) : EntityEventArgs
+public sealed class SpellTransferEvent(NetEntity spell, SpellTransfer type, bool cancelled = false) : EntityEventArgs
 {
     public NetEntity Spell = spell;
     public SpellTransfer Type = type;
+    public bool Cancelled = cancelled;
 };
 
 /// <summary>

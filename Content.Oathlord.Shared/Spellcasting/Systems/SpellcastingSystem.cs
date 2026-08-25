@@ -42,8 +42,6 @@ public abstract partial class SpellcastingSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeAllEvent<SpellTransferEvent>(OnTransfer);
-
         LoadSpells();
     }
 
@@ -53,6 +51,8 @@ public abstract partial class SpellcastingSystem : EntitySystem
         ent.Comp.Container = _container.EnsureContainer<Container>(ent, SpellsComponent.ContainerId);
     }
 
+    // todo: container deletion on shutdown
+
     [SubscribeLocalEvent]
     public void OnMapInit(Entity<SpellsComponent> ent, ref MapInitEvent args)
     {
@@ -60,10 +60,9 @@ public abstract partial class SpellcastingSystem : EntitySystem
         AddSpell(ent.AsNullable(), "SpellDebug");
         AddSpell(ent.AsNullable(), "SpellDebug");
         AddSpell(ent.AsNullable(), "SpellDebug");
-
-        DirtyField(ent.AsNullable(), nameof(SpellsComponent.LearnedSpells));
     }
 
+    [EventSubscription]
     public void OnTransfer(SpellTransferEvent msg, EntitySessionEventArgs args)
     {
         var attached = args.SenderSession.AttachedEntity;
@@ -76,6 +75,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
         if (TryTransferSpell(entity, spell, transferTo))
             return;
 
+        msg.Cancelled = true;
         _popup.PopupCursor($"You can not transfer this spell to the {transferTo.ToString()} category", entity, PopupType.MediumCaution);
     }
 
@@ -107,18 +107,23 @@ public abstract partial class SpellcastingSystem : EntitySystem
         if (!_spellQuery.HasComp(spell) || !ent.Comp.Container.Contains(spell))
             return false;
 
+        var activeSpells = GetSpells(ent, true);
+        var learnedSpells = GetSpells(ent, false);
+
         switch (spellTransferType)
         {
             case SpellTransfer.Active:
             {
-                if (ent.Comp.Slots.Contains(spell) || ent.Comp.Slots.Count >= ent.Comp.CurrentSlots)
+                if (activeSpells.Count >= ent.Comp.CurrentSlots)
                     return false;
+
                 break;
             }
             case SpellTransfer.Learned:
             {
-                if (ent.Comp.LearnedSpells.Contains(spell) || ent.Comp.LearnedSpells.Count >= ent.Comp.MaxLearned)
+                if (learnedSpells.Count >= ent.Comp.MaxLearned)
                     return false;
+
                 break;
             }
         }
@@ -142,19 +147,15 @@ public abstract partial class SpellcastingSystem : EntitySystem
         {
             case SpellTransfer.Active:
             {
-                ent.Comp.LearnedSpells.Remove(spell);
-                ent.Comp.Slots.Add(spell);
+                SetActive(spell, true);
                 break;
             }
             case SpellTransfer.Learned:
             {
-                ent.Comp.Slots.Remove(spell);
-                ent.Comp.LearnedSpells.Add(spell);
+                SetActive(spell, false);
                 break;
             }
         }
-
-        DirtyFields(ent, null, nameof(SpellsComponent.Slots), nameof(SpellsComponent.LearnedSpells));
     }
 
     /// <summary>
@@ -165,7 +166,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
             return;
 
-        var spell = GetActiveSpell(ent);
+        var spell = GetActiveSpell(ent); // todo: check if spell is actually active here
         if (_actions.GetAction(spell) is not { } action)
             return;
 
@@ -188,17 +189,20 @@ public abstract partial class SpellcastingSystem : EntitySystem
     }
 
     /// <summary>
-    /// Gets the active spell
+    /// Gets the current selected active spell of the user
     /// </summary>
     public EntityUid? GetActiveSpell(Entity<SpellsComponent?> ent)
     {
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
             return null;
 
-        if (ent.Comp.ActiveSpell >= ent.Comp.Slots.Count || ent.Comp.ActiveSpell < 0)
+        var activeSpells = GetSpells(ent, true);
+        var selectedSpell = ent.Comp.SelectedSpell;
+
+        if (selectedSpell < 0 || selectedSpell >= activeSpells.Count)
             return null;
 
-        return ent.Comp.Slots[ent.Comp.ActiveSpell];
+        return activeSpells[selectedSpell];
     }
 
     /// <summary>
@@ -228,9 +232,6 @@ public abstract partial class SpellcastingSystem : EntitySystem
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
             return;
 
-        if (ent.Comp.LearnedSpells.Count >= ent.Comp.MaxLearned)
-            return;
-
         if (_actions.GetAction(spell) is not { } action)
             return;
 
@@ -238,11 +239,44 @@ public abstract partial class SpellcastingSystem : EntitySystem
         DirtyField(action.AsNullable(), nameof(ActionComponent.AttachedEntity));
 
         _container.Insert(spell, ent.Comp.Container);
+    }
 
-        Log.Info("Spell inserted into the container");
+    /// <summary>
+    /// Activates a spell, making it ready to be used
+    /// </summary>
+    public void SetActive(Entity<SpellComponent?> ent, bool active)
+    {
+        if (!_spellQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
 
-        ent.Comp.LearnedSpells.Add(spell);
-        DirtyField(ent, nameof(SpellsComponent.LearnedSpells));
+        ent.Comp.Active = active;
+        Dirty(ent);
+    }
+
+    /// <summary>
+    /// Gets either all learned, or all active spells of the user
+    /// </summary>
+    /// <param name="ent">The spellcaster</param>
+    /// <param name="activeOnly">If true, it will only return the active spells. If false, the learned ones only (non-active)</param>
+    /// <returns>A list containing spells based on if they are active or not</returns>
+    public List<EntityUid> GetSpells(Entity<SpellsComponent?> ent, bool activeOnly)
+    {
+        if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
+            return new List<EntityUid>();
+
+        var spells = new List<EntityUid>();
+        foreach (var spell in ent.Comp.Container.ContainedEntities)
+        {
+            if (!_spellQuery.TryComp(spell, out var spellComp))
+                continue;
+
+            if (spellComp.Active != activeOnly)
+                continue;
+
+            spells.Add(spell);
+        }
+
+        return spells;
     }
 
     #endregion

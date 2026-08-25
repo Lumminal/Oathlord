@@ -1,5 +1,6 @@
 ﻿using Content.Client.Gameplay;
 using Content.Client.UserInterface.Systems.Gameplay;
+using Content.Oathlord.Client.Spellcasting;
 using Content.Oathlord.Client.UserInterface.Systems.Spells.Controls;
 using Content.Oathlord.Client.UserInterface.Systems.Spells.Widgets;
 using Content.Oathlord.Client.UserInterface.Systems.Spells.Windows;
@@ -18,6 +19,7 @@ namespace Content.Oathlord.Client.UserInterface.Systems.Spells;
 public sealed partial class SpellsUIController : UIController, IOnStateEntered<GameplayState>, IOnStateExited<GameplayState>
 {
     [Dependency] private IPlayerManager _player = default!;
+    [UISystemDependency] private readonly ClientSpellcastingSystem _spellcasting = default!;
 
     private EntityQuery<SpellsComponent> _spellsQuery = default!;
 
@@ -96,30 +98,10 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
         var activeSpellContainer = _window.ActiveSpellsContainer;
 
         SetupSpells(learnedSpellContainer, maxLearned);
-        SetupSpells(activeSpellContainer, currentSlots, true);
-        foreach (var learnedSpell in spells.LearnedSpells)
-        {
-            foreach (var learnedSpellSlot in learnedSpellContainer.Children)
-            {
-                if (learnedSpellSlot is not SpellSlot spellSlot || spellSlot.Spell != null)
-                    continue;
+        SetupSpells(activeSpellContainer, currentSlots, active: true);
 
-                spellSlot.AddSpell(learnedSpell);
-                break;
-            }
-        }
-
-        foreach (var activeSpell in spells.Slots)
-        {
-            foreach (var activeSpellSlot in activeSpellContainer.Children)
-            {
-                if (activeSpellSlot is not SpellSlot spellSlot || spellSlot.Spell != null)
-                    continue;
-
-                spellSlot.AddSpell(activeSpell);
-                break;
-            }
-        }
+        AddSpellsToContainers(learnedSpellContainer, player, active: false);
+        AddSpellsToContainers(activeSpellContainer, player, active: true);
     }
 
     private void ToggleWindow()
@@ -151,6 +133,22 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
             parent.AddChild(spell);
 
             spell.SpellTexButton.OnPressed += _ => SpellTexButtonOnOnPressed(spell);
+        }
+    }
+
+    private void AddSpellsToContainers(Control container, EntityUid user, bool active)
+    {
+        var spells = _spellcasting.GetSpells(user, active);
+        foreach (var spell in spells)
+        {
+            foreach (var spellControl in container.Children)
+            {
+                if (spellControl is not SpellSlot spellSlot || spellSlot.Spell != null)
+                    continue;
+
+                spellSlot.AddSpell(spell);
+                break;
+            }
         }
     }
 
@@ -196,10 +194,15 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
         if (selected is not { } selectedSlot)
             return;
 
+        var ev = new RequestSpellTransferEvent(fromSpell, type);
+        EntityManager.EventBus.RaiseLocalEvent(player, ref ev);
+        if (ev.Cancelled)
+            return;
+
         selectedSlot.AddSpell(fromSpell);
         from.RemoveSpell();
 
-        var ev = new RequestSpellTransferEvent(fromSpell, type);
-        EntityManager.EventBus.RaiseLocalEvent(player, ref ev);
+        var selectedSpell = _spellcasting.ActiveSelectedSpell;
+        UI?.UpdateSpellWidget(selectedSpell); // temporary..?
     }
 }
