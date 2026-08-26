@@ -29,9 +29,4 @@ public sealed partial class ClientSpellcastingSystem : SpellcastingSystem
 
         args.Cancelled = true;
     }
-
-    public void RequestActiveSpell()
-    {
-
-    }
 }

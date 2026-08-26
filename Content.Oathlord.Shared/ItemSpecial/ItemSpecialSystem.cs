@@ -63,7 +63,7 @@ public sealed partial class ItemSpecialSystem : EntitySystem
         if (TerminatingOrDeleted(user) || TerminatingOrDeleted(used))
             return;
 
-        var ev = new ItemSpecialEvent(user, coords, target);
+        var ev = new ItemSpecialEvent(user, coords, target.Valid ? target : null);
         RaiseLocalEvent(used, ref ev);
     }
 
@@ -74,4 +74,4 @@ public sealed partial class ItemSpecialSystem : EntitySystem
 /// Raised on the item when the user triggers the keybind for doing an item special
 /// </summary>
 [ByRefEvent]
-public record struct ItemSpecialEvent(EntityUid User, EntityCoordinates Coords, EntityUid Target);
+public record struct ItemSpecialEvent(EntityUid User, EntityCoordinates Coords, EntityUid? Target);

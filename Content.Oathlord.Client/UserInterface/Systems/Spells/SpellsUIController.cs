@@ -203,6 +203,6 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
         from.RemoveSpell();
 
         var selectedSpell = _spellcasting.ActiveSelectedSpell;
-        UI?.UpdateSpellWidget(selectedSpell); // temporary..?
+        UI?.UpdateSpellWidget(selectedSpell);
     }
 }

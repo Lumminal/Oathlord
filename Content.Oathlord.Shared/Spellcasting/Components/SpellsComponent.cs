@@ -31,13 +31,23 @@ public sealed partial class SpellsComponent : Component
 
     public const string ContainerId = "spells";
 
+    /// <summary>
+    /// Container that holds all spells on the entity
+    /// </summary>
     [ViewVariables]
     public Container Container = default!;
 }
 
+/// <summary>
+/// Raised before transferring a spell from learned to active, or vice-versa
+/// </summary>
+/// <param name="Spell">The spell to transfer</param>
+/// <param name="Type">What transfer is it</param>
+/// <param name="Cancelled">Whether the transfer was cancelled</param>
 [ByRefEvent]
 public record struct RequestSpellTransferEvent(EntityUid Spell, SpellTransfer Type, bool Cancelled = false);
 
+/// <inheritdoc cref="RequestSpellTransferEvent"/>
 [Serializable, NetSerializable]
 public sealed class SpellTransferEvent(NetEntity spell, SpellTransfer type, bool cancelled = false) : EntityEventArgs
 {

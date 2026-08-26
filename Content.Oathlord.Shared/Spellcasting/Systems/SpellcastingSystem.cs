@@ -5,6 +5,7 @@ using Content.Shared.Popups;
 using Robust.Shared.Containers;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Timing;
 
 namespace Content.Oathlord.Shared.Spellcasting.Systems;
 
@@ -24,6 +25,7 @@ namespace Content.Oathlord.Shared.Spellcasting.Systems;
 /// </summary>
 public abstract partial class SpellcastingSystem : EntitySystem
 {
+    [Dependency] private IGameTiming _timing = default!;
     [Dependency] private SharedContainerSystem _container = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedActionsSystem _actions = default!;
@@ -51,15 +53,24 @@ public abstract partial class SpellcastingSystem : EntitySystem
         ent.Comp.Container = _container.EnsureContainer<Container>(ent, SpellsComponent.ContainerId);
     }
 
-    // todo: container deletion on shutdown
+    [SubscribeLocalEvent]
+    public void OnShutdown(Entity<SpellsComponent> ent, ref ComponentShutdown args)
+    {
+        if (_timing.ApplyingState && ent.Comp.NetSyncEnabled)
+            return;
+
+        _container.ShutdownContainer(ent.Comp.Container);
+    }
+
+    // todo: mindadded and mindremoved support for spells
 
     [SubscribeLocalEvent]
     public void OnMapInit(Entity<SpellsComponent> ent, ref MapInitEvent args)
     {
         // debug shit
         AddSpell(ent.AsNullable(), "SpellDebug");
-        AddSpell(ent.AsNullable(), "SpellDebug");
-        AddSpell(ent.AsNullable(), "SpellDebug");
+        AddSpell(ent.AsNullable(), "SpellDebug2");
+        AddSpell(ent.AsNullable(), "SpellDebug3");
     }
 
     [EventSubscription]
@@ -159,33 +170,18 @@ public abstract partial class SpellcastingSystem : EntitySystem
     }
 
     /// <summary>
-    /// Casts the active spell
+    /// Casts the active selected spell of the entity
     /// </summary>
-    public void CastSpell(Entity<SpellsComponent?> ent, EntityUid target, EntityCoordinates coords)
+    public void CastSpell(Entity<SpellsComponent?> ent, EntityUid? target, EntityCoordinates coords)
     {
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
             return;
 
-        var spell = GetActiveSpell(ent); // todo: check if spell is actually active here
-        if (_actions.GetAction(spell) is not { } action)
+        if (GetActiveSpell(ent) is not { } spellEntity || !IsValid(spellEntity) )
             return;
 
-        // This function is usually called by item special (because that's how you cast spells)
-        // Item special has a PointerInputCmdHandler, which returns an entity.
-        // Although that entity is not null, it can be invalid (meaning its id is 0).
-        // todo: make it nullable instead?
-        if (target.Valid)
-            _actions.SetEventTarget(action, target);
-
-        // for world actions, we have to set the coordinates manually
-        if (_worldActionQuery.TryComp(action, out var worldAction) && worldAction.Event is { } worldEv)
-        {
-            worldEv.Target = coords;
-            worldEv.Entity = target.Valid ? target : null;
-        }
-
-        // todo: needs a proper tryperform
-        _actions.PerformAction(ent.Owner, action);
+        // this method is pure hell due to actions being hardcoded, but is simple, small and works. I cbf to fix action ancientcode
+        _actions.PerformSpellAction(ent, spellEntity, target, coords);
     }
 
     /// <summary>
@@ -210,18 +206,29 @@ public abstract partial class SpellcastingSystem : EntitySystem
     /// </summary>
     /// <param name="ent">The entity to add the spell to</param>
     /// <param name="spell">The spell prototype to add</param>
-    public void AddSpell(Entity<SpellsComponent?> ent, EntProtoId spell) // todo: forbid literal
+    /// <param name="force">Whether to add the spell, without checking whether we already have it</param>
+    /// <returns>The spell entity</returns>
+    public EntityUid? AddSpell(Entity<SpellsComponent?> ent, EntProtoId spell, bool force = false) // todo: forbid literal
     {
         // todo: check against AllSpells that the spell is valid
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
-            return;
+            return null;
+
+        // todo: spells with charges should add to the charges of an existing spell...!!
+        if (!force && HasSpell(ent, spell))
+            return null;
 
         var spellSpawn = Spawn(spell);
         InsertSpell(ent, spellSpawn);
 
         // if insertion failed, the spawned spell must be deleted
         if (!ent.Comp.Container.Contains(spellSpawn))
+        {
             PredictedQueueDel(spellSpawn);
+            return null;
+        }
+
+        return spellSpawn;
     }
 
     /// <summary>
@@ -254,6 +261,18 @@ public abstract partial class SpellcastingSystem : EntitySystem
     }
 
     /// <summary>
+    /// Checks whether the spell is valid,
+    /// usually that means it should have its <see cref="SpellComponent.Active"/> property set to true
+    /// </summary>
+    public bool IsValid(Entity<SpellComponent?> ent)
+    {
+        if (!_spellQuery.Resolve(ent.Owner, ref ent.Comp))
+            return false;
+
+        return ent.Comp.Active;
+    }
+
+    /// <summary>
     /// Gets either all learned, or all active spells of the user
     /// </summary>
     /// <param name="ent">The spellcaster</param>
@@ -277,6 +296,26 @@ public abstract partial class SpellcastingSystem : EntitySystem
         }
 
         return spells;
+    }
+
+    /// <summary>
+    /// Checks whether we have own a specific spell
+    /// </summary>
+    /// <param name="ent">The spellcaster</param>
+    /// <param name="spellProto">The protoype to check against</param>
+    /// <returns>True if we have the spell in our container, false otherwise</returns>
+    public bool HasSpell(Entity<SpellsComponent?> ent, [ForbidLiteral] EntProtoId spellProto)
+    {
+        if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
+            return false;
+
+        foreach (var spell in ent.Comp.Container.ContainedEntities)
+        {
+            if (Prototype(spell) is { } spellEntityProto && spellEntityProto == spellProto)
+                return true;
+        }
+
+        return false;
     }
 
     #endregion
