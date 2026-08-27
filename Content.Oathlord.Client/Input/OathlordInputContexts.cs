@@ -12,5 +12,7 @@ public static class OathlordInputContexts
 
         var human = contexts.GetContext("human");
         human.AddFunction(OathlordKeyFunctions.SpecialItemAction);
+        human.AddFunction(OathlordKeyFunctions.MoveSpellDown);
+        human.AddFunction(OathlordKeyFunctions.MoveSpellUp);
     }
 }

@@ -43,7 +43,7 @@ public sealed partial class OathlordScreenUIController : UIController
         _manaBar = null;
         _spellsButton = null;
 
-        _spells.UnloadButton();
+        _spells.UnloadGui();
 
         switch (UIManager.ActiveScreen)
         {
@@ -74,7 +74,7 @@ public sealed partial class OathlordScreenUIController : UIController
         // because the UI controllers usually request the active widget, which may not exist at that time.
         //
         // e.g. You can't click a button widget because ui controller couldn't register the event handler bcuz it was null at that time
-        _spells.LoadButton();
+        _spells.LoadGui();
     }
 
     #region Widget Setup

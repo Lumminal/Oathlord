@@ -10,4 +10,6 @@ public static class OathlordKeyFunctions
 
     // Spellcasting
     public static readonly BoundKeyFunction OpenSpellsMenu = "OpenSpellsMenu";
+    public static readonly BoundKeyFunction MoveSpellUp = "MoveSpellUp";
+    public static readonly BoundKeyFunction MoveSpellDown = "MoveSpellDown";
 }

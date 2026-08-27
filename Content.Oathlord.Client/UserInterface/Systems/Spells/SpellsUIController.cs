@@ -16,7 +16,7 @@ using Robust.Shared.Input.Binding;
 namespace Content.Oathlord.Client.UserInterface.Systems.Spells;
 
 [UsedImplicitly]
-public sealed partial class SpellsUIController : UIController, IOnStateEntered<GameplayState>, IOnStateExited<GameplayState>
+public sealed partial class SpellsUIController : UIController, IOnStateEntered<GameplayState>, IOnStateExited<GameplayState>, IOnSystemChanged<ClientSpellcastingSystem>
 {
     [Dependency] private IPlayerManager _player = default!;
     [UISystemDependency] private readonly ClientSpellcastingSystem _spellcasting = default!;
@@ -61,11 +61,11 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
         _spellsQuery = EntityManager.GetEntityQuery<SpellsComponent>();
 
         var gameplayStateLoad = UIManager.GetUIController<GameplayStateLoadController>();
-        gameplayStateLoad.OnScreenLoad += LoadButton;
-        gameplayStateLoad.OnScreenUnload += UnloadButton;
+        gameplayStateLoad.OnScreenLoad += LoadGui;
+        gameplayStateLoad.OnScreenUnload += UnloadGui;
     }
 
-    public void LoadButton()
+    public void LoadGui()
     {
         if (UI == null)
             return;
@@ -73,12 +73,31 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
         UI.OpenSpellsButton.OnPressed += SpellsButtonOnOnPressed;
     }
 
-    public void UnloadButton()
+    public void UnloadGui()
     {
         if (UI == null)
             return;
 
         UI.OpenSpellsButton.OnPressed -= SpellsButtonOnOnPressed;
+    }
+
+    public void OnSystemLoaded(ClientSpellcastingSystem system)
+    {
+        system.SelectedSpellChanged += OnSelectedSpellChanged;
+    }
+
+    public void OnSystemUnloaded(ClientSpellcastingSystem system)
+    {
+        system.SelectedSpellChanged -= OnSelectedSpellChanged;
+    }
+
+    private void OnSelectedSpellChanged(object? sender, int spellIndex)
+    {
+        if (UI == null || _player.LocalEntity is not { } player)
+            return;
+
+        var activeSpell = _spellcasting.GetActiveSpell(player);
+        UI.UpdateSpellWidget(activeSpell);
     }
 
     private void SpellsButtonOnOnPressed(BaseButton.ButtonEventArgs obj)
@@ -195,7 +214,7 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
             return;
 
         var ev = new RequestSpellTransferEvent(fromSpell, type);
-        EntityManager.EventBus.RaiseLocalEvent(player, ref ev);
+        EntityManager.EventBus.RaiseLocalEvent(player, ref ev); // todo: raise predictive instantly from here...?
         if (ev.Cancelled)
             return;
 

@@ -191,6 +191,8 @@ namespace Content.Client.Options.UI.Tabs
             // </Oathlord>
             AddButton(OathlordKeyFunctions.SpecialItemAction);
             AddButton(OathlordKeyFunctions.OpenSpellsMenu);
+            AddButton(OathlordKeyFunctions.MoveSpellUp);
+            AddButton(OathlordKeyFunctions.MoveSpellDown);
             // <Oathlord>
             AddButton(ContentKeyFunctions.Drop);
             AddButton(ContentKeyFunctions.ExamineEntity);

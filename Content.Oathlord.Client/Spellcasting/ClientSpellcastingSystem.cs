@@ -8,6 +8,8 @@ public sealed partial class ClientSpellcastingSystem : SpellcastingSystem
 {
     [Dependency] private IPlayerManager _player = default!;
 
+    public event EventHandler<int>? SelectedSpellChanged;
+
     public EntityUid? ActiveSelectedSpell
     {
         get
@@ -28,5 +30,14 @@ public sealed partial class ClientSpellcastingSystem : SpellcastingSystem
             return;
 
         args.Cancelled = true;
+    }
+
+    protected override void UpdateUi(Entity<SpellsComponent> ent)
+    {
+        base.UpdateUi(ent);
+
+        Log.Info("Updating spell UI");
+
+        SelectedSpellChanged?.Invoke(this, ent.Comp.SelectedSpell);
     }
 }

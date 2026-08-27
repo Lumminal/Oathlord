@@ -13,12 +13,13 @@ public sealed partial class SpellsComponent : Component
 {
     /// <summary>
     /// The current selected spell
+    /// It is an index pointing at <see cref="Container.ContainedEntities"/>
     /// </summary>
     [DataField, AutoNetworkedField]
     public int SelectedSpell;
 
     /// <summary>
-    /// How many slots we currently have
+    /// How many active slots we currently have
     /// </summary>
     [DataField]
     public int CurrentSlots = 2;
@@ -57,12 +58,20 @@ public sealed class SpellTransferEvent(NetEntity spell, SpellTransfer type, bool
 };
 
 /// <summary>
-/// We know there's 2 types of categories in our spellcasting UI. The learned spells, and the active spells.
-/// This enum exists to help with transferring from one category to another.
+/// Spell users have 2 categories, learned spells and active spells.
+/// Transferring spells is done between those categories.
 /// </summary>
+/// <remarks>https://www.teamten.com/lawrence/programming/prefer-enums-over-booleans.html</remarks>
 [NetSerializable, Serializable]
 public enum SpellTransfer : byte
 {
     Learned,
     Active,
+}
+
+[NetSerializable, Serializable]
+public enum SpellMove : byte
+{
+    Up,
+    Down,
 }

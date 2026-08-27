@@ -8,6 +8,13 @@ binds:
 - function: OpenSpellsMenu
   type: State
   key: L
+- function: MoveSpellUp
+  type: State
+  key: PageUp
+- function: MoveSpellDown
+  type: State
+  key: PageDown
+  priority: -1 # text takes priority
 # </Oathlrod>
 - function: UIClick
   type: State

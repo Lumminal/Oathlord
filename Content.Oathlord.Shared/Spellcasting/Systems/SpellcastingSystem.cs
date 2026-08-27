@@ -1,9 +1,12 @@
-﻿using Content.Oathlord.Shared.Spellcasting.Components;
+﻿using Content.Oathlord.Common.Input;
+using Content.Oathlord.Shared.Spellcasting.Components;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
 using Content.Shared.Popups;
 using Robust.Shared.Containers;
+using Robust.Shared.Input.Binding;
 using Robust.Shared.Map;
+using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
@@ -32,7 +35,6 @@ public abstract partial class SpellcastingSystem : EntitySystem
 
     [Dependency] private EntityQuery<SpellsComponent> _spellsQuery = default!;
     [Dependency] private EntityQuery<SpellComponent> _spellQuery = default!;
-    [Dependency] private EntityQuery<WorldTargetActionComponent> _worldActionQuery = default!;
 
     /// <summary>
     /// List of every spell prototype loaded in the game
@@ -44,8 +46,29 @@ public abstract partial class SpellcastingSystem : EntitySystem
     {
         base.Initialize();
 
+        CommandBinds.Builder
+            .Bind(OathlordKeyFunctions.MoveSpellDown, InputCmdHandler.FromDelegate(HandleMoveSpellDown, handle: false, outsidePrediction: false))
+            .Bind(OathlordKeyFunctions.MoveSpellUp, InputCmdHandler.FromDelegate(HandleMoveSpellUp, handle: false, outsidePrediction: false))
+            .Register<SpellcastingSystem>();
+
         LoadSpells();
     }
+
+    #region Command Binds
+
+    private void HandleMoveSpellDown(ICommonSession? session)
+    {
+        MoveSelectedSpell(session, SpellMove.Down);
+    }
+
+    private void HandleMoveSpellUp(ICommonSession? session)
+    {
+        MoveSelectedSpell(session, SpellMove.Up);
+    }
+
+    #endregion
+
+    #region Event Handlers
 
     [SubscribeLocalEvent]
     public void OnCompInit(Entity<SpellsComponent> ent, ref ComponentInit args)
@@ -99,12 +122,12 @@ public abstract partial class SpellcastingSystem : EntitySystem
         LoadSpells();
     }
 
+    #endregion
+
     #region Public API
 
     /// <summary>
     /// Tries to transfer a spell from one category to another.
-    ///
-    /// You probably shouldn't be using this, as it's for UI purposes mostly, but don't tell me I didn't warn you
     /// </summary>
     /// <param name="ent">The spellcaster</param>
     /// <param name="spell">The spell to transfer</param>
@@ -118,8 +141,8 @@ public abstract partial class SpellcastingSystem : EntitySystem
         if (!_spellQuery.HasComp(spell) || !ent.Comp.Container.Contains(spell))
             return false;
 
-        var activeSpells = GetSpells(ent, true);
-        var learnedSpells = GetSpells(ent, false);
+        var activeSpells = GetSpells(ent, activeOnly: true);
+        var learnedSpells = GetSpells(ent, activeOnly: false);
 
         switch (spellTransferType)
         {
@@ -154,19 +177,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
             return;
 
-        switch (spellTransferType)
-        {
-            case SpellTransfer.Active:
-            {
-                SetActive(spell, true);
-                break;
-            }
-            case SpellTransfer.Learned:
-            {
-                SetActive(spell, false);
-                break;
-            }
-        }
+        SetActive(spell, active: spellTransferType == SpellTransfer.Active);
     }
 
     /// <summary>
@@ -177,7 +188,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
             return;
 
-        if (GetActiveSpell(ent) is not { } spellEntity || !IsValid(spellEntity) )
+        if (GetActiveSpell(ent) is not { } spellEntity || !IsValid(spellEntity))
             return;
 
         // this method is pure hell due to actions being hardcoded, but is simple, small and works. I cbf to fix action ancientcode
@@ -207,12 +218,17 @@ public abstract partial class SpellcastingSystem : EntitySystem
     /// <param name="ent">The entity to add the spell to</param>
     /// <param name="spell">The spell prototype to add</param>
     /// <param name="force">Whether to add the spell, without checking whether we already have it</param>
-    /// <returns>The spell entity</returns>
+    /// <returns>The spell entity that was made, null if insertion failed</returns>
     public EntityUid? AddSpell(Entity<SpellsComponent?> ent, EntProtoId spell, bool force = false) // todo: forbid literal
     {
-        // todo: check against AllSpells that the spell is valid
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
             return null;
+
+        if (!AllSpells.Contains(spell))
+        {
+            Log.Error($"No spell prototype found for: {spell}");
+            return null;
+        }
 
         // todo: spells with charges should add to the charges of an existing spell...!!
         if (!force && HasSpell(ent, spell))
@@ -318,6 +334,49 @@ public abstract partial class SpellcastingSystem : EntitySystem
         return false;
     }
 
+    /// <summary>
+    /// Moves the entity's selected spell index by 1
+    /// </summary>
+    /// <param name="ent">The spellcaster</param>
+    /// <param name="moveType">Do we want to move the index up, or down</param>
+    public void MoveSelectedSpell(Entity<SpellsComponent?> ent, SpellMove moveType)
+    {
+        if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
+
+        var currentSpell = ent.Comp.SelectedSpell;
+        var activeSpells = GetSpells(ent, activeOnly: true);
+        if (activeSpells.Count == 0)
+            return;
+
+        switch (moveType)
+        {
+            case SpellMove.Up:
+            {
+                // reset to 0 if index out of range, otherwise count up
+                currentSpell = currentSpell + 1 >= activeSpells.Count ? 0 : currentSpell + 1;
+                break;
+            }
+            case SpellMove.Down:
+            {
+                // reset to highest index if index out of range, otherwise count down
+                currentSpell = currentSpell - 1 < 0 ? activeSpells.Count - 1 : currentSpell - 1;
+                break;
+            }
+        }
+
+        ent.Comp.SelectedSpell = currentSpell;
+        Dirty(ent);
+
+        UpdateUi((ent.Owner, ent.Comp));
+    }
+
+    #endregion
+
+    #region Virtual
+
+    protected virtual void UpdateUi(Entity<SpellsComponent> ent) { }
+
     #endregion
 
     private void LoadSpells()
@@ -327,10 +386,21 @@ public abstract partial class SpellcastingSystem : EntitySystem
         foreach (var proto in ProtoMan.EnumeratePrototypes<EntityPrototype>())
         {
             if (!proto.HasComp(name))
-                return;
+                continue;
 
             var id = proto.ID;
             AllSpells.Add(id);
         }
+    }
+
+    private void MoveSelectedSpell(ICommonSession? session, SpellMove moveType)
+    {
+        if (session is not { } playerSession)
+            return;
+
+        if (playerSession.AttachedEntity is not { Valid: true } uid || !Exists(uid))
+            return;
+
+        MoveSelectedSpell(uid, moveType);
     }
 }
