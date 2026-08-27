@@ -1,16 +1,10 @@
 ﻿<widgets:SpellsButton
     xmlns="https://spacestation14.io"
     xmlns:widgets="using:Content.Oathlord.Client.UserInterface.Systems.Spells.Widgets"
-    xmlns:graphics="using:Robust.Client.Graphics"
-    MinSize="64 64">
+    xmlns:controls="using:Content.Oathlord.Client.UserInterface.Systems.Spells.Controls"
+    MinSize="48 64">
     <BoxContainer Orientation="Vertical" HorizontalExpand="True" Align="Center" VerticalExpand="True">
         <Label Text="Spells" Margin="0 16" Align="Center"/>
-        <PanelContainer VerticalExpand="True" HorizontalExpand="True" MinSize="64 64">
-            <PanelContainer.PanelOverride>
-                <graphics:StyleBoxFlat BackgroundColor="#7393B3"></graphics:StyleBoxFlat>
-            </PanelContainer.PanelOverride>
-
-            <TextureButton Name="OpenSpellsButton" Access="Public"/>
-        </PanelContainer>
+        <controls:SpellSlot Name="SelectedSpellSlot" Access="Public"/>
     </BoxContainer>
 </widgets:SpellsButton>

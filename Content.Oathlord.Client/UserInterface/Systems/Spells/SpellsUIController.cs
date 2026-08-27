@@ -70,7 +70,7 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
         if (UI == null)
             return;
 
-        UI.OpenSpellsButton.OnPressed += SpellsButtonOnOnPressed;
+        UI.SelectedSpellSlot.SpellTexButton.OnPressed += SpellsButtonOnOnPressed;
     }
 
     public void UnloadGui()
@@ -78,7 +78,7 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
         if (UI == null)
             return;
 
-        UI.OpenSpellsButton.OnPressed -= SpellsButtonOnOnPressed;
+        UI.SelectedSpellSlot.SpellTexButton.OnPressed -= SpellsButtonOnOnPressed;
     }
 
     public void OnSystemLoaded(ClientSpellcastingSystem system)
@@ -127,8 +127,6 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
     {
         if (_window == null)
             return;
-
-        UI?.OpenSpellsButton.SetClickPressed(!_window.IsOpen);
 
         if (_window.IsOpen)
         {
@@ -220,8 +218,5 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
 
         selectedSlot.AddSpell(fromSpell);
         from.RemoveSpell();
-
-        var selectedSpell = _spellcasting.ActiveSelectedSpell;
-        UI?.UpdateSpellWidget(selectedSpell);
     }
 }

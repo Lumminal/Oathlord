@@ -22,7 +22,7 @@ public sealed partial class SpellsComponent : Component
     /// How many active slots we currently have
     /// </summary>
     [DataField]
-    public int CurrentSlots = 2;
+    public int CurrentSlots = 3;
 
     /// <summary>
     /// How many learned slots we are allowed to have

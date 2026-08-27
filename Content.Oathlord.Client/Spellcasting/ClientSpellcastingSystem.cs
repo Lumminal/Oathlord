@@ -36,8 +36,6 @@ public sealed partial class ClientSpellcastingSystem : SpellcastingSystem
     {
         base.UpdateUi(ent);
 
-        Log.Info("Updating spell UI");
-
         SelectedSpellChanged?.Invoke(this, ent.Comp.SelectedSpell);
     }
 }

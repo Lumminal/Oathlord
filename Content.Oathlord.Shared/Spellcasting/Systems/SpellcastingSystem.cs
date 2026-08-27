@@ -158,6 +158,8 @@ public abstract partial class SpellcastingSystem : EntitySystem
                 if (learnedSpells.Count >= ent.Comp.MaxLearned)
                     return false;
 
+                ent.Comp.SelectedSpell = 0;
+                Dirty(ent);
                 break;
             }
         }
@@ -178,6 +180,8 @@ public abstract partial class SpellcastingSystem : EntitySystem
             return;
 
         SetActive(spell, active: spellTransferType == SpellTransfer.Active);
+
+        UpdateUi((ent.Owner, ent.Comp));
     }
 
     /// <summary>
@@ -203,7 +207,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
             return null;
 
-        var activeSpells = GetSpells(ent, true);
+        var activeSpells = GetSpells(ent, activeOnly: true);
         var selectedSpell = ent.Comp.SelectedSpell;
 
         if (selectedSpell < 0 || selectedSpell >= activeSpells.Count)
