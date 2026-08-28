@@ -1,4 +1,5 @@
-﻿using Robust.Shared.Containers;
+﻿using Content.Oathlord.Shared.Spellcasting.Systems;
+using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
 using Robust.Shared.Serialization;
 
@@ -7,7 +8,7 @@ namespace Content.Oathlord.Shared.Spellcasting.Components;
 /// <summary>
 /// Component that handles spellcasting. It holds all learned spells, and active spells.
 /// </summary>
-[RegisterComponent, NetworkedComponent]
+[RegisterComponent, NetworkedComponent, Access(typeof(SpellcastingSystem))]
 [AutoGenerateComponentState]
 public sealed partial class SpellsComponent : Component
 {

@@ -1,4 +1,5 @@
 ﻿using Content.Oathlord.Shared.Spellcasting.Prototypes;
+using Content.Oathlord.Shared.Spellcasting.Systems;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -7,7 +8,7 @@ namespace Content.Oathlord.Shared.Spellcasting.Components;
 /// <summary>
 /// Component used on actions to mark it as a spell
 /// </summary>
-[RegisterComponent, NetworkedComponent]
+[RegisterComponent, NetworkedComponent, Access(typeof(SpellcastingSystem))]
 [AutoGenerateComponentState]
 public sealed partial class SpellComponent : Component
 {

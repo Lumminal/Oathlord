@@ -1,6 +1,7 @@
 ﻿using Content.Oathlord.Shared.Spellcasting.Components;
 using Content.Oathlord.Shared.Spellcasting.Systems;
 using Robust.Client.Player;
+using Robust.Shared.Player;
 
 namespace Content.Oathlord.Client.Spellcasting;
 
@@ -10,6 +11,8 @@ public sealed partial class ClientSpellcastingSystem : SpellcastingSystem
 
     public event EventHandler<int>? SelectedSpellChanged;
     public event EventHandler? UpdateSpellWindow;
+    public event EventHandler? DisableSpells;
+    public event EventHandler? EnableSpells;
 
     public EntityUid? ActiveSelectedSpell
     {
@@ -20,6 +23,19 @@ public sealed partial class ClientSpellcastingSystem : SpellcastingSystem
                 ? GetActiveSpell(player)
                 : null;
         }
+    }
+
+    [SubscribeLocalEvent]
+    public void OnAttached(Entity<SpellsComponent> ent, ref LocalPlayerAttachedEvent args)
+    {
+        if (_player.LocalEntity == ent.Owner)
+            EnableSpells?.Invoke(this, EventArgs.Empty);
+    }
+
+    [SubscribeLocalEvent]
+    public void OnDetached(Entity<SpellsComponent> ent, ref LocalPlayerDetachedEvent args)
+    {
+        DisableSpells?.Invoke(this, EventArgs.Empty);
     }
 
     protected override void UpdateUi(Entity<SpellsComponent> ent, bool refresh = false)

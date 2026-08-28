@@ -23,6 +23,8 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
 
     private EntityQuery<SpellsComponent> _spellsQuery = default!;
 
+    private bool _canUseSpells = true;
+
     private SpellsWindow? _window;
     private SpellsButton? UI => UIManager.GetActiveUIWidgetOrNull<SpellsButton>();
 
@@ -85,17 +87,38 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
     {
         system.SelectedSpellChanged += OnSelectedSpellChanged;
         system.UpdateSpellWindow += SystemOnUpdateSpellWindow;
+        system.EnableSpells += SystemOnEnableSpells;
+        system.DisableSpells += SystemOnDisableSpells;
     }
 
     public void OnSystemUnloaded(ClientSpellcastingSystem system)
     {
         system.SelectedSpellChanged -= OnSelectedSpellChanged;
         system.UpdateSpellWindow -= SystemOnUpdateSpellWindow;
+        system.EnableSpells -= SystemOnEnableSpells;
+        system.DisableSpells -= SystemOnDisableSpells;
     }
 
     private void SystemOnUpdateSpellWindow(object? sender, EventArgs e)
     {
         UpdateWindow();
+    }
+
+    private void SystemOnEnableSpells(object? sender, EventArgs e)
+    {
+        UI?.Visible = true;
+        _canUseSpells = true;
+        UpdateWindow();
+
+        Log.Info("Is this even getting run 2?");
+    }
+
+    private void SystemOnDisableSpells(object? sender, EventArgs e)
+    {
+        UI?.Visible = false;
+        _canUseSpells = false;
+
+        Log.Info("Is this even getting run?");
     }
 
     private void OnSelectedSpellChanged(object? sender, int spellIndex)
@@ -131,7 +154,7 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
 
     private void ToggleWindow()
     {
-        if (_window == null)
+        if (!_canUseSpells || _window == null)
             return;
 
         if (_window.IsOpen)

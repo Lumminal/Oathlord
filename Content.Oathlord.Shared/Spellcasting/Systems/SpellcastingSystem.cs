@@ -315,6 +315,19 @@ public abstract partial class SpellcastingSystem : EntitySystem
     }
 
     /// <summary>
+    /// Deletes a spell from the user
+    /// </summary>
+    /// <param name="ent">The entity</param>
+    /// <param name="spell">The spell to remove</param>
+    public void RemoveSpell(Entity<SpellsComponent?> ent, EntityUid spell)
+    {
+        if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp) || !ent.Comp.Container.Contains(spell))
+            return;
+
+        PredictedQueueDel(spell);
+    }
+
+    /// <summary>
     /// Gets the first instance of a spell
     /// </summary>
     /// <param name="ent">The entity</param>
