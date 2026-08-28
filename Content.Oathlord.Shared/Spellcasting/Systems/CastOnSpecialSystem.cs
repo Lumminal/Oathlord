@@ -10,6 +10,6 @@ public sealed partial class CastOnSpecialSystem : EntitySystem
     [SubscribeLocalEvent]
     public void OnItemSpecial(Entity<CastOnSpecialComponent> ent, ref ItemSpecialEvent args)
     {
-        _spellcasting.CastSpell(args.User, args.Target, args.Coords);
+        _spellcasting.CastSpell(args.User, ent, args.Target, args.Coords);
     }
 };

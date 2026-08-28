@@ -1,4 +1,6 @@
-﻿using Robust.Shared.GameStates;
+﻿using Content.Oathlord.Shared.Spellcasting.Prototypes;
+using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 
 namespace Content.Oathlord.Shared.Spellcasting.Components;
 
@@ -14,4 +16,11 @@ public sealed partial class SpellComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public bool Active;
+
+    /// <summary>
+    /// What type of spell is this?
+    /// If it's not set, any entity that can cast spells will be able to cast this spell
+    /// </summary>
+    [DataField]
+    public List<ProtoId<SpellTypePrototype>> Types = new();
 };

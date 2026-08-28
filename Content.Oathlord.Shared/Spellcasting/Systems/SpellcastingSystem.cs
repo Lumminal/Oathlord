@@ -2,6 +2,7 @@
 using Content.Oathlord.Shared.Spellcasting.Components;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
+using Content.Shared.Mind.Components;
 using Content.Shared.Popups;
 using Robust.Shared.Containers;
 using Robust.Shared.Input.Binding;
@@ -29,18 +30,13 @@ namespace Content.Oathlord.Shared.Spellcasting.Systems;
 public abstract partial class SpellcastingSystem : EntitySystem
 {
     [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private SpellcasterSystem _spellcaster = default!;
     [Dependency] private SharedContainerSystem _container = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedActionsSystem _actions = default!;
 
     [Dependency] private EntityQuery<SpellsComponent> _spellsQuery = default!;
     [Dependency] private EntityQuery<SpellComponent> _spellQuery = default!;
-
-    /// <summary>
-    /// List of every spell prototype loaded in the game
-    /// </summary>
-    [ViewVariables]
-    public List<EntProtoId> AllSpells = new();
 
     public override void Initialize()
     {
@@ -51,7 +47,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
             .Bind(OathlordKeyFunctions.MoveSpellUp, InputCmdHandler.FromDelegate(HandleMoveSpellUp, handle: false, outsidePrediction: false))
             .Register<SpellcastingSystem>();
 
-        LoadSpells();
+        InitializeSpells();
     }
 
     #region Command Binds
@@ -85,15 +81,12 @@ public abstract partial class SpellcastingSystem : EntitySystem
         _container.ShutdownContainer(ent.Comp.Container);
     }
 
-    // todo: mindadded and mindremoved support for spells
+    // todo: needs mind interactions
 
     [SubscribeLocalEvent]
-    public void OnMapInit(Entity<SpellsComponent> ent, ref MapInitEvent args)
+    public void OnMindRemoved(Entity<SpellsComponent> ent, ref MindRemovedMessage args)
     {
-        // debug shit
-        AddSpell(ent.AsNullable(), "SpellDebug");
-        AddSpell(ent.AsNullable(), "SpellDebug2");
-        AddSpell(ent.AsNullable(), "SpellDebug3");
+        _container.ShutdownContainer(ent.Comp.Container);
     }
 
     [EventSubscription]
@@ -110,16 +103,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
             return;
 
         msg.Cancelled = true;
-        _popup.PopupCursor($"You can not transfer this spell to the {transferTo.ToString()} category", entity, PopupType.MediumCaution);
-    }
-
-    [SubscribeLocalEvent]
-    public void OnPrototypesReload(PrototypesReloadedEventArgs args)
-    {
-        if (!args.WasModified<EntityPrototype>())
-            return;
-
-        LoadSpells();
+        _popup.PopupCursor($"You can not transfer this spell to the {transferTo.ToString().ToLower()} category", entity, PopupType.MediumCaution);
     }
 
     #endregion
@@ -129,7 +113,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
     /// <summary>
     /// Tries to transfer a spell from one category to another.
     /// </summary>
-    /// <param name="ent">The spellcaster</param>
+    /// <param name="ent">The entity</param>
     /// <param name="spell">The spell to transfer</param>
     /// <param name="spellTransferType">In which category to transfer to; either learned spells or active spells</param>
     /// <returns>False if the transferring was canceled, true otherwise</returns>
@@ -158,6 +142,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
                 if (learnedSpells.Count >= ent.Comp.MaxLearned)
                     return false;
 
+                // so things don't get fucked up, always reset the index to the first spell
                 ent.Comp.SelectedSpell = 0;
                 Dirty(ent);
                 break;
@@ -171,7 +156,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
     /// <summary>
     /// Transfers a spell from one category to another
     /// </summary>
-    /// <param name="ent">The spellcaster</param>
+    /// <param name="ent">The entity</param>
     /// <param name="spell">The spell to transfer</param>
     /// <param name="spellTransferType">In which category to transfer to; either learned spells or active spells</param>
     public void TransferSpell(Entity<SpellsComponent?> ent, EntityUid spell, SpellTransfer spellTransferType)
@@ -187,13 +172,22 @@ public abstract partial class SpellcastingSystem : EntitySystem
     /// <summary>
     /// Casts the active selected spell of the entity
     /// </summary>
-    public void CastSpell(Entity<SpellsComponent?> ent, EntityUid? target, EntityCoordinates coords)
+    /// <param name="ent">The entity</param>
+    /// <param name="used">What was used to cast this spell</param>
+    /// <param name="target">The target of this spell, if null there was no target</param>
+    /// <param name="coords">The click coordinates of the special interaction</param>
+    public void CastSpell(Entity<SpellsComponent?> ent, EntityUid used, EntityUid? target, EntityCoordinates coords)
     {
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
             return;
 
-        if (GetActiveSpell(ent) is not { } spellEntity || !IsValid(spellEntity))
+        if (GetActiveSpell(ent) is not { } spellEntity
+            || !_spellcaster.CanCast(used, spellEntity)
+            || !IsValid(spellEntity))
+        {
+            _popup.PopupEntity("You fail to cast the spell!", ent, PopupType.MediumCaution);
             return;
+        }
 
         // this method is pure hell due to actions being hardcoded, but is simple, small and works. I cbf to fix action ancientcode
         _actions.PerformSpellAction(ent, spellEntity, target, coords);
@@ -213,7 +207,11 @@ public abstract partial class SpellcastingSystem : EntitySystem
         if (selectedSpell < 0 || selectedSpell >= activeSpells.Count)
             return null;
 
-        return activeSpells[selectedSpell];
+        var spell = activeSpells[selectedSpell];
+        if (TerminatingOrDeleted(spell))
+            return null;
+
+        return spell;
     }
 
     /// <summary>
@@ -223,7 +221,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
     /// <param name="spell">The spell prototype to add</param>
     /// <param name="force">Whether to add the spell, without checking whether we already have it</param>
     /// <returns>The spell entity that was made, null if insertion failed</returns>
-    public EntityUid? AddSpell(Entity<SpellsComponent?> ent, EntProtoId spell, bool force = false) // todo: forbid literal
+    public EntityUid? AddSpell(Entity<SpellsComponent?> ent, [ForbidLiteral] EntProtoId spell, bool force = false)
     {
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
             return null;
@@ -235,7 +233,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
         }
 
         // todo: spells with charges should add to the charges of an existing spell...!!
-        if (!force && HasSpell(ent, spell))
+        if (!force && GetSpell(ent, spell) == null)
             return null;
 
         var spellSpawn = Spawn(spell);
@@ -269,33 +267,9 @@ public abstract partial class SpellcastingSystem : EntitySystem
     }
 
     /// <summary>
-    /// Activates a spell, making it ready to be used
-    /// </summary>
-    public void SetActive(Entity<SpellComponent?> ent, bool active)
-    {
-        if (!_spellQuery.Resolve(ent.Owner, ref ent.Comp))
-            return;
-
-        ent.Comp.Active = active;
-        Dirty(ent);
-    }
-
-    /// <summary>
-    /// Checks whether the spell is valid,
-    /// usually that means it should have its <see cref="SpellComponent.Active"/> property set to true
-    /// </summary>
-    public bool IsValid(Entity<SpellComponent?> ent)
-    {
-        if (!_spellQuery.Resolve(ent.Owner, ref ent.Comp))
-            return false;
-
-        return ent.Comp.Active;
-    }
-
-    /// <summary>
     /// Gets either all learned, or all active spells of the user
     /// </summary>
-    /// <param name="ent">The spellcaster</param>
+    /// <param name="ent">The entity</param>
     /// <param name="activeOnly">If true, it will only return the active spells. If false, the learned ones only (non-active)</param>
     /// <returns>A list containing spells based on if they are active or not</returns>
     public List<EntityUid> GetSpells(Entity<SpellsComponent?> ent, bool activeOnly)
@@ -319,29 +293,42 @@ public abstract partial class SpellcastingSystem : EntitySystem
     }
 
     /// <summary>
-    /// Checks whether we have own a specific spell
+    /// Deletes a spell from the user
     /// </summary>
-    /// <param name="ent">The spellcaster</param>
-    /// <param name="spellProto">The protoype to check against</param>
-    /// <returns>True if we have the spell in our container, false otherwise</returns>
-    public bool HasSpell(Entity<SpellsComponent?> ent, [ForbidLiteral] EntProtoId spellProto)
+    /// <param name="ent">The entity</param>
+    /// <param name="spell">The spell prototype to remove</param>
+    public void RemoveSpell(Entity<SpellsComponent?> ent, [ForbidLiteral] EntProtoId spell)
+    {
+        if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp) || GetSpell(ent, spell) is not { } spellEntity)
+            return;
+
+        PredictedQueueDel(spellEntity);
+    }
+
+    /// <summary>
+    /// Gets the first instance of a spell
+    /// </summary>
+    /// <param name="ent">The entity</param>
+    /// <param name="spellProto">The spell prototype</param>
+    /// <returns>The spell entity, null otherwise</returns>
+    public EntityUid? GetSpell(Entity<SpellsComponent?> ent, [ForbidLiteral] EntProtoId spellProto)
     {
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
-            return false;
+            return null;
 
         foreach (var spell in ent.Comp.Container.ContainedEntities)
         {
             if (Prototype(spell) is { } spellEntityProto && spellEntityProto == spellProto)
-                return true;
+                return spell;
         }
 
-        return false;
+        return null;
     }
 
     /// <summary>
     /// Moves the entity's selected spell index by 1
     /// </summary>
-    /// <param name="ent">The spellcaster</param>
+    /// <param name="ent">The entity</param>
     /// <param name="moveType">Do we want to move the index up, or down</param>
     public void MoveSelectedSpell(Entity<SpellsComponent?> ent, SpellMove moveType)
     {
@@ -382,20 +369,6 @@ public abstract partial class SpellcastingSystem : EntitySystem
     protected virtual void UpdateUi(Entity<SpellsComponent> ent) { }
 
     #endregion
-
-    private void LoadSpells()
-    {
-        AllSpells.Clear();
-        var name = Factory.CompName<SpellComponent>();
-        foreach (var proto in ProtoMan.EnumeratePrototypes<EntityPrototype>())
-        {
-            if (!proto.HasComp(name))
-                continue;
-
-            var id = proto.ID;
-            AllSpells.Add(id);
-        }
-    }
 
     private void MoveSelectedSpell(ICommonSession? session, SpellMove moveType)
     {
