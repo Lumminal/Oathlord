@@ -84,11 +84,18 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
     public void OnSystemLoaded(ClientSpellcastingSystem system)
     {
         system.SelectedSpellChanged += OnSelectedSpellChanged;
+        system.UpdateSpellWindow += SystemOnUpdateSpellWindow;
     }
 
     public void OnSystemUnloaded(ClientSpellcastingSystem system)
     {
         system.SelectedSpellChanged -= OnSelectedSpellChanged;
+        system.UpdateSpellWindow -= SystemOnUpdateSpellWindow;
+    }
+
+    private void SystemOnUpdateSpellWindow(object? sender, EventArgs e)
+    {
+        UpdateWindow();
     }
 
     private void OnSelectedSpellChanged(object? sender, int spellIndex)
@@ -107,7 +114,6 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
 
     public void UpdateWindow()
     {
-        // todo: this is temporarily until I add client systems to update stuff
         if (_window == null || _player.LocalEntity is not { } player || !_spellsQuery.TryComp(player, out var spells))
             return;
 
@@ -211,8 +217,9 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
         if (selected is not { } selectedSlot)
             return;
 
-        var ev = new RequestSpellTransferEvent(fromSpell, type);
-        EntityManager.EventBus.RaiseLocalEvent(player, ref ev); // todo: raise predictive instantly from here...?
+        var netEnt = EntityManager.GetNetEntity(fromSpell);
+        var ev = new SpellTransferEvent(netEnt, type);
+        EntityManager.RaisePredictiveEvent(ev);
         if (ev.Cancelled)
             return;
 

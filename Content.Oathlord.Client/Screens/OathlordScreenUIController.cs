@@ -100,12 +100,13 @@ public sealed partial class OathlordScreenUIController : UIController
 
         if (!separated)
         {
-            LayoutContainer.SetAnchorAndMarginPreset(_spellsButton, LayoutContainer.LayoutPreset.BottomLeft, margin: 40);
+            LayoutContainer.SetAnchorAndMarginPreset(_spellsButton, LayoutContainer.LayoutPreset.BottomWide, margin: 20);
+            LayoutContainer.SetMarginLeft(_spellsButton, 450);
             return;
         }
 
-        LayoutContainer.SetAnchorAndMarginPreset(_spellsButton, LayoutContainer.LayoutPreset.BottomLeft, margin: 40);
-        LayoutContainer.SetMarginLeft(_spellsButton, -50);
+        LayoutContainer.SetAnchorAndMarginPreset(_spellsButton, LayoutContainer.LayoutPreset.BottomWide, margin: 20);
+        LayoutContainer.SetMarginLeft(_spellsButton, 200);
     }
 
     #endregion

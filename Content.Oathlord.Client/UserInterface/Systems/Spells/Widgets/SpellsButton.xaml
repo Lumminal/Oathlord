@@ -1,10 +1,15 @@
 ﻿<widgets:SpellsButton
     xmlns="https://spacestation14.io"
     xmlns:widgets="using:Content.Oathlord.Client.UserInterface.Systems.Spells.Widgets"
-    xmlns:controls="using:Content.Oathlord.Client.UserInterface.Systems.Spells.Controls"
-    MinSize="48 64">
-    <BoxContainer Orientation="Vertical" HorizontalExpand="True" Align="Center" VerticalExpand="True">
-        <Label Text="Spells" Margin="0 16" Align="Center"/>
-        <controls:SpellSlot Name="SelectedSpellSlot" Access="Public"/>
+    xmlns:spells="using:Content.Oathlord.Client.UserInterface.Systems.Spells.Controls"
+    xmlns:controls="using:Content.Client.UserInterface.Controls"
+    MinSize="64 98"
+    Margin="20 0">
+    <BoxContainer Orientation="Vertical" VerticalExpand="True">
+        <BoxContainer Align="Center" Orientation="Vertical" Margin="8">
+            <Label Text="SPELLS" Align="Center" FontColorOverride="#EDEADE"/>
+            <controls:HLine StyleClasses="highlight" Thickness="3"/>
+        </BoxContainer>
+        <spells:SpellSlot Name="SelectedSpellSlot" Access="Public" MinSize="64 86"/>
     </BoxContainer>
 </widgets:SpellsButton>

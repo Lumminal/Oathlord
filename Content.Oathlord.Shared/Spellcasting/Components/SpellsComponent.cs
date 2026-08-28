@@ -40,15 +40,11 @@ public sealed partial class SpellsComponent : Component
 }
 
 /// <summary>
-/// Raised before transferring a spell from learned to active, or vice-versa
+/// Raised from the client before transferring a spell from learned to active, or vice-versa
 /// </summary>
-/// <param name="Spell">The spell to transfer</param>
-/// <param name="Type">What transfer is it</param>
-/// <param name="Cancelled">Whether the transfer was cancelled</param>
-[ByRefEvent]
-public record struct RequestSpellTransferEvent(EntityUid Spell, SpellTransfer Type, bool Cancelled = false);
-
-/// <inheritdoc cref="RequestSpellTransferEvent"/>
+/// <param name="spell">The spell to transfer</param>
+/// <param name="type">What transfer is it</param>
+/// <param name="cancelled">Whether the transfer was cancelled</param>
 [Serializable, NetSerializable]
 public sealed class SpellTransferEvent(NetEntity spell, SpellTransfer type, bool cancelled = false) : EntityEventArgs
 {
@@ -69,6 +65,9 @@ public enum SpellTransfer : byte
     Active,
 }
 
+/// <summary>
+/// Enum that defines how to move the <see cref="SpellsComponent.SelectedSpell"/>
+/// </summary>
 [NetSerializable, Serializable]
 public enum SpellMove : byte
 {

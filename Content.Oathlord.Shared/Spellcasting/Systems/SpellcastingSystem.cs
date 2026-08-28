@@ -81,12 +81,22 @@ public abstract partial class SpellcastingSystem : EntitySystem
         _container.ShutdownContainer(ent.Comp.Container);
     }
 
-    // todo: needs mind interactions
+    [SubscribeLocalEvent]
+    public void OnContInserted(Entity<SpellsComponent> ent, ref EntInsertedIntoContainerMessage args)
+    {
+        if (args.Container.ID != SpellsComponent.ContainerId)
+            return;
+
+        UpdateUi(ent, refresh: true);
+    }
 
     [SubscribeLocalEvent]
-    public void OnMindRemoved(Entity<SpellsComponent> ent, ref MindRemovedMessage args)
+    public void OnContRemoved(Entity<SpellsComponent> ent, ref EntRemovedFromContainerMessage args)
     {
-        _container.ShutdownContainer(ent.Comp.Container);
+        if (args.Container.ID != SpellsComponent.ContainerId)
+            return;
+
+        UpdateUi(ent, refresh: true);
     }
 
     [EventSubscription]
@@ -165,7 +175,6 @@ public abstract partial class SpellcastingSystem : EntitySystem
             return;
 
         SetActive(spell, active: spellTransferType == SpellTransfer.Active);
-
         UpdateUi((ent.Owner, ent.Comp));
     }
 
@@ -233,7 +242,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
         }
 
         // todo: spells with charges should add to the charges of an existing spell...!!
-        if (!force && GetSpell(ent, spell) == null)
+        if (!force && GetSpell(ent, spell) != null)
             return null;
 
         var spellSpawn = Spawn(spell);
@@ -366,7 +375,12 @@ public abstract partial class SpellcastingSystem : EntitySystem
 
     #region Virtual
 
-    protected virtual void UpdateUi(Entity<SpellsComponent> ent) { }
+    /// <summary>
+    /// Refreshes the spell HUD slot, and optionally the spell window
+    /// </summary>
+    /// <param name="ent">The entity</param>
+    /// <param name="refresh">If true, it will also refresh the window UI (if it's open)</param>
+    protected virtual void UpdateUi(Entity<SpellsComponent> ent, bool refresh = false) { }
 
     #endregion
 

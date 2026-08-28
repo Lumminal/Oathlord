@@ -7,7 +7,7 @@
     <BoxContainer HorizontalAlignment="Center" MinSize="180 16">
         <ProgressBar HorizontalExpand="True" Name="ManaProgress" MaxValue="100" MinValue="0" Value="100" MinSize="128 24">
             <ProgressBar.ForegroundStyleBoxOverride>
-                <graphics:StyleBoxFlat BackgroundColor="#28b4d2" BorderThickness="2" BorderColor="#575e40"/>
+                <graphics:StyleBoxFlat BackgroundColor="#28b4d2" BorderThickness="2" BorderColor="#baaa91"/>
             </ProgressBar.ForegroundStyleBoxOverride>
 
             <ProgressBar.BackgroundStyleBoxOverride>

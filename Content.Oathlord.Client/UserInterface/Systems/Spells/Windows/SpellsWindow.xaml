@@ -7,6 +7,7 @@
     <BoxContainer>
         <BoxContainer Orientation="Vertical">
             <Label Text="Learned Spells" Align="Center" Margin="16"/>
+            <controls:HLine StyleClasses="highlight" Thickness="2"/>
             <GridContainer Name="LearnedSpellsContainer"
                            Rows="5"
                            Columns="5"
@@ -17,16 +18,15 @@
                            MinWidth="240"
                            Access="Public"/>
         </BoxContainer>
-
         <!-- This draws a vertical line since for some goddamn reason there's only horizontal lines available premade... -->
-        <PanelContainer MinSize="4 600" VerticalExpand="True">
+        <PanelContainer MinSize="2 600" VerticalExpand="True">
             <PanelContainer.PanelOverride>
-                <graphics:StyleBoxFlat BackgroundColor="#36454F"/>
+                <graphics:StyleBoxFlat BackgroundColor="#a88b5e"/>
             </PanelContainer.PanelOverride>
         </PanelContainer>
-
         <BoxContainer Orientation="Vertical" HorizontalExpand="True">
             <Label Text="Active Spells" Align="Center" Margin="16"/>
+            <controls:HLine StyleClasses="highlight" Thickness="2"/>
             <BoxContainer
                 Name="ActiveSpellsContainer"
                 Orientation="Vertical"

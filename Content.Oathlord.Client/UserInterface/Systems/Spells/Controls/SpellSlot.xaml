@@ -5,7 +5,10 @@
     MinSize="48 64">
     <PanelContainer Name="SpellPanel">
         <PanelContainer.PanelOverride>
-            <graphics:StyleBoxFlat BackgroundColor="#36454F"/>
+            <graphics:StyleBoxFlat
+                BackgroundColor="#3f4550"
+                BorderThickness="3"
+                BorderColor="#877459"/>
         </PanelContainer.PanelOverride>
 
         <TextureButton Name="SpellTexButton" Access="Public"/>

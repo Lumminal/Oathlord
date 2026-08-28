@@ -1,5 +1,4 @@
 ﻿using Robust.Shared.Prototypes;
-using Robust.Shared.Utility;
 
 namespace Content.Oathlord.Shared.Spellcasting.Prototypes;
 
@@ -8,7 +7,7 @@ namespace Content.Oathlord.Shared.Spellcasting.Prototypes;
 /// This is used before casting an item, to check if the spellcasting item can cast the spell.
 /// E.g. if a Staff can only cast X type, then it will fail to cast Y spell type
 /// </summary>
-[Prototype()]
+[Prototype]
 public sealed partial class SpellTypePrototype : IPrototype
 {
     /// <inheritdoc/>
@@ -26,10 +25,4 @@ public sealed partial class SpellTypePrototype : IPrototype
     /// </summary>
     [DataField(required: true)]
     public string Description = string.Empty;
-
-    /// <summary>
-    /// An icon to display on the tooltip
-    /// </summary>
-    [DataField(required: true)]
-    public SpriteSpecifier Icon;
 }

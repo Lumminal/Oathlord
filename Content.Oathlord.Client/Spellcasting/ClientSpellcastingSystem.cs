@@ -9,6 +9,7 @@ public sealed partial class ClientSpellcastingSystem : SpellcastingSystem
     [Dependency] private IPlayerManager _player = default!;
 
     public event EventHandler<int>? SelectedSpellChanged;
+    public event EventHandler? UpdateSpellWindow;
 
     public EntityUid? ActiveSelectedSpell
     {
@@ -21,21 +22,16 @@ public sealed partial class ClientSpellcastingSystem : SpellcastingSystem
         }
     }
 
-    [SubscribeLocalEvent]
-    public void OnRequestTransfer(Entity<SpellsComponent> ent, ref RequestSpellTransferEvent args)
+    protected override void UpdateUi(Entity<SpellsComponent> ent, bool refresh = false)
     {
-        var ev = new SpellTransferEvent(GetNetEntity(args.Spell), args.Type);
-        RaisePredictiveEvent(ev);
-        if (!ev.Cancelled)
+        base.UpdateUi(ent, refresh);
+
+        if (_player.LocalEntity != ent.Owner)
             return;
 
-        args.Cancelled = true;
-    }
-
-    protected override void UpdateUi(Entity<SpellsComponent> ent)
-    {
-        base.UpdateUi(ent);
-
         SelectedSpellChanged?.Invoke(this, ent.Comp.SelectedSpell);
+
+        if (refresh)
+            UpdateSpellWindow?.Invoke(this, EventArgs.Empty);
     }
 }
