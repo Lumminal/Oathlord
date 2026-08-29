@@ -228,14 +228,13 @@ public abstract partial class SpellcastingSystem : EntitySystem
     /// <param name="ent">The entity to add the spell to</param>
     /// <param name="spell">The spell prototype to add</param>
     /// <param name="force">Whether to add the spell, without checking whether we already have it</param>
-    /// <param name="ignore">Ignore checking against <see cref="AllSpells"/>, this should be always false.</param>
     /// <returns>The spell entity that was made, null if insertion failed</returns>
-    public EntityUid? AddSpell(Entity<SpellsComponent?> ent, [ForbidLiteral] EntProtoId spell, bool force = false, bool ignore = false)
+    public EntityUid? AddSpell(Entity<SpellsComponent?> ent, [ForbidLiteral] EntProtoId spell, bool force = false)
     {
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
             return null;
 
-        if (!AllSpells.Contains(spell) && !ignore)
+        if (!AllSpells.Contains(spell))
         {
             // this should not ever happen
             Log.Error($"No spell prototype found for: {spell}");
