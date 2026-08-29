@@ -14,11 +14,11 @@ public sealed class SpellTest : InteractionTest
     [TestPrototypes]
     private const string TestSpell = @"
 - type: entity
-  parent: ActionBlink
   id: EntitySpellTest
   name: spell
   components:
   - type: Spell
+  - type: Action
 ";
 
     [TestPrototypes]
@@ -47,7 +47,8 @@ public sealed class SpellTest : InteractionTest
             Assert.That(heldItem, Is.Null, $"Player is holding an item ({SEntMan.ToPrettyString(heldItem)}) at start of test.");
 
             // Add the spell to the player, return if insertion failed
-            var spell = _spellcasting.AddSpell(spellUser, TestSpell);
+            // ignore needed because test prototype isn't registered in AllSpells
+            var spell = _spellcasting.AddSpell(spellUser, TestSpell, ignore: true);
             Assert.That(spell, Is.Not.Null, $"The spell {TestSpell} returned null. Either player already owns the spell, or spell not valid");
 
             var spellComp = SEntMan.GetComponent<SpellComponent>(spell.Value);

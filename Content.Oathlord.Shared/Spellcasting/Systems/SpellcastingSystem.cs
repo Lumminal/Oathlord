@@ -228,14 +228,16 @@ public abstract partial class SpellcastingSystem : EntitySystem
     /// <param name="ent">The entity to add the spell to</param>
     /// <param name="spell">The spell prototype to add</param>
     /// <param name="force">Whether to add the spell, without checking whether we already have it</param>
+    /// <param name="ignore">Ignore checking against <see cref="AllSpells"/>, this should be always false.</param>
     /// <returns>The spell entity that was made, null if insertion failed</returns>
-    public EntityUid? AddSpell(Entity<SpellsComponent?> ent, [ForbidLiteral] EntProtoId spell, bool force = false)
+    public EntityUid? AddSpell(Entity<SpellsComponent?> ent, [ForbidLiteral] EntProtoId spell, bool force = false, bool ignore = false)
     {
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
             return null;
 
-        if (!AllSpells.Contains(spell))
+        if (!AllSpells.Contains(spell) && !ignore)
         {
+            // this should not ever happen
             Log.Error($"No spell prototype found for: {spell}");
             return null;
         }
@@ -244,12 +246,13 @@ public abstract partial class SpellcastingSystem : EntitySystem
         if (!force && GetSpell(ent, spell) != null)
             return null;
 
-        var spellSpawn = Spawn(spell);
+        var spellSpawn = PredictedSpawnAtPosition(spell, Transform(ent).Coordinates);
         InsertSpell(ent, spellSpawn);
 
         // if insertion failed, the spawned spell must be deleted
         if (!ent.Comp.Container.Contains(spellSpawn))
         {
+            Log.Warning($"Failed to add {spell} to the user {ent.Owner}");
             PredictedQueueDel(spellSpawn);
             return null;
         }
@@ -266,7 +269,11 @@ public abstract partial class SpellcastingSystem : EntitySystem
             return;
 
         if (_actions.GetAction(spell) is not { } action)
+        {
+            // spells should always have action component
+            Log.Error($"Tried to add {spell} but it does not have an action component.");
             return;
+        }
 
         action.Comp.AttachedEntity = ent.Owner;
         DirtyField(action.AsNullable(), nameof(ActionComponent.AttachedEntity));
