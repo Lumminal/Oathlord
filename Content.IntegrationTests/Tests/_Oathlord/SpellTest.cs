@@ -14,11 +14,11 @@ public sealed class SpellTest : InteractionTest
     [TestPrototypes]
     private const string TestSpell = @"
 - type: entity
+  parent: ActionBlink
   id: EntitySpellTest
   name: spell
   components:
   - type: Spell
-  - type: Action
 ";
 
     [TestPrototypes]
