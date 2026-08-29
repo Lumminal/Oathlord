@@ -7,3 +7,4 @@
   components:
   - type: ManaUser
     currentMana: 100
+  - type: Spells

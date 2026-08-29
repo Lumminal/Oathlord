@@ -1,6 +1,6 @@
 ﻿<controls:FancyWindow
     xmlns="https://spacestation14.io"
-    xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls;assembly=Content.Client"
+    xmlns:controls="using:Content.Client.UserInterface.Controls"
     Title="Grant Loan"
     MinSize="300 250">
     <BoxContainer Margin="16">

@@ -1,0 +1,40 @@
+﻿<controls:FancyWindow
+    xmlns="https://spacestation14.io"
+    xmlns:controls="using:Content.Client.UserInterface.Controls"
+    xmlns:graphics="using:Robust.Client.Graphics"
+    Title="Spells"
+    MinSize="500 600">
+    <BoxContainer>
+        <BoxContainer Orientation="Vertical">
+            <Label Text="Learned Spells" Align="Center" Margin="16"/>
+            <controls:HLine StyleClasses="highlight" Thickness="2"/>
+            <GridContainer Name="LearnedSpellsContainer"
+                           Rows="5"
+                           Columns="5"
+                           Margin="16"
+                           HSeparationOverride="20"
+                           VSeparationOverride="20"
+                           HorizontalExpand="True"
+                           MinWidth="240"
+                           Access="Public"/>
+        </BoxContainer>
+        <!-- This draws a vertical line since for some goddamn reason there's only horizontal lines available premade... -->
+        <PanelContainer MinSize="2 600" VerticalExpand="True">
+            <PanelContainer.PanelOverride>
+                <graphics:StyleBoxFlat BackgroundColor="#a88b5e"/>
+            </PanelContainer.PanelOverride>
+        </PanelContainer>
+        <BoxContainer Orientation="Vertical" HorizontalExpand="True">
+            <Label Text="Active Spells" Align="Center" Margin="16"/>
+            <controls:HLine StyleClasses="highlight" Thickness="2"/>
+            <BoxContainer
+                Name="ActiveSpellsContainer"
+                Orientation="Vertical"
+                SeparationOverride="20"
+                HorizontalExpand="True"
+                HorizontalAlignment="Center"
+                Margin="16"
+                Access="Public"/>
+        </BoxContainer>
+    </BoxContainer>
+</controls:FancyWindow>

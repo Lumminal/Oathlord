@@ -13,9 +13,9 @@ namespace Content.Oathlord.Client.UserInterface.Systems.Mana;
 public sealed partial class ManaUIController : UIController, IOnStateEntered<GameplayState>, IOnSystemChanged<ManaClientSystem>
 {
     [Dependency] private IPlayerManager _player = default!;
-    private EntityQuery<ManaUserComponent> _manaQuery = default!;
-
     [UISystemDependency] private readonly ManaClientSystem _mana = default!;
+
+    private EntityQuery<ManaUserComponent> _manaQuery = default!;
 
     public ManaBar? UI => UIManager.GetActiveUIWidgetOrNull<ManaBar>();
 

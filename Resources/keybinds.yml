@@ -1,5 +1,21 @@
 ﻿version: 1 # Not used right now, whatever.
 binds:
+# <Oathlord>
+- function: SpecialItemAction
+  type: State
+  key: MouseMiddle
+  priority: 10 # this should fire before rotation and others
+- function: OpenSpellsMenu
+  type: State
+  key: L
+- function: MoveSpellUp
+  type: State
+  key: PageUp
+- function: MoveSpellDown
+  type: State
+  key: PageDown
+  priority: -1 # text takes priority
+# </Oathlord>
 - function: UIClick
   type: State
   key: MouseLeft

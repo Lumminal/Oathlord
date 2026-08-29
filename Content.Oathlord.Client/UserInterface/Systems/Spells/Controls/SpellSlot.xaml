@@ -1,0 +1,16 @@
+﻿<controls:SpellSlot
+    xmlns="https://spacestation14.io"
+    xmlns:controls="using:Content.Oathlord.Client.UserInterface.Systems.Spells.Controls"
+    xmlns:graphics="using:Robust.Client.Graphics"
+    MinSize="48 64">
+    <PanelContainer Name="SpellPanel">
+        <PanelContainer.PanelOverride>
+            <graphics:StyleBoxFlat
+                BackgroundColor="#3f4550"
+                BorderThickness="3"
+                BorderColor="#877459"/>
+        </PanelContainer.PanelOverride>
+
+        <TextureButton Name="SpellTexButton" Access="Public"/>
+    </PanelContainer>
+</controls:SpellSlot>

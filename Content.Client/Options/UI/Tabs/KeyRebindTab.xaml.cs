@@ -1,3 +1,4 @@
+using Content.Oathlord.Common.Input; // Oathlord
 using System.Numerics;
 using Content.Client.Stylesheets;
 using Content.Shared.CCVar;
@@ -187,6 +188,12 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(ContentKeyFunctions.AltUseItemInHand);
             AddButton(ContentKeyFunctions.ActivateItemInWorld);
             AddButton(ContentKeyFunctions.AltActivateItemInWorld);
+            // </Oathlord>
+            AddButton(OathlordKeyFunctions.SpecialItemAction);
+            AddButton(OathlordKeyFunctions.OpenSpellsMenu);
+            AddButton(OathlordKeyFunctions.MoveSpellUp);
+            AddButton(OathlordKeyFunctions.MoveSpellDown);
+            // <Oathlord>
             AddButton(ContentKeyFunctions.Drop);
             AddButton(ContentKeyFunctions.ExamineEntity);
             AddButton(ContentKeyFunctions.SwapHands);
