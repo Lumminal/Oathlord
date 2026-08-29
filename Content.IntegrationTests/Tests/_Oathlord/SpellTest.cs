@@ -25,6 +25,7 @@ public sealed class SpellTest : InteractionTest
     [TestPrototypes]
     private const string TestSpellcaster = $@"
 - type: entity
+  parent: BaseItem
   id: {SpellcasterTestId}
   name: spellcaster
   components:
