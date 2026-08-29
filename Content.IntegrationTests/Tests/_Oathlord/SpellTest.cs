@@ -11,20 +11,21 @@ public sealed class SpellTest : InteractionTest
     [SidedDependency(Side.Server)] private SpellcastingSystem _spellcasting = default!;
     [SidedDependency(Side.Server)] private SpellcasterSystem _spellcaster = default!;
 
+    private const string SpellTestId = "EntitySpellTest";
+    private const string SpellcasterTestId = "EntitySpellcasterTest";
+
     [TestPrototypes]
-    private const string TestSpell = @"
+    private const string TestSpell = $@"
 - type: entity
-  parent: ActionBlink
-  id: EntitySpellTest
+  parent: BaseSpell
+  id: {SpellTestId}
   name: spell
-  components:
-  - type: Spell
 ";
 
     [TestPrototypes]
-    private const string TestSpellcaster = @"
+    private const string TestSpellcaster = $@"
 - type: entity
-  id: EntitySpellcasterTest
+  id: {SpellcasterTestId}
   name: spellcaster
   components:
   - type: Spellcaster
@@ -48,7 +49,7 @@ public sealed class SpellTest : InteractionTest
 
             // Add the spell to the player, return if insertion failed
             // ignore needed because test prototype isn't registered in AllSpells
-            var spell = _spellcasting.AddSpell(spellUser, TestSpell, ignore: true);
+            var spell = _spellcasting.AddSpell(spellUser, SpellTestId);
             Assert.That(spell, Is.Not.Null, $"The spell {TestSpell} returned null. Either player already owns the spell, or spell not valid");
 
             var spellComp = SEntMan.GetComponent<SpellComponent>(spell.Value);
@@ -58,8 +59,8 @@ public sealed class SpellTest : InteractionTest
             Assert.That(spellComp.Active, Is.True, $"The spell {TestSpell} was not active, even though we transferred it to active spells.");
 
             // Add the spellcaster item to the user's hand so spells can be casted
-            var item = SEntMan.SpawnEntity(TestSpellcaster, Transform.GetMapCoordinates(playerUid));
-            Assert.That(HandSys.TryPickupAnyHand(playerUid, item), Is.True, "Could not pickup spellcaster item");
+            var item = SSpawnAtPosition(SpellcasterTestId, MapData.GridCoords);
+            Assert.That(HandSys.TryPickupAnyHand(playerUid, item, checkActionBlocker: false), Is.True, "Could not pickup spellcaster item");
 
             // Check that we can cast the test spell
             Assert.That(_spellcaster.CanCast(item, spell.Value), Is.True, "The spellcaster failed to pass the conditions to cast the spell");
