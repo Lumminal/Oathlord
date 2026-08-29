@@ -36,6 +36,7 @@ public sealed class SpellTest : InteractionTest
     public async Task TestSpells()
     {
         var playerUid = SEntMan.GetEntity(Player);
+        var xform = SComp<TransformComponent>(playerUid);
 
         await Server.WaitAssertion(() =>
         {
@@ -59,8 +60,8 @@ public sealed class SpellTest : InteractionTest
             Assert.That(spellComp.Active, Is.True, $"The spell {TestSpell} was not active, even though we transferred it to active spells.");
 
             // Add the spellcaster item to the user's hand so spells can be casted
-            var item = SSpawnAtPosition(SpellcasterTestId, MapData.GridCoords);
-            Assert.That(HandSys.TryPickupAnyHand(playerUid, item, checkActionBlocker: false), Is.True, "Could not pickup spellcaster item");
+            var item = SSpawnAtPosition(SpellcasterTestId, xform.Coordinates);
+            Assert.That(HandSys.TryPickupAnyHand(playerUid, item), Is.True, "Could not pickup spellcaster item");
 
             // Check that we can cast the test spell
             Assert.That(_spellcaster.CanCast(item, spell.Value), Is.True, "The spellcaster failed to pass the conditions to cast the spell");
