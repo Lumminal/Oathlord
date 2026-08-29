@@ -307,7 +307,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
     }
 
     /// <summary>
-    /// Deletes a spell from the user
+    /// Removes a spell from the user
     /// </summary>
     /// <param name="ent">The entity</param>
     /// <param name="spell">The spell prototype to remove</param>
@@ -316,7 +316,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp) || GetSpell(ent, spell) is not { } spellEntity)
             return;
 
-        PredictedQueueDel(spellEntity);
+        RemoveSpell(ent, spellEntity);
     }
 
     /// <summary>

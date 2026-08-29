@@ -15,7 +15,7 @@ binds:
   type: State
   key: PageDown
   priority: -1 # text takes priority
-# </Oathlrod>
+# </Oathlord>
 - function: UIClick
   type: State
   key: MouseLeft
