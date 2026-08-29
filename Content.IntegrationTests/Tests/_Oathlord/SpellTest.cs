@@ -1,5 +1,4 @@
-﻿using Content.Client.Hands.Systems;
-using Content.IntegrationTests.Fixtures.Attributes;
+﻿using Content.IntegrationTests.Fixtures.Attributes;
 using Content.IntegrationTests.Tests.Interaction;
 using Content.Oathlord.Shared.Spellcasting.Components;
 using Content.Oathlord.Shared.Spellcasting.Systems;
@@ -11,7 +10,6 @@ public sealed class SpellTest : InteractionTest
 {
     [SidedDependency(Side.Server)] private SpellcastingSystem _spellcasting = default!;
     [SidedDependency(Side.Server)] private SpellcasterSystem _spellcaster = default!;
-    [SidedDependency(Side.Server)] private HandsSystem _hands = default!;
 
     [TestPrototypes]
     private const string TestSpell = @"
@@ -45,7 +43,7 @@ public sealed class SpellTest : InteractionTest
             Entity<SpellsComponent> spellUser = (playerUid, spells);
 
             // Make sure the player's hand starts empty
-            var heldItem = _hands.GetActiveItem((playerUid, Hands));
+            var heldItem = HandSys.GetActiveItem((playerUid, Hands));
             Assert.That(heldItem, Is.Null, $"Player is holding an item ({SEntMan.ToPrettyString(heldItem)}) at start of test.");
 
             // Add the spell to the player, return if insertion failed
@@ -60,7 +58,7 @@ public sealed class SpellTest : InteractionTest
 
             // Add the spellcaster item to the user's hand so spells can be casted
             var item = SEntMan.SpawnEntity(TestSpellcaster, Transform.GetMapCoordinates(playerUid));
-            Assert.That(_hands.TryPickupAnyHand(playerUid, item), Is.True, "Could not pickup spellcaster item");
+            Assert.That(HandSys.TryPickupAnyHand(playerUid, item), Is.True, "Could not pickup spellcaster item");
 
             // Check that we can cast the test spell
             Assert.That(_spellcaster.CanCast(item, spell.Value), Is.True, "The spellcaster failed to pass the conditions to cast the spell");
