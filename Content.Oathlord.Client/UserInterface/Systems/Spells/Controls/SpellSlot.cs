@@ -25,6 +25,9 @@ public sealed partial class SpellSlot : Control, IEntityControl
     /// </summary>
     public EntityUid? Spell;
 
+    /// <summary>
+    /// Is the spell in the active category?
+    /// </summary>
     public bool Active;
 
     /// <summary>
@@ -32,7 +35,7 @@ public sealed partial class SpellSlot : Control, IEntityControl
     /// </summary>
     private Entity<ActionComponent>? _actionEntity;
 
-    public CooldownGraphic Cooldown;
+    private CooldownGraphic _cooldown;
 
     public SpellSlot()
     {
@@ -41,8 +44,8 @@ public sealed partial class SpellSlot : Control, IEntityControl
 
         SpellTexButton.TooltipSupplier = SetupTooltip;
 
-        Cooldown = new CooldownGraphic {Visible = false};
-        SpellPanel.AddChild(Cooldown);
+        _cooldown = new CooldownGraphic {Visible = false};
+        SpellPanel.AddChild(_cooldown);
 
         _sprite = _entMan.System<SpriteSystem>();
     }
@@ -77,19 +80,19 @@ public sealed partial class SpellSlot : Control, IEntityControl
         Spell = null;
         SpellTexButton.TextureNormal = null;
         _actionEntity = null;
-        Cooldown.Visible = false;
+        _cooldown.Visible = false;
     }
 
     protected override void FrameUpdate(FrameEventArgs args)
     {
         base.FrameUpdate(args);
 
-        Cooldown.Visible = _actionEntity?.Comp.Cooldown != null;
+        _cooldown.Visible = _actionEntity?.Comp.Cooldown != null;
         if (_actionEntity?.Comp is not { } action)
             return;
 
         if (action.Cooldown is { } cooldown)
-            Cooldown.FromTime(cooldown.Start, cooldown.End);
+            _cooldown.FromTime(cooldown.Start, cooldown.End);
     }
 
     private Control? SetupTooltip(Control sender)
@@ -97,7 +100,9 @@ public sealed partial class SpellSlot : Control, IEntityControl
         if (Spell is not { } spellEntity || !_entMan.TryGetComponent(spellEntity, out MetaDataComponent? metadata))
             return null;
 
-        // todo: expand this with extra fluff about spell types etc
+        // todo:
+        // expand this with extra fluff about spell types etc
+        // in the future, we should have our own tooltip control for spells
 
         var msg = FormattedMessage.FromMarkupPermissive(metadata.EntityName);
         var desc = FormattedMessage.FromMarkupPermissive(metadata.EntityDescription);

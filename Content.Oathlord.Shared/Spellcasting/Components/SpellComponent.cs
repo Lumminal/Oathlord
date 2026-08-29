@@ -6,7 +6,10 @@ using Robust.Shared.Prototypes;
 namespace Content.Oathlord.Shared.Spellcasting.Components;
 
 /// <summary>
-/// Component used on actions to mark it as a spell
+/// Component used on actions to mark them as a spell,
+/// which then can be casted by entities with <see cref="SpellcasterComponent"/>
+///
+/// Spells are stored on the body in entities with <see cref="SpellsComponent"/>
 /// </summary>
 [RegisterComponent, NetworkedComponent, Access(typeof(SpellcastingSystem))]
 [AutoGenerateComponentState]
@@ -20,7 +23,7 @@ public sealed partial class SpellComponent : Component
 
     /// <summary>
     /// What type of spell is this?
-    /// If it's not set, any entity that can cast spells will be able to cast this spell
+    /// If it's not set, any entity with <see cref="SpellcasterComponent"/> will be able to cast this spell
     /// </summary>
     [DataField]
     public List<ProtoId<SpellTypePrototype>> Types = new();

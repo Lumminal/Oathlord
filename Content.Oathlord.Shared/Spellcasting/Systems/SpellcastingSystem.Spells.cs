@@ -4,6 +4,9 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Oathlord.Shared.Spellcasting.Systems;
 
+/// <summary>
+/// Public api for <see cref="SpellComponent"/>
+/// </summary>
 public partial class SpellcastingSystem
 {
     /// <summary>

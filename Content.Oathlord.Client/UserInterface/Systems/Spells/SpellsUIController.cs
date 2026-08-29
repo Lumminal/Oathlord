@@ -23,6 +23,9 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
 
     private EntityQuery<SpellsComponent> _spellsQuery = default!;
 
+    /// <summary>
+    /// Exists to prevent ghosts or non-spell users opening the window with the keybind
+    /// </summary>
     private bool _canUseSpells = true;
 
     private SpellsWindow? _window;
@@ -109,16 +112,12 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
         UI?.Visible = true;
         _canUseSpells = true;
         UpdateWindow();
-
-        Log.Info("Is this even getting run 2?");
     }
 
     private void SystemOnDisableSpells(object? sender, EventArgs e)
     {
         UI?.Visible = false;
         _canUseSpells = false;
-
-        Log.Info("Is this even getting run?");
     }
 
     private void OnSelectedSpellChanged(object? sender, int spellIndex)

@@ -2,7 +2,6 @@
 using Content.Oathlord.Shared.Spellcasting.Components;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
-using Content.Shared.Mind.Components;
 using Content.Shared.Popups;
 using Robust.Shared.Containers;
 using Robust.Shared.Input.Binding;
@@ -20,7 +19,7 @@ namespace Content.Oathlord.Shared.Spellcasting.Systems;
 ///
 /// Some of the important ones being:
 /// - You can have only 1 spell active at a time to use
-/// - Spells usually require a catalyst in order to be casted (usually an item on the user's hand)
+/// - Spells usually require an entity with <see cref="SpellcasterComponent"/> in order to be casted (usually an item on the user's hand)
 /// - You have a limited amount of spells you can switch to
 /// - You have a limited amount of spells you can learn
 ///

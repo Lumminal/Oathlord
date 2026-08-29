@@ -6,7 +6,8 @@ using Robust.Shared.Serialization;
 namespace Content.Oathlord.Shared.Spellcasting.Components;
 
 /// <summary>
-/// Component that handles spellcasting. It holds all learned spells, and active spells.
+/// Component that handles spellcasting for the user.
+/// It holds all learned spells, and active spells in a container on the entity.
 /// </summary>
 [RegisterComponent, NetworkedComponent, Access(typeof(SpellcastingSystem))]
 [AutoGenerateComponentState]
