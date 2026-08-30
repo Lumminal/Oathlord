@@ -222,7 +222,7 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
     /// </summary>
     private void TransferSpell(SpellSlot from, Control container, SpellTransfer type)
     {
-        if (from.Spell is not { } fromSpell|| _player.LocalEntity is not { } player)
+        if (from.Spell is not { } fromSpell)
             return;
 
         SpellSlot? selected = null;
