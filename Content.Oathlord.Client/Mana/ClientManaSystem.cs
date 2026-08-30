@@ -5,7 +5,7 @@ using Robust.Shared.Player;
 
 namespace Content.Oathlord.Client.Mana;
 
-public sealed partial class ManaClientSystem : ManaSystem
+public sealed partial class ClientManaSystem : ManaSystem
 {
     [Dependency] private IPlayerManager _player = default!;
 
