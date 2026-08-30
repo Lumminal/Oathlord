@@ -17,10 +17,8 @@ namespace Content.Oathlord.Client.UserInterface.Systems.Spells.Controls;
 public sealed partial class SpellSlot : Control, IEntityControl
 {
     [Dependency] private IEntityManager _entMan = default!;
-    [Dependency] private IPrototypeManager _proto = default!;
     [Dependency] private IPlayerManager _player = default!;
 
-    private SpriteSystem _sprite;
     private EntityQuery<SpriteComponent> _spriteQuery;
     private EntityQuery<ActionComponent> _actionQuery;
 
@@ -51,7 +49,6 @@ public sealed partial class SpellSlot : Control, IEntityControl
         _cooldown = new CooldownGraphic {Visible = false};
         SpellPanel.AddChild(_cooldown);
 
-        _sprite = _entMan.System<SpriteSystem>();
         _spriteQuery = _entMan.GetEntityQuery<SpriteComponent>();
         _actionQuery = _entMan.GetEntityQuery<ActionComponent>();
     }
