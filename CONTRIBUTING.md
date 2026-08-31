@@ -30,6 +30,7 @@ Remember to test your PR again after making changes to it! Not doing so is one o
 5. Do not add new event handlers to upstream systems, make your own system in `Content.Oathlord.*` instead.
 6. Always use proxy methods when they are available, e.g. `TryComp` instead of `EntityManager.TryGetComponent`. This also means don't depend on `EntityManager` when you are in a `EntitySystem` or a BUI.
 7. Always use the most updated methods the engine offers. Older ways of doing things will no longer be allowed, such as using `SubscribeLocalEvent<T, TEvent>()` instead of the `[SubscribeLocalEvent]` attribute. 
+8. Default to naming conventions of upstream. E.g. server systems should be `ServerXSystem`, and shared systems should be `XSystem`. Same goes for client, `ClientXSystem`.
 
 ### Resources
 
@@ -79,6 +80,31 @@ All code should be in shared unless they have a hard dependency in server/client
 Tags you add to `Resources/Prototypes/_Oathlord/tags.yml` must be added in alphabetical order, with documentation of how they are used.
 For example, if you add a `Katana` tag for a katana sheath' storage whitelist, add `# Used in ClothingBeltKatanaSheath slot whitelist`
 Try to update this documentation if you add a substatial use of a tag.
+
+### Partial Prototypes
+
+Modifying upstream prototypes is *no longer allowed* unless there is a good reason to do it. Instead, we advise you to make Partial Prototypes. This greatly reduces merge conflicts for us.
+
+Partial prototypes go under `Resources/Prototypes/_Oathlord/Partials/`, in their respective folders.
+
+Example:
+```yml
+- type: entity
+  id: MyEntity # This is the id of the entity you want to edit from upstream
+  components:
+  - type: MyComponent # This component will get applied to that entity, or modified
+    list:
+    - 1
+  - type: OtherComponent # Assume this already exists
+    list:
+    - !Remove 2 # This will remove an element from this component's list
+    - 5 # This element will be added to the list
+  - !Remove type: AnotherComponent # This component will get removed from the entity
+```
+
+This logic applies to all prorotypes, such as `EmotePrototype` and others, not just entity prototypes.
+
+You can read more here: https://github.com/space-wizards/RobustToolbox/pull/6923
 
 ### YML style
 

@@ -21,7 +21,7 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
     [Dependency] private IPlayerManager _player = default!;
     [UISystemDependency] private readonly ClientSpellcastingSystem _spellcasting = default!;
 
-    private EntityQuery<SpellsComponent> _spellsQuery = default!;
+    private EntityQuery<SpellsComponent> _spellsQuery;
 
     /// <summary>
     /// Exists to prevent ghosts or non-spell users opening the window with the keybind
@@ -222,7 +222,7 @@ public sealed partial class SpellsUIController : UIController, IOnStateEntered<G
     /// </summary>
     private void TransferSpell(SpellSlot from, Control container, SpellTransfer type)
     {
-        if (from.Spell is not { } fromSpell|| _player.LocalEntity is not { } player)
+        if (from.Spell is not { } fromSpell)
             return;
 
         SpellSlot? selected = null;

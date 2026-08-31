@@ -1,0 +1,8 @@
+﻿- type: entity
+  save: false
+  abstract: true
+  id: BaseSpeciesMob
+  components:
+  - type: ManaUser
+    currentMana: 100
+  - type: Spells

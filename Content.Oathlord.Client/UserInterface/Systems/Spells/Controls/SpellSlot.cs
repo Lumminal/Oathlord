@@ -8,6 +8,7 @@ using Robust.Client.GameObjects;
 using Robust.Client.Player;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.XAML;
+using Robust.Shared.Graphics.RSI;
 using Robust.Shared.Timing;
 
 namespace Content.Oathlord.Client.UserInterface.Systems.Spells.Controls;
@@ -18,7 +19,8 @@ public sealed partial class SpellSlot : Control, IEntityControl
     [Dependency] private IEntityManager _entMan = default!;
     [Dependency] private IPlayerManager _player = default!;
 
-    private SpriteSystem _sprite;
+    private EntityQuery<SpriteComponent> _spriteQuery;
+    private EntityQuery<ActionComponent> _actionQuery;
 
     /// <summary>
     /// The spell that is owned by this slot
@@ -47,29 +49,16 @@ public sealed partial class SpellSlot : Control, IEntityControl
         _cooldown = new CooldownGraphic {Visible = false};
         SpellPanel.AddChild(_cooldown);
 
-        _sprite = _entMan.System<SpriteSystem>();
-    }
-
-    public void AddSpell(EntityUid spell, bool active)
-    {
-        // todo: rework this for sprite actions once stable
-        if (!_entMan.TryGetComponent(spell, out ActionComponent? action) || action.Icon is not { } iconSpecifier)
-            return;
-
-        SpellTexButton.TextureNormal = _sprite.Frame0(iconSpecifier);
-        Spell = spell;
-        Active = active;
-
-        _actionEntity = (spell, action);
+        _spriteQuery = _entMan.GetEntityQuery<SpriteComponent>();
+        _actionQuery = _entMan.GetEntityQuery<ActionComponent>();
     }
 
     public void AddSpell(EntityUid spell)
     {
-        // todo: rework this for sprite actions once stable
-        if (!_entMan.TryGetComponent(spell, out ActionComponent? action) || action.Icon is not { } iconSpecifier)
+        if (!_spriteQuery.TryComp(spell, out var sprite) || !_actionQuery.TryComp(spell, out var action))
             return;
 
-        SpellTexButton.TextureNormal = _sprite.Frame0(iconSpecifier);
+        SpellTexButton.TextureNormal = sprite.Icon?.GetFrame(RsiDirection.South, 0);
         Spell = spell;
 
         _actionEntity = (spell, action);

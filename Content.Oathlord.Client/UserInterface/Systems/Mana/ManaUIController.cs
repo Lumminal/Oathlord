@@ -10,10 +10,10 @@ using Robust.Client.UserInterface.Controllers;
 
 namespace Content.Oathlord.Client.UserInterface.Systems.Mana;
 
-public sealed partial class ManaUIController : UIController, IOnStateEntered<GameplayState>, IOnSystemChanged<ManaClientSystem>
+public sealed partial class ManaUIController : UIController, IOnStateEntered<GameplayState>, IOnSystemChanged<ClientManaSystem>
 {
     [Dependency] private IPlayerManager _player = default!;
-    [UISystemDependency] private readonly ManaClientSystem _mana = default!;
+    [UISystemDependency] private readonly ClientManaSystem _clientMana = default!;
 
     private EntityQuery<ManaUserComponent> _manaQuery = default!;
 
@@ -34,12 +34,12 @@ public sealed partial class ManaUIController : UIController, IOnStateEntered<Gam
         SyncMana();
     }
 
-    public void OnSystemLoaded(ManaClientSystem system)
+    public void OnSystemLoaded(ClientManaSystem system)
     {
         system.SyncMana += SystemOnSyncMana;
     }
 
-    public void OnSystemUnloaded(ManaClientSystem system)
+    public void OnSystemUnloaded(ClientManaSystem system)
     {
         system.SyncMana -= SystemOnSyncMana;
     }
@@ -61,15 +61,15 @@ public sealed partial class ManaUIController : UIController, IOnStateEntered<Gam
 
         if (!_manaQuery.TryComp(player, out var mana))
         {
-            SystemOnSyncMana(_mana, (1, 1, false));
+            SystemOnSyncMana(_clientMana, (1, 1, false));
             return;
         }
 
         var manaUser = (player, mana);
 
-        var current = _mana.GetMana(manaUser);
-        var max = _mana.GetMaxMana(manaUser);
-        var canUse = _mana.CanUseMana(manaUser);
-        SystemOnSyncMana(_mana, (current, max, canUse));
+        var current = _clientMana.GetMana(manaUser);
+        var max = _clientMana.GetMaxMana(manaUser);
+        var canUse = _clientMana.CanUseMana(manaUser);
+        SystemOnSyncMana(_clientMana, (current, max, canUse));
     }
 }
