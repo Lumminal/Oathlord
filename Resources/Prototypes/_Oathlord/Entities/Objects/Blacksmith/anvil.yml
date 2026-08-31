@@ -1,0 +1,18 @@
+﻿- type: entity
+  parent: BaseStructure
+  id: Anvil
+  name: Anvil
+  description: An anvil.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite # todo: replace
+    sprite: Structures/Furniture/chairs.rsi
+    state: chair
+  - type: Anvil
+  - type: InteractionOutline
+  - type: UserInterface
+    interfaces:
+      enum.AnvilUiKey.Key:
+        type: AnvilBoundInterface
+  - type: ActivatableUI
+    key: enum.AnvilUiKey.Key
