@@ -3,5 +3,19 @@
     xmlns:controls="using:Content.Client.UserInterface.Controls"
     Title="Anvil"
     MinSize="500 500">
+    <BoxContainer Orientation="Vertical">
 
+        <BoxContainer Orientation="Vertical" HorizontalAlignment="Left" Margin="16" SeparationOverride="4">
+            <Label Text="Metals" Align="Left"/>
+            <controls:HLine StyleClasses="highlight" Thickness="2"></controls:HLine>
+            <BoxContainer>
+                <BoxContainer
+                    Name="ViewsContainer"
+                    SeparationOverride="10"
+                    Align="Center"/>
+                <Button Text="Outputs" Name="OutputsButton"/>
+            </BoxContainer>
+        </BoxContainer>
+
+    </BoxContainer>
 </controls:FancyWindow>

@@ -13,6 +13,10 @@ public sealed class AnvilBoundInterface(EntityUid owner, Enum uiKey) : BoundUser
         base.Open();
 
         _window = this.CreateWindow<AnvilWindow>();
+
+        _window.SetOwner(Owner);
+        _window.UpdateWindow();
+
         _window.OpenCentered();
     }
 }

@@ -14,5 +14,26 @@
     interfaces:
       enum.AnvilUiKey.Key:
         type: AnvilBoundInterface
+      enum.StorageUiKey.Key:
+        type: StorageBoundUserInterface
   - type: ActivatableUI
     key: enum.AnvilUiKey.Key
+  - type: Storage
+    grid:
+    - 0,0,1,1
+    openOnActivate: false
+    whitelist:
+      components:
+      - MetalWorkable
+
+- type: entity
+  parent: BaseItem
+  id: DebugWorkable
+  name: Workable Metal
+  description: Debug
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: Objects/Devices/pda.rsi
+    state: pda
+  - type: MetalWorkable

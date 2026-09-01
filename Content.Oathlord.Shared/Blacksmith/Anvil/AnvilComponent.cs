@@ -1,4 +1,6 @@
-﻿using Robust.Shared.GameStates;
+﻿using Content.Oathlord.Shared.Blacksmith.Anvil.Prototypes;
+using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
 namespace Content.Oathlord.Shared.Blacksmith.Anvil;
@@ -9,10 +11,17 @@ namespace Content.Oathlord.Shared.Blacksmith.Anvil;
 [RegisterComponent, NetworkedComponent]
 public sealed partial class AnvilComponent : Component
 {
-    // todo:
-    // 1. Not all anvils can work with all metals
-    // 2. Container
-    // 3. Minigame implementation from tfc
+    /// <summary>
+    /// How many workables we can have in this anvil at a time
+    /// </summary>
+    [DataField]
+    public int AllowedWorkables = 2;
+
+    /// <summary>
+    /// The recipe that was selected to be worked on
+    /// </summary>
+    [DataField]
+    public ProtoId<AnvilRecipePrototype>? SelectedRecipe;
 }
 
 [Serializable, NetSerializable]

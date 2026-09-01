@@ -1,0 +1,5 @@
+﻿<controls:AnvilRecipe
+    xmlns="https://spacestation14.io"
+    xmlns:controls="using:Content.Oathlord.Client.Blacksmith.Anvil">
+
+</controls:AnvilRecipe>

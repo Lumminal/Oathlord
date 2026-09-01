@@ -1,0 +1,8 @@
+﻿<controls:FancyWindow
+    xmlns="https://spacestation14.io"
+    xmlns:controls="using:Content.Client.UserInterface.Controls"
+    MinSize="400 200">
+    <ScrollContainer HScrollEnabled="True">
+        <BoxContainer Name="RecipesContainer"/>
+    </ScrollContainer>
+</controls:FancyWindow>
