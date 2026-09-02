@@ -12,13 +12,8 @@ namespace Content.Oathlord.Shared.Blacksmith.Anvil;
 public sealed partial class MetalWorkableComponent : Component
 {
     /// <summary>
-    /// Defines what this metal can be turned into.
-    /// </summary>
-    [DataField] // todo: required
-    public List<ProtoId<AnvilRecipePrototype>> Outputs = new();
-
-    /// <summary>
-    /// The amount that has been worked on this metal, towards the selected recipe
+    /// The amount that has been worked on this metal, towards the selected recipe of the anvil.
+    /// Check <see cref="AnvilRecipePrototype"/> for more info.
     /// </summary>
     [DataField, AutoNetworkedField]
     public int WorkedAmount;

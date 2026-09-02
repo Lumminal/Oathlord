@@ -16,7 +16,6 @@ public sealed partial class AnvilWindow : FancyWindow
     private SharedContainerSystem _container;
 
     private EntityQuery<AnvilComponent> _anvilQuery;
-    private EntityQuery<MetalWorkableComponent> _workableQuery;
 
     private AnvilRecipesWindow? _recipesWindow;
 
@@ -28,8 +27,8 @@ public sealed partial class AnvilWindow : FancyWindow
         IoCManager.InjectDependencies(this);
 
         _container = _entMan.System<SharedContainerSystem>();
+
         _anvilQuery = _entMan.GetEntityQuery<AnvilComponent>();
-        _workableQuery = _entMan.GetEntityQuery<MetalWorkableComponent>();
 
         OutputsButton.OnPressed += OutputsButtonOnOnPressed;
     }
@@ -41,6 +40,7 @@ public sealed partial class AnvilWindow : FancyWindow
 
         _recipesWindow?.Close();
         _recipesWindow = new AnvilRecipesWindow();
+        _recipesWindow.SetupWindow(container.ContainedEntities);
         _recipesWindow.OnClose += () => _recipesWindow = null;
 
         _recipesWindow.OpenCentered();

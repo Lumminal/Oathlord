@@ -1,4 +1,5 @@
 ﻿using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype.Array;
 
 namespace Content.Oathlord.Shared.Blacksmith.Anvil.Prototypes;
 
@@ -6,16 +7,23 @@ namespace Content.Oathlord.Shared.Blacksmith.Anvil.Prototypes;
 /// Prototype used for recipes of <see cref="MetalWorkableComponent"/> entities.
 /// </summary>
 [Prototype]
-public sealed partial class AnvilRecipePrototype : IPrototype
+public sealed partial class AnvilRecipePrototype : IPrototype, IInheritingPrototype
 {
     [IdDataField]
     public string ID { get; private set;  } = default!;
 
+    [ParentDataField(typeof(AbstractPrototypeIdArraySerializer<AnvilRecipePrototype>))]
+    public string[]? Parents { get; private set; }
+
+    [AbstractDataField]
+    public bool Abstract { get; private set; }
+
     /// <summary>
-    /// How many of the same metal is required for this recipe
+    /// Metals needed for this recipe
     /// </summary>
-    [DataField]
-    public int MetalAmount = 1;
+    [DataField(required: true)]
+    [AlwaysPushInheritance]
+    public List<EntProtoId> Metals = new();
 
     /// <summary>
     /// How much work it is required for this recipe.

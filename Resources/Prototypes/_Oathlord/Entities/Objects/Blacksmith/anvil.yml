@@ -37,3 +37,15 @@
     sprite: Objects/Devices/pda.rsi
     state: pda
   - type: MetalWorkable
+
+- type: anvilRecipe
+  id: DebugAnvilRecipe1
+  metals: [ DebugWorkable ]
+  workRequired: 60
+  result: Throngler
+
+- type: anvilRecipe
+  id: DebugAnvilRecipe2
+  metals: [ DebugWorkable, DebugWorkable ]
+  workRequired: 75
+  result: PlushieThrongler
