@@ -12,7 +12,13 @@ public sealed partial class ClientAnvilSystem : AnvilSystem
     [SubscribeLocalEvent]
     public void OnAutoHandleState(Entity<AnvilComponent> ent, ref AfterAutoHandleStateEvent args)
     {
-        // todo: figure out why container is not working, solution rework into item slots and be done with it or something
+        UpdateWindow?.Invoke(this, EventArgs.Empty);
+    }
+
+    protected override void UpdateViews()
+    {
+        base.UpdateViews();
+
         UpdateWindow?.Invoke(this, EventArgs.Empty);
     }
 }

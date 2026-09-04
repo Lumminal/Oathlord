@@ -1,13 +1,14 @@
 ﻿<controls:FancyWindow
     xmlns="https://spacestation14.io"
     xmlns:controls="using:Content.Client.UserInterface.Controls"
+    xmlns:graphics="using:Robust.Client.Graphics"
     Title="Anvil"
     MinSize="500 500">
     <BoxContainer Orientation="Vertical">
 
         <BoxContainer Orientation="Vertical" HorizontalAlignment="Left" Margin="16" SeparationOverride="6">
             <Label Text="Metals" Align="Left"/>
-            <controls:HLine StyleClasses="highlight" Thickness="2"></controls:HLine>
+            <controls:HLine StyleClasses="highlight" Thickness="2"/>
             <BoxContainer SeparationOverride="6">
                 <BoxContainer
                     Name="ViewsContainer"
@@ -17,9 +18,20 @@
             </BoxContainer>
         </BoxContainer>
 
-        <BoxContainer>
-            <Label Name="RecipeName"/>
-            <Label Name="WorkRequired"/>
+        <controls:HLine StyleClasses="highlight" Thickness="3" Margin="16 0"/>
+        <BoxContainer Orientation="Vertical" HorizontalAlignment="Center" Margin="0 16">
+
+            <BoxContainer Orientation="Vertical">
+                <Label Name="RecipeName" Align="Center" Margin="0 6"/>
+                <PanelContainer HorizontalAlignment="Center">
+                    <PanelContainer.PanelOverride>
+                        <graphics:StyleBoxFlat BackgroundColor="#36454F"/>
+                    </PanelContainer.PanelOverride>
+                    <TextureRect Name="RecipeView"/>
+                </PanelContainer>
+            </BoxContainer>
+
+            <Label Name="WorkRequired" Align="Center"/>
         </BoxContainer>
     </BoxContainer>
 </controls:FancyWindow>

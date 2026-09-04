@@ -26,7 +26,7 @@ public sealed partial class AnvilBoundInterface : BoundUserInterface
 
         _anvil.UpdateWindow += UpdateWindow;
 
-        _window.RecipesWindow?.RecipeSelected += RecipeSelected;
+        _window.RecipeSelected += RecipeSelected;
     }
 
     private void UpdateWindow(object? sender, EventArgs e)

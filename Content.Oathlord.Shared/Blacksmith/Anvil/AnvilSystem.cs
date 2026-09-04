@@ -74,7 +74,7 @@ public abstract partial class AnvilSystem : EntitySystem
 
     private void OnRecipeSelected(Entity<AnvilComponent> ent, ref AnvilRecipeSelectedMessage args)
     {
-        if (!_container.TryGetContainer(ent, StorageComponent.ContainerId, out var container))
+        if (ent.Comp.SelectedRecipe == args.Recipe || !_container.TryGetContainer(ent, StorageComponent.ContainerId, out var container))
             return;
 
         var metals = container.ContainedEntities.ToList();
@@ -82,7 +82,7 @@ public abstract partial class AnvilSystem : EntitySystem
         if (!recipes.Contains(args.Recipe))
         {
             // malf recipe
-            Log.Error($"Requested invalid: {args.Recipe}");
+            Log.Error($"Requested invalid anvil recipe: {args.Recipe}");
             return;
         }
 
@@ -152,14 +152,17 @@ public abstract partial class AnvilSystem : EntitySystem
 
     private void ResetRecipe(Entity<AnvilComponent> ent, string containerId)
     {
-        if (_timing.ApplyingState)
-            return;
-
         if (containerId != StorageComponent.ContainerId)
             return;
 
-        ent.Comp.SelectedRecipe = null;
-        Dirty(ent);
+        if (!_timing.ApplyingState)
+        {
+            ent.Comp.SelectedRecipe = null;
+            Dirty(ent);
+        }
+
+        // Updating the views should be outside ApplyingState due to mispredicts
+        UpdateViews();
     }
 
     private void LoadMetalRecipes()
@@ -170,4 +173,9 @@ public abstract partial class AnvilSystem : EntitySystem
             Recipes.Add(recipe);
         }
     }
+
+    /// <summary>
+    /// Refreshes the anvil window
+    /// </summary>
+    protected virtual void UpdateViews() { }
 }
