@@ -17,5 +17,9 @@
             </BoxContainer>
         </BoxContainer>
 
+        <BoxContainer>
+            <Label Name="RecipeName"/>
+            <Label Name="WorkRequired"/>
+        </BoxContainer>
     </BoxContainer>
 </controls:FancyWindow>

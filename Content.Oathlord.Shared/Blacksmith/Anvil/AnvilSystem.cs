@@ -1,7 +1,9 @@
 ﻿using System.Linq;
 using Content.Oathlord.Shared.Blacksmith.Anvil.Prototypes;
+using Content.Shared.Storage;
 using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Timing;
 
 namespace Content.Oathlord.Shared.Blacksmith.Anvil;
 
@@ -10,10 +12,10 @@ namespace Content.Oathlord.Shared.Blacksmith.Anvil;
 ///
 /// todo: expand with explanations
 /// </summary>
-public sealed partial class AnvilSystem : EntitySystem
+public abstract partial class AnvilSystem : EntitySystem
 {
-    // todo:
-    // 1. Update sprite views when ent insert/remove happens
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private SharedContainerSystem _container = default!;
     [Dependency] private EntityQuery<MetalWorkableComponent> _metalQuery = default!;
 
     /// <summary>
@@ -26,8 +28,16 @@ public sealed partial class AnvilSystem : EntitySystem
     {
         base.Initialize();
 
+        Subs.BuiEvents<AnvilComponent>(AnvilUiKey.Key,
+            subs =>
+            {
+                subs.Event<AnvilRecipeSelectedMessage>(OnRecipeSelected);
+            });
+
         LoadMetalRecipes();
     }
+
+    #region Event Handlers
 
     [SubscribeLocalEvent]
     public void OnProtoReload(PrototypesReloadedEventArgs args)
@@ -41,11 +51,46 @@ public sealed partial class AnvilSystem : EntitySystem
     [SubscribeLocalEvent]
     public void InsertAttempt(Entity<AnvilComponent> ent, ref ContainerIsInsertingAttemptEvent args)
     {
+        if (args.Container.ID != StorageComponent.ContainerId)
+            return;
+
         if (args.Cancelled || args.Container.Count < ent.Comp.AllowedWorkables)
             return;
 
         args.Cancel();
     }
+
+    [SubscribeLocalEvent]
+    public void EntRemoved(Entity<AnvilComponent> ent, ref EntRemovedFromContainerMessage args)
+    {
+        ResetRecipe(ent, args.Container.ID);
+    }
+
+    [SubscribeLocalEvent]
+    public void EntInserted(Entity<AnvilComponent> ent, ref EntInsertedIntoContainerMessage args)
+    {
+        ResetRecipe(ent, args.Container.ID);
+    }
+
+    private void OnRecipeSelected(Entity<AnvilComponent> ent, ref AnvilRecipeSelectedMessage args)
+    {
+        if (!_container.TryGetContainer(ent, StorageComponent.ContainerId, out var container))
+            return;
+
+        var metals = container.ContainedEntities.ToList();
+        var recipes = GetRecipes(metals);
+        if (!recipes.Contains(args.Recipe))
+        {
+            // malf recipe
+            Log.Error($"Requested invalid: {args.Recipe}");
+            return;
+        }
+
+        ent.Comp.SelectedRecipe = args.Recipe;
+        Dirty(ent);
+    }
+
+    #endregion
 
     /// <summary>
     /// Gets all recipes, given a list of workable metal entities.
@@ -103,6 +148,18 @@ public sealed partial class AnvilSystem : EntitySystem
         }
 
         return recipes;
+    }
+
+    private void ResetRecipe(Entity<AnvilComponent> ent, string containerId)
+    {
+        if (_timing.ApplyingState)
+            return;
+
+        if (containerId != StorageComponent.ContainerId)
+            return;
+
+        ent.Comp.SelectedRecipe = null;
+        Dirty(ent);
     }
 
     private void LoadMetalRecipes()

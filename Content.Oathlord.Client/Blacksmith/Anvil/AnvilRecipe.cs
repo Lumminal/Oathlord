@@ -23,6 +23,6 @@ public sealed partial class AnvilRecipe : Control
     public void SetTexture(EntProtoId result)
     {
         if (_proto.TryIndex(result, out var entityProto))
-            RecipeTexture.Texture = _sprite.Frame0(entityProto);
+            RecipeButton.TextureNormal = _sprite.Frame0(entityProto);
     }
 }

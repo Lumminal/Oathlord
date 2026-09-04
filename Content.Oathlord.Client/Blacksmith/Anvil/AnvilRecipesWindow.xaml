@@ -9,6 +9,12 @@
             <BoxContainer Name="RecipesContainer" Margin="16 0" SeparationOverride="6"/>
         </ScrollContainer>
         <controls:HLine StyleClasses="highlight" Thickness="2" Margin="6 0"/>
-        <Button Text="Select Recipe" Name="SelectRecipeButton" MinSize="32 32" Margin="0 8" HorizontalAlignment="Center"/>
+        <Button
+            Text="Select Recipe"
+            Name="SelectRecipeButton"
+            MinSize="32 32"
+            Margin="0 8"
+            HorizontalAlignment="Center"
+            Disabled="True"/>
     </BoxContainer>
 </controls:FancyWindow>
