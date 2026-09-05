@@ -23,6 +23,19 @@ public sealed partial class AnvilComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public ProtoId<AnvilRecipePrototype>? SelectedRecipe;
+
+    /// <summary>
+    /// The numbers that this anvil support, for hitting workables.
+    /// </summary>
+    [DataField(required: true)]
+    public List<int> Numbers = new();
+
+    /// <summary>
+    /// The amount that has been worked on the metals, towards the <see cref="SelectedRecipe"/>.
+    /// Check <see cref="AnvilRecipePrototype"/> for more info.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public int WorkDone;
 }
 
 [Serializable, NetSerializable]

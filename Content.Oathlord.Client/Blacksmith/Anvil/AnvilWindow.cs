@@ -8,6 +8,7 @@ using Robust.Client.GameObjects;
 using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface.XAML;
 using Robust.Shared.Containers;
+using Container = Robust.Client.UserInterface.Controls.Container;
 
 namespace Content.Oathlord.Client.Blacksmith.Anvil;
 
@@ -70,7 +71,8 @@ public sealed partial class AnvilWindow : FancyWindow
             return;
 
         UpdateViewsContainer(container.ContainedEntities, anvilComponent.AllowedWorkables);
-        UpdateRecipe(anvilComponent.SelectedRecipe);
+        UpdateRecipe(anvilComponent.SelectedRecipe, anvilComponent.WorkDone);
+        UpdateMinigame(anvilComponent.Numbers);
     }
 
     private void UpdateViewsContainer(IReadOnlyList<EntityUid> entities, int amount)
@@ -86,14 +88,16 @@ public sealed partial class AnvilWindow : FancyWindow
         }
     }
 
-    private void UpdateRecipe(ProtoId<AnvilRecipePrototype>? recipe)
+    private void UpdateRecipe(ProtoId<AnvilRecipePrototype>? recipe, int workDone)
     {
         if (recipe is not { } anvilRecipe|| !_proto.TryIndex(anvilRecipe, out var recipeProto))
         {
             RecipeName.Text = "No recipe has been selected... Click 'Outputs' to select one!";
-            WorkRequired.Text = string.Empty;
             RecipeView.Visible = false;
             RecipeView.Texture = null;
+            RecipeMinigameContainer.Visible = false;
+            WorkNeededBar.Value = WorkNeededBar.MinValue;
+            WorkDoneBar.Value = WorkDoneBar.MinValue;
             return;
         }
 
@@ -101,10 +105,41 @@ public sealed partial class AnvilWindow : FancyWindow
             return;
 
         RecipeName.Text = entityProto.Name;
-        WorkRequired.Text = $"Work Required: {recipeProto.WorkRequired.ToString()}";
-
         RecipeView.Texture = _sprite.Frame0(entityProto);
         RecipeView.Visible = true;
+
+        RecipeMinigameContainer.Visible = true;
+
+        WorkNeededBar.Value = recipeProto.WorkRequired;
+        WorkDoneBar.Value = workDone;
+    }
+
+    private void UpdateMinigame(List<int> numbers)
+    {
+        if (!RecipeMinigameContainer.Visible)
+            return;
+
+        NegativeNumbersContainer.Children.Clear();
+        PositiveNumbersContainer.Children.Clear();
+        foreach (var number in numbers)
+        {
+            if (number < 0)
+            {
+                SetupHitButton(number, NegativeNumbersContainer);
+                continue;
+            }
+
+            SetupHitButton(number, PositiveNumbersContainer);
+        }
+    }
+
+    private void SetupHitButton(int number, Container container)
+    {
+        var hitButton = new RecipeHitButton();
+        hitButton.SetHitNumber(number);
+
+        hitButton.MinSize = new Vector2(32, 32);
+        container.AddChild(hitButton);
     }
 }
 

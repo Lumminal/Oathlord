@@ -158,6 +158,7 @@ public abstract partial class AnvilSystem : EntitySystem
         if (!_timing.ApplyingState)
         {
             ent.Comp.SelectedRecipe = null;
+            ent.Comp.WorkDone = 0;
             Dirty(ent);
         }
 
