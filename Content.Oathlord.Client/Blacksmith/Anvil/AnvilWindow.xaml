@@ -2,7 +2,6 @@
     xmlns="https://spacestation14.io"
     xmlns:controls="using:Content.Client.UserInterface.Controls"
     xmlns:graphics="using:Robust.Client.Graphics"
-    xmlns:oathcontrols="using:Content.Oathlord.Client.UserInterface.Controls"
     Title="Anvil"
     MinSize="500 500">
     <BoxContainer Orientation="Vertical">
@@ -49,32 +48,29 @@
 
                 <BoxContainer SeparationOverride="5" Margin="6">
 
-                    <oathcontrols:BoxRange Name="WorkDoneBar"
-                                           MinSize="32 6"
-                                           Vertical="True"
-                                           VerticalAlignment="Bottom"
-                                           Margin="12">
-                        <oathcontrols:BoxRange.StyleBoxOverride>
+                    <ProgressBar Name="WorkDoneBar"
+                                 MinSize="32 6"
+                                 Margin="12"
+                                 Vertical="True">
+                        <ProgressBar.ForegroundStyleBoxOverride>
                             <graphics:StyleBoxFlat BackgroundColor="#EFBF04"/>
-                        </oathcontrols:BoxRange.StyleBoxOverride>
-                    </oathcontrols:BoxRange>
+                        </ProgressBar.ForegroundStyleBoxOverride>
+                    </ProgressBar>
 
-                    <!-- todo: Fix the box range not aligning correctly... -->
                     <PanelContainer VerticalExpand="True" MinWidth="3" VerticalAlignment="Stretch" Margin="6">
                         <PanelContainer.PanelOverride>
                             <graphics:StyleBoxFlat BackgroundColor="#a88b5e"/>
                         </PanelContainer.PanelOverride>
                     </PanelContainer>
 
-                    <oathcontrols:BoxRange Name="WorkNeededBar"
-                                           MinSize="32 6"
-                                           Vertical="True"
-                                           VerticalAlignment="Bottom"
-                                           Margin="12">
-                        <oathcontrols:BoxRange.StyleBoxOverride>
+                    <ProgressBar Name="WorkNeededBar"
+                                 MinSize="32 6"
+                                 Margin="12"
+                                 Vertical="True">
+                        <ProgressBar.ForegroundStyleBoxOverride>
                             <graphics:StyleBoxFlat BackgroundColor="#880808"/>
-                        </oathcontrols:BoxRange.StyleBoxOverride>
-                    </oathcontrols:BoxRange>
+                        </ProgressBar.ForegroundStyleBoxOverride>
+                    </ProgressBar>
 
                 </BoxContainer>
             </PanelContainer>

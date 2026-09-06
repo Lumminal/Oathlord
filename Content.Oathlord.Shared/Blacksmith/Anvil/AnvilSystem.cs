@@ -16,6 +16,7 @@ public abstract partial class AnvilSystem : EntitySystem
 {
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private SharedContainerSystem _container = default!;
+    [Dependency] private EntityQuery<AnvilComponent> _anvilQuery = default!;
     [Dependency] private EntityQuery<MetalWorkableComponent> _metalQuery = default!;
 
     /// <summary>
@@ -32,6 +33,7 @@ public abstract partial class AnvilSystem : EntitySystem
             subs =>
             {
                 subs.Event<AnvilRecipeSelectedMessage>(OnRecipeSelected);
+                subs.Event<AnvilHitMessage>(OnHit);
             });
 
         LoadMetalRecipes();
@@ -74,23 +76,34 @@ public abstract partial class AnvilSystem : EntitySystem
 
     private void OnRecipeSelected(Entity<AnvilComponent> ent, ref AnvilRecipeSelectedMessage args)
     {
-        if (ent.Comp.SelectedRecipe == args.Recipe || !_container.TryGetContainer(ent, StorageComponent.ContainerId, out var container))
+        var recipe = args.Recipe;
+        if (ent.Comp.SelectedRecipe == recipe || !_container.TryGetContainer(ent, StorageComponent.ContainerId, out var container))
             return;
 
         var metals = container.ContainedEntities.ToList();
         var recipes = GetRecipes(metals);
-        if (!recipes.Contains(args.Recipe))
+        if (!recipes.Contains(recipe))
         {
             // malf recipe
-            Log.Error($"Requested invalid anvil recipe: {args.Recipe}");
+            Log.Error($"Requested invalid anvil recipe: {recipe}");
             return;
         }
 
-        ent.Comp.SelectedRecipe = args.Recipe;
-        Dirty(ent);
+        SetSelectedRecipe(ent.AsNullable(), recipe);
+    }
+
+    private void OnHit(Entity<AnvilComponent> ent, ref AnvilHitMessage args)
+    {
+        var num = args.Number;
+        if (!ent.Comp.Numbers.Contains(num) || ent.Comp.SelectedRecipe == null)
+            return;
+
+        AdjustWorkDone(ent.AsNullable(), num);
     }
 
     #endregion
+
+    #region Public Api
 
     /// <summary>
     /// Gets all recipes, given a list of workable metal entities.
@@ -150,6 +163,39 @@ public abstract partial class AnvilSystem : EntitySystem
         return recipes;
     }
 
+    /// <summary>
+    /// Sets the selected recipe of the anvil
+    /// </summary>
+    /// <param name="ent">The anvil</param>
+    /// <param name="recipe">The recipe to select</param>
+    public void SetSelectedRecipe(Entity<AnvilComponent?> ent, [ForbidLiteral] ProtoId<AnvilRecipePrototype> recipe)
+    {
+        if (!_anvilQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
+
+        ent.Comp.SelectedRecipe = recipe;
+        DirtyField(ent, nameof(AnvilComponent.SelectedRecipe));
+    }
+
+    /// <summary>
+    /// Adjusts the work that was done on the current recipe
+    /// </summary>
+    /// <param name="ent">The anvil</param>
+    /// <param name="number">The work to adjust</param>
+    public void AdjustWorkDone(Entity<AnvilComponent?> ent, int number)
+    {
+        if (!_anvilQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
+
+        // todo for future expansion:
+        // once we get cooling/heating metals, raise event here for every metal so it checks against the current temp
+
+        ent.Comp.WorkDone = Math.Clamp(ent.Comp.WorkDone + number, 0, 100); // todo: should not be 100 max once we get more complex recipes (maybe add recipe categories for higher?)
+        DirtyField(ent, nameof(AnvilComponent.WorkDone));
+    }
+
+    #endregion
+
     private void ResetRecipe(Entity<AnvilComponent> ent, string containerId)
     {
         if (containerId != StorageComponent.ContainerId)
@@ -162,7 +208,7 @@ public abstract partial class AnvilSystem : EntitySystem
             Dirty(ent);
         }
 
-        // Updating the views should be outside ApplyingState due to mispredicts
+        // container mispredict hellbugs
         UpdateViews();
     }
 

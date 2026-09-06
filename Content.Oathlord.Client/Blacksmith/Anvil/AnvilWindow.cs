@@ -25,6 +25,7 @@ public sealed partial class AnvilWindow : FancyWindow
     private AnvilRecipesWindow? _recipesWindow;
 
     public Action<ProtoId<AnvilRecipePrototype>>? RecipeSelected;
+    public Action<int>? DoHit;
 
     private EntityUid _owner;
 
@@ -135,11 +136,18 @@ public sealed partial class AnvilWindow : FancyWindow
 
     private void SetupHitButton(int number, Container container)
     {
-        var hitButton = new RecipeHitButton();
-        hitButton.SetHitNumber(number);
+        var hitButton = new Button();
+        hitButton.Text = number > 0 ? $"+{number}" : $"{number}";
+
+        hitButton.OnPressed += _ => HitButtonOnOnPressed(number);
 
         hitButton.MinSize = new Vector2(32, 32);
         container.AddChild(hitButton);
+    }
+
+    private void HitButtonOnOnPressed(int number)
+    {
+        DoHit?.Invoke(number);
     }
 }
 

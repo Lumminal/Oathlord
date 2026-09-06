@@ -27,6 +27,7 @@ public sealed partial class AnvilBoundInterface : BoundUserInterface
         _anvil.UpdateWindow += UpdateWindow;
 
         _window.RecipeSelected += RecipeSelected;
+        _window.DoHit += DoHit;
     }
 
     private void UpdateWindow(object? sender, EventArgs e)
@@ -37,6 +38,11 @@ public sealed partial class AnvilBoundInterface : BoundUserInterface
     private void RecipeSelected(ProtoId<AnvilRecipePrototype> recipe)
     {
         SendPredictedMessage(new AnvilRecipeSelectedMessage(recipe));
+    }
+
+    private void DoHit(int number)
+    {
+        SendPredictedMessage(new AnvilHitMessage(number));
     }
 
     protected override void Dispose(bool disposing)
