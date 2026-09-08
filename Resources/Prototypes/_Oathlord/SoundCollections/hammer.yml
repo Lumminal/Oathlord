@@ -1,0 +1,7 @@
+﻿- type: soundCollection
+  id: HitSounds
+  files:
+  - /Audio/_Oathlord/Blacksmith/Smithing/hit_metal_1.ogg
+  - /Audio/_Oathlord/Blacksmith/Smithing/hit_metal_2.ogg
+  - /Audio/_Oathlord/Blacksmith/Smithing/hit_metal_3.ogg
+  - /Audio/_Oathlord/Blacksmith/Smithing/hit_metal_4.ogg

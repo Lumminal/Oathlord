@@ -1,4 +1,5 @@
 ﻿using Content.Oathlord.Shared.Blacksmith.Anvil.Prototypes;
+using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
@@ -8,7 +9,7 @@ namespace Content.Oathlord.Shared.Blacksmith.Anvil;
 /// <summary>
 /// Component used on entities (usually structures) to give them the ability to work on <see cref="MetalWorkableComponent"/> entities.
 /// </summary>
-[RegisterComponent, NetworkedComponent]
+[RegisterComponent, NetworkedComponent, Access(typeof(AnvilSystem))]
 [AutoGenerateComponentState(true, fieldDeltas: true)]
 public sealed partial class AnvilComponent : Component
 {
@@ -36,6 +37,9 @@ public sealed partial class AnvilComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public int WorkDone;
+
+    [DataField]
+    public SoundSpecifier HitSounds = new SoundCollectionSpecifier("HitSounds");
 }
 
 [Serializable, NetSerializable]
@@ -61,3 +65,10 @@ public enum AnvilUiKey : byte
 {
     Key,
 }
+
+/// <summary>
+/// Raised before doing operations on the anvil, on the user, to check if they can operate on it.
+/// It is relayed to the hands to check if we're holding any hammer currently.
+/// </summary>
+[ByRefEvent]
+public record struct CanOperateAnvilAttempt(bool Handled = false);

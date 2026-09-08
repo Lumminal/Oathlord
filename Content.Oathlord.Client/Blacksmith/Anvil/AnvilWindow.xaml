@@ -2,6 +2,7 @@
     xmlns="https://spacestation14.io"
     xmlns:controls="using:Content.Client.UserInterface.Controls"
     xmlns:graphics="using:Robust.Client.Graphics"
+    xmlns:oathcontrols="using:Content.Oathlord.Client.UserInterface.Controls"
     Title="Anvil"
     MinSize="500 500">
     <BoxContainer Orientation="Vertical">
@@ -48,14 +49,14 @@
 
                 <BoxContainer SeparationOverride="5" Margin="6">
 
-                    <ProgressBar Name="WorkDoneBar"
-                                 MinSize="32 6"
-                                 Margin="12"
-                                 Vertical="True">
+                    <oathcontrols:LabelProgressBar Name="WorkDoneBar"
+                                                   MinSize="32 6"
+                                                   Margin="12"
+                                                   Vertical="True">
                         <ProgressBar.ForegroundStyleBoxOverride>
-                            <graphics:StyleBoxFlat BackgroundColor="#EFBF04"/>
+                            <graphics:StyleBoxFlat BackgroundColor="#228B22"/>
                         </ProgressBar.ForegroundStyleBoxOverride>
-                    </ProgressBar>
+                    </oathcontrols:LabelProgressBar>
 
                     <PanelContainer VerticalExpand="True" MinWidth="3" VerticalAlignment="Stretch" Margin="6">
                         <PanelContainer.PanelOverride>
@@ -63,14 +64,14 @@
                         </PanelContainer.PanelOverride>
                     </PanelContainer>
 
-                    <ProgressBar Name="WorkNeededBar"
-                                 MinSize="32 6"
-                                 Margin="12"
-                                 Vertical="True">
+                    <oathcontrols:LabelProgressBar Name="WorkNeededBar"
+                                                   MinSize="32 6"
+                                                   Margin="12"
+                                                   Vertical="True">
                         <ProgressBar.ForegroundStyleBoxOverride>
                             <graphics:StyleBoxFlat BackgroundColor="#880808"/>
                         </ProgressBar.ForegroundStyleBoxOverride>
-                    </ProgressBar>
+                    </oathcontrols:LabelProgressBar>
 
                 </BoxContainer>
             </PanelContainer>

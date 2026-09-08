@@ -15,10 +15,9 @@ public sealed partial class ClientAnvilSystem : AnvilSystem
         UpdateWindow?.Invoke(this, EventArgs.Empty);
     }
 
-    protected override void UpdateViews()
+    protected override void UpdateUi()
     {
-        base.UpdateViews();
-
+        base.UpdateUi();
         UpdateWindow?.Invoke(this, EventArgs.Empty);
     }
 }
