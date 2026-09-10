@@ -38,6 +38,17 @@ public sealed partial class AnvilComponent : Component
     [DataField, AutoNetworkedField]
     public int WorkDone;
 
+    /// <summary>
+    /// The index of the <see cref="AnvilRecipePrototype.Pattern"/> the player must meet
+    /// It increases with every successful hit, but resets if user fails the pattern
+    /// -1 means no pattern
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public int PatternIndex = -1;
+
+    /// <summary>
+    /// Sounds that play when the player does a hit
+    /// </summary>
     [DataField]
     public SoundSpecifier HitSounds = new SoundCollectionSpecifier("HitSounds");
 }

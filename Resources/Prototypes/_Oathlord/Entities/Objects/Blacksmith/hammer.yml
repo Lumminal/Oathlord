@@ -1,0 +1,11 @@
+﻿- type: entity
+  parent: BaseItem
+  id: DebugHammer
+  name: Hammer
+  description: Hammer
+  categories: [ ForkFiltered ]
+  components:
+  - type: Hammer
+  - type: Sprite
+    sprite: Objects/Devices/cartridge.rsi # todo: change
+    state: cart-y

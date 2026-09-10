@@ -72,8 +72,15 @@ public partial class AnvilSystem
     /// <param name="recipe">The recipe to select</param>
     public void SetSelectedRecipe(Entity<AnvilComponent?> ent, [ForbidLiteral] ProtoId<AnvilRecipePrototype> recipe)
     {
-        if (!_anvilQuery.Resolve(ent.Owner, ref ent.Comp))
+        if (!_anvilQuery.Resolve(ent.Owner, ref ent.Comp) || !ProtoMan.Resolve(recipe, out var recipeProto))
             return;
+
+        // this means the recipe has a pattern, so we must set the index to 0 from -1
+        if (recipeProto.Pattern.Count > 0)
+        {
+            ent.Comp.PatternIndex = 0;
+            DirtyField(ent, nameof(AnvilComponent.PatternIndex));
+        }
 
         ent.Comp.SelectedRecipe = recipe;
         DirtyField(ent, nameof(AnvilComponent.SelectedRecipe));
@@ -96,15 +103,75 @@ public partial class AnvilSystem
         DirtyField(ent, nameof(AnvilComponent.WorkDone));
     }
 
-    #region Helpers
+    /// <summary>
+    /// Advances the current pattern, and checks if the pattern has been met
+    /// </summary>
+    /// <param name="ent">The anvil</param>
+    /// <param name="number">The number to check against the pattern</param>
+    /// <param name="pattern">The pattern to advance</param>
+    /// <returns>True if we completed the pattern, false otherwise</returns>
+    public bool AdvancePattern(Entity<AnvilComponent?> ent, int number, List<int> pattern)
+    {
+        if (!_anvilQuery.Resolve(ent.Owner, ref ent.Comp))
+            return false;
+
+        var patternIdx = ent.Comp.PatternIndex;
+        if (patternIdx == -1)
+            return true;
+
+        if (patternIdx >= pattern.Count)
+            patternIdx = 0;
+
+        ent.Comp.PatternIndex = pattern[patternIdx] == number ? patternIdx + 1 : 0;
+        DirtyField(ent, nameof(AnvilComponent.PatternIndex));
+
+        return ent.Comp.PatternIndex == pattern.Count;
+    }
+
+    /// <summary>
+    /// Does a "hit", accounting for patterns and completion of the recipe.
+    /// If the recipe is complete, the result will be spawned on top of the anvil
+    /// </summary>
+    /// <param name="ent">The anvil</param>
+    /// <param name="number">The number to do a hit with</param>
+    public void DoHit(Entity<AnvilComponent?> ent, int number)
+    {
+        if (!_anvilQuery.Resolve(ent.Owner, ref ent.Comp)
+            || ent.Comp.SelectedRecipe is not { } selectedRecipe
+            || !ent.Comp.Numbers.Contains(number)
+            || !ProtoMan.TryIndex(selectedRecipe, out var recipeProto)) // should already be resolved before doing a hit
+            return;
+
+        AdjustWorkDone(ent.AsNullable(), number);
+
+        // If the pattern was not met, it doesn't matter if we reached the work required
+        if (!AdvancePattern(ent, number, recipeProto.Pattern))
+            return;
+
+        if (ent.Comp.WorkDone != recipeProto.WorkRequired)
+            return;
+
+        // In all cases, we clean up the metals once we win the minigame
+        // It can still fail if storage container is missing
+        if (!TryCleanMetals(ent))
+            return;
+
+        var xform = Transform(ent);
+        PredictedSpawnAtPosition(recipeProto.Result, xform.Coordinates);
+
+        ResetAnvil((ent.Owner, ent.Comp));
+    }
 
     /// <summary>
     /// Tries to clean and delete the container containing the metals
     /// </summary>
     /// <param name="ent">The anvil</param>
     /// <returns>True if the container could be cleaned, false otherwise</returns>
-    private bool TryCleanMetals(Entity<AnvilComponent> ent)
+    public bool TryCleanMetals(Entity<AnvilComponent?> ent)
     {
+        if (!_anvilQuery.Resolve(ent.Owner, ref ent.Comp))
+            return false;
+
         if (!_container.TryGetContainer(ent, StorageComponent.ContainerId, out var container))
         {
             Log.Error($"Could not find anvil's ({ToPrettyString(ent)}) storage container");
@@ -115,8 +182,10 @@ public partial class AnvilSystem
         return true;
     }
 
+    #region Helpers
+
     /// <summary>
-    /// Resets the recipe on the anvil, as well as the work done on the previous recipe (if any was done)
+    /// Resets the values on the anvil, making it able to start a new recipe
     /// </summary>
     private void ResetAnvil(Entity<AnvilComponent> ent, string containerId)
     {
@@ -124,14 +193,19 @@ public partial class AnvilSystem
             return;
 
         if (!_timing.ApplyingState)
-        {
-            ent.Comp.SelectedRecipe = null;
-            ent.Comp.WorkDone = 0;
-            Dirty(ent);
-        }
+            ResetAnvil(ent);
 
         // container mispredict hellbugs
         UpdateUi();
+    }
+
+    /// <inheritdoc cref="ResetAnvil(Entity{AnvilComponent}, string)"/>
+    private void ResetAnvil(Entity<AnvilComponent> ent)
+    {
+        ent.Comp.SelectedRecipe = null;
+        ent.Comp.WorkDone = 0;
+        ent.Comp.PatternIndex = -1;
+        Dirty(ent);
     }
 
     private void LoadMetalRecipes()

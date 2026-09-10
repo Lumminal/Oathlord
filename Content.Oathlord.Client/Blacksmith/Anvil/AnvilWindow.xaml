@@ -75,7 +75,11 @@
 
                 </BoxContainer>
             </PanelContainer>
+
             <GridContainer Name="NegativeNumbersContainer" Columns="3" Rows="3"/>
         </BoxContainer>
+
+        <Label Name="PatternsLabel" Text="Patterns" Visible="False" HorizontalAlignment="Center" Align="Center"/>
+        <BoxContainer Name="PatternContainer" HorizontalAlignment="Center" SeparationOverride="10" VerticalAlignment="Bottom" Visible="False"/>
     </BoxContainer>
 </controls:FancyWindow>

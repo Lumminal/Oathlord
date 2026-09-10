@@ -2,7 +2,6 @@
 using Content.Oathlord.Shared.Blacksmith.Anvil.Prototypes;
 using Content.Shared.Popups;
 using Content.Shared.Storage;
-using Content.Shared.UserInterface;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
@@ -89,19 +88,6 @@ public abstract partial class AnvilSystem : EntitySystem
         ResetAnvil(ent, args.Container.ID);
     }
 
-    [SubscribeLocalEvent]
-    public void OnBeforeUiOpen(Entity<AnvilComponent> ent, ref ActivatableUIOpenAttemptEvent args)
-    {
-        var user = args.User;
-        var ev = new CanOperateAnvilAttempt();
-        RaiseLocalEvent(user, ref ev);
-        if (ev.Handled)
-            return;
-
-        _popup.PopupEntity("Hold a hammer before operating on the anvil!", user, user, PopupType.Medium);
-        args.Cancel();
-    }
-
     private void OnRecipeSelected(Entity<AnvilComponent> ent, ref AnvilRecipeSelectedMessage args)
     {
         var recipe = args.Recipe;
@@ -127,32 +113,11 @@ public abstract partial class AnvilSystem : EntitySystem
         RaiseLocalEvent(actor, ref ev);
         if (!ev.Handled)
         {
-            // caution because player tried to bypass hammer restriction on hits
             _popup.PopupCursor("Hold a hammer before operating on the anvil!", actor, PopupType.MediumCaution);
             return;
         }
 
-        var num = args.Number;
-        if (!ent.Comp.Numbers.Contains(num)
-            || ent.Comp.SelectedRecipe is not { } selectedRecipe
-            || !ProtoMan.TryIndex(selectedRecipe, out var recipeProto)) // already resolved before
-            return;
-
+        DoHit(ent.AsNullable(), args.Number);
         _audio.PlayPredicted(ent.Comp.HitSounds, ent.Owner, actor);
-        AdjustWorkDone(ent.AsNullable(), num);
-        if (ent.Comp.WorkDone != recipeProto.WorkRequired)
-            return;
-
-        // In all cases, we clean up the metals once we win the minigame.
-        // It can still fail if storage container is missing.
-        if (!TryCleanMetals(ent))
-            return;
-
-        // You won the minigame, you get the reward
-        var xform = Transform(ent);
-        PredictedSpawnAtPosition(recipeProto.Result, xform.Coordinates);
-
-        // Clean up the current recipe, and set the work done to 0
-        ResetAnvil(ent, StorageComponent.ContainerId);
     }
 }

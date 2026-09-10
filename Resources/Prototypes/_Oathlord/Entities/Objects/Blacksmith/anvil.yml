@@ -19,10 +19,15 @@
         type: StorageBoundUserInterface
   - type: ActivatableUI
     key: enum.AnvilUiKey.Key
+    singleUser: true
+    verbOnly: true
+    requiredItems:
+      components:
+      - Hammer
   - type: Storage
     grid:
     - 0,0,1,1
-    openOnActivate: false
+    clickInsert: true
     whitelist:
       components:
       - MetalWorkable
@@ -44,6 +49,7 @@
   metals: [ DebugWorkable ]
   workRequired: 60
   result: Throngler
+  pattern: [3, 3]
 
 - type: anvilRecipe
   id: DebugAnvilRecipe2

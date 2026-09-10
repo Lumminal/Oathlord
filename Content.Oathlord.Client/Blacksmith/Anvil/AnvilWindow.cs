@@ -72,7 +72,7 @@ public sealed partial class AnvilWindow : FancyWindow
             return;
 
         UpdateViewsContainer(container.ContainedEntities, anvilComponent.AllowedWorkables);
-        UpdateRecipe(anvilComponent.SelectedRecipe, anvilComponent.WorkDone);
+        UpdateRecipe(anvilComponent.SelectedRecipe, anvilComponent.WorkDone, anvilComponent.PatternIndex);
         UpdateMinigame(anvilComponent.Numbers);
     }
 
@@ -89,7 +89,7 @@ public sealed partial class AnvilWindow : FancyWindow
         }
     }
 
-    private void UpdateRecipe(ProtoId<AnvilRecipePrototype>? recipe, int workDone)
+    private void UpdateRecipe(ProtoId<AnvilRecipePrototype>? recipe, int workDone, int patternIdx)
     {
         if (recipe is not { } anvilRecipe|| !_proto.TryIndex(anvilRecipe, out var recipeProto))
         {
@@ -99,6 +99,8 @@ public sealed partial class AnvilWindow : FancyWindow
             RecipeMinigameContainer.Visible = false;
             WorkNeededBar.Value = WorkNeededBar.MinValue;
             WorkDoneBar.Value = WorkDoneBar.MinValue;
+            PatternContainer.Visible = false;
+            PatternsLabel.Visible = false;
             return;
         }
 
@@ -113,6 +115,8 @@ public sealed partial class AnvilWindow : FancyWindow
 
         WorkNeededBar.Value = recipeProto.WorkRequired;
         WorkDoneBar.Value = workDone;
+
+        UpdatePatterns(recipeProto.Pattern, patternIdx);
     }
 
     private void UpdateMinigame(List<int> numbers)
@@ -131,6 +135,34 @@ public sealed partial class AnvilWindow : FancyWindow
             }
 
             SetupHitButton(number, PositiveNumbersContainer);
+        }
+    }
+
+    private void UpdatePatterns(List<int> patterns, int currentIdx)
+    {
+        if (patterns.Count == 0 || currentIdx == -1)
+            return;
+
+        PatternContainer.Children.Clear();
+        PatternsLabel.Visible = true;
+        PatternContainer.Visible = true;
+
+        foreach (var number in patterns)
+        {
+            var anvilPattern = new AnvilPattern();
+            anvilPattern.SetLabel(number);
+
+            PatternContainer.AddChild(anvilPattern);
+        }
+
+        // Set up the "completed" patterns based on the anvil's pattern index
+        for (var i = 0; i < currentIdx; i++)
+        {
+            var pattern = PatternContainer.Children.ElementAtOrDefault(i);
+            if (pattern is not AnvilPattern anvilPattern)
+                continue;
+
+            anvilPattern.SetComplete();
         }
     }
 

@@ -37,4 +37,10 @@ public sealed partial class AnvilRecipePrototype : IPrototype, IInheritingProtot
     /// </summary>
     [DataField]
     public EntProtoId Result;
+
+    /// <summary>
+    /// Optionally, a sequence of numbers the player must hit before the recipe succeeds
+    /// </summary>
+    [DataField]
+    public List<int> Pattern = new();
 }
