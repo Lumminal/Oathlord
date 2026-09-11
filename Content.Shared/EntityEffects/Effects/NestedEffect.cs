@@ -60,6 +60,6 @@ public sealed partial class NestedEffectSystem : EntityEffectSystem<TransformCom
 
     protected override void Effect(Entity<TransformComponent> ent, ref EntityEffectEvent<NestedEffect> args)
     {
-        _effects.TryApplyEffect(ent, args.Effect.Proto, args.Scale, args.User);
+        _effects.TryApplyEffect(ent, args.Effect.Proto, args.Scale, args.User, args.Predicted); // Oathlord - pass predicted
     }
 }

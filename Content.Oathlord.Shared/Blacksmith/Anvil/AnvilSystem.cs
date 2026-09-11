@@ -2,7 +2,7 @@
 using Content.Oathlord.Shared.Blacksmith.Anvil.Prototypes;
 using Content.Shared.Popups;
 using Content.Shared.Storage;
-using Robust.Shared.Audio.Systems;
+using Content.Shared.Whitelist;
 using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
@@ -24,14 +24,15 @@ namespace Content.Oathlord.Shared.Blacksmith.Anvil;
 /// - The player's goal is to reach the red progress bar by pressing the correct combination of numbers.
 /// - Once done, the player will be rewarded with the recipe. However, there's still other things to account for such as:
 ///     - Metals need to be at correct temp (not implemented yet cause it requires cooling/heating mechanics into blacksmith)
-///     - Patterns that need to be performed (not implemented yet)
+///     - Patterns that need to be performed
 /// </summary>
 public abstract partial class AnvilSystem : EntitySystem
 {
     [Dependency] private IGameTiming _timing = default!;
-    [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private SharedContainerSystem _container = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private EntityWhitelistSystem _whitelist = default!;
+
     [Dependency] private EntityQuery<AnvilComponent> _anvilQuery = default!;
     [Dependency] private EntityQuery<MetalWorkableComponent> _metalQuery = default!;
 
@@ -73,6 +74,9 @@ public abstract partial class AnvilSystem : EntitySystem
         if (args.Cancelled || args.Container.Count < ent.Comp.AllowedWorkables)
             return;
 
+        if (!_whitelist.IsWhitelistPass(ent.Comp.Blacklist, args.EntityUid))
+            return;
+
         args.Cancel();
     }
 
@@ -109,15 +113,17 @@ public abstract partial class AnvilSystem : EntitySystem
     private void OnHit(Entity<AnvilComponent> ent, ref AnvilHitMessage args)
     {
         var actor = args.Actor;
-        var ev = new CanOperateAnvilAttempt();
-        RaiseLocalEvent(actor, ref ev);
-        if (!ev.Handled)
+        var attemptEv = new CanOperateAnvilAttemptEvent();
+        RaiseLocalEvent(actor, ref attemptEv);
+        if (!attemptEv.Handled)
         {
             _popup.PopupCursor("Hold a hammer before operating on the anvil!", actor, PopupType.MediumCaution);
             return;
         }
 
         DoHit(ent.AsNullable(), args.Number);
-        _audio.PlayPredicted(ent.Comp.HitSounds, ent.Owner, actor);
+
+        var ev = new HammerHitDoneEvent(ent, actor);
+        RaiseLocalEvent(actor, ref ev);
     }
 }

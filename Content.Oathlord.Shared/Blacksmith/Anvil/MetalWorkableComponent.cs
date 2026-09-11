@@ -1,6 +1,4 @@
-﻿using Content.Oathlord.Shared.Blacksmith.Anvil.Prototypes;
-using Robust.Shared.GameStates;
-using Robust.Shared.Prototypes;
+﻿using Robust.Shared.GameStates;
 
 namespace Content.Oathlord.Shared.Blacksmith.Anvil;
 

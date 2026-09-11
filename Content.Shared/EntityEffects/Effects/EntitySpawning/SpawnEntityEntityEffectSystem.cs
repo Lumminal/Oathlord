@@ -16,7 +16,7 @@ public sealed partial class SpawnEntityEntityEffectSystem : EntityEffectSystem<T
         var quantity = args.Effect.Number * (int)Math.Floor(args.Scale);
         var proto = args.Effect.Entity;
 
-        if (args.Effect.Predicted)
+        if (args.Effect.Predicted && args.Predicted) // Oathlord - check args.Predicted
         {
             for (var i = 0; i < quantity; i++)
             {

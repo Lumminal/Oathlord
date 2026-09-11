@@ -12,6 +12,7 @@ public sealed partial class OathlordHandsSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<HandsComponent, CanOperateAnvilAttempt>(_hands.RefRelayEvent);
+        SubscribeLocalEvent<HandsComponent, CanOperateAnvilAttemptEvent>(_hands.RefRelayEvent);
+        SubscribeLocalEvent<HandsComponent, HammerHitDoneEvent>(_hands.RefRelayEvent);
     }
 }

@@ -35,7 +35,7 @@ public sealed partial class AnvilRecipePrototype : IPrototype, IInheritingProtot
     /// <summary>
     /// What will result from this recipe
     /// </summary>
-    [DataField]
+    [DataField(required: true)]
     public EntProtoId Result;
 
     /// <summary>

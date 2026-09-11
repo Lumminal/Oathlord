@@ -21,7 +21,7 @@ public sealed partial class SpawnEntityInContainerOrDropEntityEffectSystem : Ent
 
         var xform = Transform(entity);
 
-        if (args.Effect.Predicted)
+        if (args.Effect.Predicted && args.Predicted) // Oathlord - check args.Predicted
         {
             for (var i = 0; i < quantity; i++)
             {

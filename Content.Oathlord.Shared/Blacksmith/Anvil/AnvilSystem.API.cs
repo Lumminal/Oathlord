@@ -116,15 +116,19 @@ public partial class AnvilSystem
             return false;
 
         var patternIdx = ent.Comp.PatternIndex;
+
+        // No pattern, consider it complete by default
         if (patternIdx == -1)
             return true;
 
+        // We must reset if we exceeded the pattern
         if (patternIdx >= pattern.Count)
             patternIdx = 0;
 
         ent.Comp.PatternIndex = pattern[patternIdx] == number ? patternIdx + 1 : 0;
         DirtyField(ent, nameof(AnvilComponent.PatternIndex));
 
+        // The pattern is only considered done when our pattern index is the same as the pattern's list count
         return ent.Comp.PatternIndex == pattern.Count;
     }
 
@@ -220,7 +224,7 @@ public partial class AnvilSystem
     #endregion
 
     /// <summary>
-    /// Refreshes the anvil window
+    /// Does a refresh of the anvil window
     /// </summary>
     protected virtual void UpdateUi() { }
 }

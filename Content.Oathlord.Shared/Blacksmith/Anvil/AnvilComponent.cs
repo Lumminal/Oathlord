@@ -1,5 +1,5 @@
 ﻿using Content.Oathlord.Shared.Blacksmith.Anvil.Prototypes;
-using Robust.Shared.Audio;
+using Content.Shared.Whitelist;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
@@ -47,10 +47,10 @@ public sealed partial class AnvilComponent : Component
     public int PatternIndex = -1;
 
     /// <summary>
-    /// Sounds that play when the player does a hit
+    /// Metals that are not allowed to be worked on in this anvil.
     /// </summary>
     [DataField]
-    public SoundSpecifier HitSounds = new SoundCollectionSpecifier("HitSounds");
+    public EntityWhitelist? Blacklist;
 }
 
 [Serializable, NetSerializable]
@@ -82,4 +82,10 @@ public enum AnvilUiKey : byte
 /// It is relayed to the hands to check if we're holding any hammer currently.
 /// </summary>
 [ByRefEvent]
-public record struct CanOperateAnvilAttempt(bool Handled = false);
+public record struct CanOperateAnvilAttemptEvent(bool Handled = false);
+
+/// <summary>
+/// Raised on the user when a hit has been done.
+/// </summary>
+[ByRefEvent]
+public record struct HammerHitDoneEvent(EntityUid Anvil, EntityUid user);
