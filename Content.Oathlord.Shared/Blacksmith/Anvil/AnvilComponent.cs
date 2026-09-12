@@ -1,5 +1,4 @@
 ﻿using Content.Oathlord.Shared.Blacksmith.Anvil.Prototypes;
-using Content.Shared.Whitelist;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
@@ -45,12 +44,6 @@ public sealed partial class AnvilComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public int PatternIndex = -1;
-
-    /// <summary>
-    /// Metals that are not allowed to be worked on in this anvil.
-    /// </summary>
-    [DataField]
-    public EntityWhitelist? Blacklist;
 }
 
 [Serializable, NetSerializable]
@@ -88,4 +81,4 @@ public record struct CanOperateAnvilAttemptEvent(bool Handled = false);
 /// Raised on the user when a hit has been done.
 /// </summary>
 [ByRefEvent]
-public record struct HammerHitDoneEvent(EntityUid Anvil, EntityUid user);
+public record struct HammerHitDoneEvent(EntityUid Anvil, EntityUid User);

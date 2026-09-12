@@ -1,0 +1,23 @@
+﻿- type: entity
+  id: HammerSparksEffect
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TimedDespawn
+    lifetime: 0.9
+  - type: LightFade
+    duration: 0.9
+  - type: PointLight
+    color: Orange
+    radius: 3
+    energy: 8
+  - type: Sprite
+    noRot: true
+    drawdepth: Effects
+    sprite: _Oathlord/Effects/hammer_sparks.rsi
+    state: hammer_sparks
+  - type: EffectVisuals
+  - type: AnimationPlayer
+  - type: Tag
+    tags:
+    - HideContextMenu
+

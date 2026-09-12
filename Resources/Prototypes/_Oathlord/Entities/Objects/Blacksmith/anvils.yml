@@ -16,8 +16,6 @@
 # - type: Anvil
 #   allowedWorkables: 2 -> How many metals this specific anvil can hold.
 #   numbers: [ 5, -5 ] -> The "hit" numbers provided by the anvil. They get separated into positive and negative on the UI.
-#   blacklist: -> metals you don't want to be worked on in this anvil
-#   hitSounds -> sounds played by the anvil when the user does a hit
 - type: entity
   abstract: true
   parent: BaseStructure
@@ -43,6 +41,13 @@
       components:
       - Hammer
   - type: Storage # Other option is to make this with item slots, but this is simpler
+    storageOpenSound:
+      path: /Audio/_Oathlord/Blacksmith/Smithing/anvil_storage.ogg
+      params:
+        volume: -6
+    storageCloseSound: null
+    storageInsertSound: null
+    storageRemoveSound: null
     grid:
     - 0,0,1,1
     clickInsert: true
@@ -59,6 +64,3 @@
     state: anvil_black
   - type: Anvil
     numbers: [ -9, -7, -3, -1, 1, 3, 7, 9 ]
-    blacklist:
-      tags:
-      - SilverMetal

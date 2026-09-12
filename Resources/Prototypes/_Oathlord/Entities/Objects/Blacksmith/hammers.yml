@@ -12,8 +12,14 @@
     - !type:PlaySound
       sound:
         collection: HitSounds
+        params:
+          volume: -8
+          variation: 0.5
+    - !type:SpawnEntity
+      entity: HammerSparksEffect
+      predicted: false
   - type: Item
-    sprite: _Oathlord/Objects/Blacksmith/Smithing/HammerNormal/inhands.rsi
+    sprite: _Oathlord/Objects/Blacksmith/Smithing/hammer_normal.rsi
     inhandVisuals:
       left:
       - state: inhand-left
@@ -26,5 +32,5 @@
   name: Hammer
   components:
   - type: Sprite
-    sprite: _Oathlord/Objects/Blacksmith/Smithing/HammerNormal/icon.rsi
-    state: icon
+    sprite: _Oathlord/Objects/Blacksmith/Smithing/hammer_normal.rsi
+    state: hammer

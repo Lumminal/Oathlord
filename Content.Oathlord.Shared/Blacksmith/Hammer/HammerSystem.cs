@@ -20,7 +20,7 @@ public sealed partial class HammerSystem : EntitySystem
     {
         var arguments = args.Args;
         var anvil = arguments.Anvil;
-        var user = arguments.user;
+        var user = arguments.User;
 
         if (TerminatingOrDeleted(anvil))
             return;

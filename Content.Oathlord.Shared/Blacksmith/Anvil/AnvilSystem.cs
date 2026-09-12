@@ -74,9 +74,6 @@ public abstract partial class AnvilSystem : EntitySystem
         if (args.Cancelled || args.Container.Count < ent.Comp.AllowedWorkables)
             return;
 
-        if (!_whitelist.IsWhitelistPass(ent.Comp.Blacklist, args.EntityUid))
-            return;
-
         args.Cancel();
     }
 
