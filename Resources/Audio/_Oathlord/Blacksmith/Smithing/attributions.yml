@@ -1,0 +1,14 @@
+- files: ["hit_metal_2.ogg", "hit_metal_3.ogg", "hit_metal_4.ogg"]
+  license: "CC0-1.0"
+  copyright: "Created by BMacZero & Brian MacIntosh, converted to ogg by Luminal"
+  source: "https://opengameart.org/content/metal-impact-sounds"
+
+- files: ["hit_metal_1.ogg"]
+  license: "CC0-1.0"
+  copyright: "Created by Ogrebane, converted to ogg by Luminal"
+  source: "https://opengameart.org/content/wood-and-metal-sound-effects-volume-2"
+
+- files: ["anvil_storage.ogg"]
+  license: "CC-BY-3.0"
+  copyright: "Created by artisticdude, converted to ogg by Luminal"
+  source: "https://opengameart.org/content/inventory-sound-effects"

@@ -9,7 +9,7 @@ public sealed partial class EntityEffectOnTriggerSystem : XOnTriggerSystem<Entit
 
     protected override void OnTrigger(Entity<EntityEffectOnTriggerComponent> ent, EntityUid target, ref TriggerEvent args)
     {
-        _effects.ApplyEffects(target, ent.Comp.Effects, ent.Comp.Scale);
+        _effects.ApplyEffects(target, ent.Comp.Effects, ent.Comp.Scale, predicted: args.Predicted); // Oathlord - pass predicted
         args.Handled = true;
     }
 }

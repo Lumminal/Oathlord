@@ -1,0 +1,24 @@
+﻿# Put all new metals in this file, parented off BaseWorkableMetal. Don't re-use or touch upstream metals (e.g. IngotSilver, IngotGold etc).
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: BaseWorkableMetal
+  categories: [ ForkFiltered ]
+  components:
+  - type: MetalWorkable
+  - type: Tag
+
+- type: entity
+  parent: BaseWorkableMetal
+  id: DebugWorkable
+  name: Workable Metal
+  suffix: Debug
+  description: Workable Metal
+  components:
+  - type: Sprite
+    sprite: Objects/Materials/ingots.rsi
+    state: silver
+  - type: MetalWorkable
+  - type: Tag
+    tags:
+    - SilverMetal

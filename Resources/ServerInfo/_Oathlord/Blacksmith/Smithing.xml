@@ -1,0 +1,58 @@
+﻿<Document>
+  # The Field Guide
+
+  This feature is: [color=orange]In-Progress[/color].
+
+  ## Anvils & You
+
+  <Box>
+    <GuideEntityEmbed Entity="Anvil" Caption="Anvil"/>
+    <GuideEntityEmbed Entity="Hammer" Caption="Hammer"/>
+  </Box>
+
+  In order to use an anvil, you must first have two things on you.
+  Firstly, metal(s) to put in it's internal storage, and a hammer in any of your hands (doesn't have to be the active hand).
+
+  Once you have those, you are ready to start smithing. Follow these steps:
+
+  - 1. Insert your desired metal into the anvil. You can do that by clicking on it, or via the context menu verb.
+  - 2. Hold the hammer in your active hand, and right click the anvil to open the context menu. Click "Toggle UI" to open the anvil UI.
+  - 2.5. From this point, you can have your hammer in any hand.
+  - 3. You'll notice there's a few slots at the top of the UI, and a button called "Outputs". Clicking on the button will show the recipes available for those metals you put in before.
+  - 4. Once you open the recipes menu, you may click on a recipe of your choice, and click the button at the bottom to confirm your choice.
+  - 5. You may now begin the minigame.
+
+  ## How to complete a recipe
+
+  The minigame of the anvil is simple, but requires memorization and simple math. Here's how it works:
+  - There's two progress bars. One [color=green]green[/color], and one [color=red]red[/color]. Both have a value displayed inside of them.
+    - The [color=green]green[/color] bar indicates your progress. Your goal is to meet the [color=red]red[/color] bar's value.
+    - The [color=red]red[/color] bar indicates the work required for the recipe to complete itself.
+  - On the left and right you may see grids of numbers, positive and negative respectively. Those are called "hit numbers".
+  - If you click on a positive number, the green bar will go up, otherwise it will go down with a negative number.
+  - This is basically it. Click the right combination of numbers to match the green bar with the red bar.
+
+  Once a recipe is complete, the result will spawn on top of the anvil, and the metals will no longer appear in the UI or storage.
+
+  Although this sounds simple for most recipes, advanced ones have an extra layer of difficulty called [color=yellow]Patterns[/color]
+
+  A [color=yellow]Pattern[/color] is a sequence of numbers you must meet before the recipe is considered complete.
+  As an example, if a recipe has a pattern with these numbers:
+  - 7, 5, -5
+
+  And the required work for the recipe is 60, then you'd have to hit 7, 5, -5 in the exact order,
+  and the last number of that pattern sequence should lead to 60.
+
+  If you hit the pattern, and the last number doesn't lead to the work required, then the pattern will reset.
+
+  ## What is next for Anvils?
+
+  The anvils are obviously too simple now, even with patterns.
+
+  There's 2 features that will affect anvils in the future.
+  - Heating/Cooling metals. Metals will need to be above a certain temp. in order to be workable. The blacksmith must be quick with working.
+  - Flux. It will be a required material for working on metals.
+  - More recipes.
+  - Durability for the hammer, along with special hammer effects.
+
+</Document>

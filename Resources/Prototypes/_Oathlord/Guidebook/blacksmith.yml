@@ -1,0 +1,6 @@
+﻿- type: guideEntry
+  hidden: false
+  locFilter: "en-US"
+  id: OathlordSmithing
+  name: guidebook-oathlord-smithing-name
+  text: "/ServerInfo/_Oathlord/Blacksmith/Smithing.xml"

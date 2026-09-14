@@ -32,7 +32,7 @@ public abstract partial class SharedHandsSystem
         CoreRelayEvent(entity, ref args);
     }
 
-    private void RefRelayEvent<T>(Entity<HandsComponent> entity, ref T args)
+    public void RefRelayEvent<T>(Entity<HandsComponent> entity, ref T args) // Oathlord - made public
     {
         var ev = CoreRelayEvent(entity, ref args);
         args = ev.Args;
@@ -45,6 +45,10 @@ public abstract partial class SharedHandsSystem
         foreach (var held in EnumerateHeld(entity.AsNullable()))
         {
             RaiseLocalEvent(held, ref ev);
+            // <Oathlord> - Exists for when we only want to run the event on first item found, instead of all
+            if (ev.RunOnce)
+                break;
+            // <Oathlord/>
         }
 
         return ev;

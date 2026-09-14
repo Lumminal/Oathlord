@@ -351,10 +351,12 @@ namespace Content.Shared.Hands
     public sealed class HeldRelayedEvent<TEvent> : EntityEventArgs
     {
         public TEvent Args;
+        public bool RunOnce; // Oathlord - Run only for first held item found
 
-        public HeldRelayedEvent(TEvent args)
+        public HeldRelayedEvent(TEvent args, bool runOnce = false) // Oathlord
         {
             Args = args;
+            RunOnce = runOnce; // Oathlord
         }
     }
 }

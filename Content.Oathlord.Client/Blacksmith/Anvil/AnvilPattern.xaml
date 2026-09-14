@@ -1,0 +1,11 @@
+﻿<controls:AnvilPattern
+    xmlns="https://spacestation14.io"
+    xmlns:controls="using:Content.Oathlord.Client.Blacksmith.Anvil"
+    xmlns:graphics="using:Robust.Client.Graphics">
+    <PanelContainer Name="PatternPanelContainer" MinSize="64 64">
+        <PanelContainer.PanelOverride>
+            <graphics:StyleBoxFlat BackgroundColor="#36454F" BorderColor="#C2B067" BorderThickness="2"/>
+        </PanelContainer.PanelOverride>
+        <Label Name="PatternLabel" Align="Center"/>
+    </PanelContainer>
+</controls:AnvilPattern>

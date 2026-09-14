@@ -72,7 +72,7 @@ public sealed class SpellTest : InteractionTest
 
             // Remove the spell
             _spellcasting.RemoveSpell(spellUser, spell.Value);
-            Assert.That(spellUser.Comp.Container.Count, Is.EqualTo(0), "The spell was not removed from the container");
+            Assert.That(spellUser.Comp.Container.Count, Is.Zero, "The spell was not removed from the container");
         });
     }
 }

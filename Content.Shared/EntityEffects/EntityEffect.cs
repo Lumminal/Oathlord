@@ -17,7 +17,7 @@ public abstract partial class EntityEffect
     /// <param name="raiser">The type of effect raising the event.</param>
     /// <param name="scale">Optional scale multiplier for the effect.</param>
     /// <param name="user">The entity causing the effect.</param>
-    public abstract void RaiseEvent(EntityUid target, IEntityEffectRaiser raiser, float scale, EntityUid? user);
+    public abstract void RaiseEvent(EntityUid target, IEntityEffectRaiser raiser, float scale, EntityUid? user, bool predicted = true); // Oathlord - Added predicted
 
     /// <summary>
     /// Conditions for this effect to happen.
@@ -71,11 +71,11 @@ public abstract partial class EntityEffect
 /// <typeparam name="T">The Condition wer are raising.</typeparam>
 public abstract partial class EntityEffectBase<T> : EntityEffect where T : EntityEffectBase<T>
 {
-    public override void RaiseEvent(EntityUid target, IEntityEffectRaiser raiser, float scale, EntityUid? user)
+    public override void RaiseEvent(EntityUid target, IEntityEffectRaiser raiser, float scale, EntityUid? user, bool predicted = true) // Oathlord - Added predicted
     {
         if (this is not T type)
             return;
 
-        raiser.RaiseEffectEvent(target, type, scale, user);
+        raiser.RaiseEffectEvent(target, type, scale, user, predicted); // Oathlord - Added predicted
     }
 }

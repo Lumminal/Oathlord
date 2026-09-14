@@ -1,0 +1,36 @@
+﻿# Put all hammers in this file.
+# Hammers don't have any functionality now other than restricting you from using the anvil, but will get more later as blacksmithing develops.
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: BaseHammer
+  description: If you dont rock and stone, you ain't coming home.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Hammer
+    hitEffects:
+    - !type:PlaySound
+      sound:
+        collection: HitSounds
+        params:
+          volume: -8
+          variation: 0.5
+    - !type:SpawnEntity
+      entity: HammerSparksEffect
+      predicted: false
+  - type: Item
+    sprite: _Oathlord/Objects/Blacksmith/Smithing/hammer_normal.rsi
+    inhandVisuals:
+      left:
+      - state: inhand-left
+      right:
+      - state: inhand-right
+
+- type: entity
+  parent: BaseHammer
+  id: Hammer
+  name: Hammer
+  components:
+  - type: Sprite
+    sprite: _Oathlord/Objects/Blacksmith/Smithing/hammer_normal.rsi
+    state: hammer

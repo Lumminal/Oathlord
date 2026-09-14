@@ -19,7 +19,7 @@ public sealed partial class SpawnEntityInContainerEntityEffectSystem : EntityEff
         var proto = args.Effect.Entity;
         var container = args.Effect.ContainerName;
 
-        if (args.Effect.Predicted)
+        if (args.Effect.Predicted && args.Predicted) // Oathlord - check args.Predicted
         {
             for (var i = 0; i < quantity; i++)
             {
