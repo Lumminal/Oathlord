@@ -18,13 +18,16 @@ public sealed partial class HammerSystem : EntitySystem
     [SubscribeLocalEvent]
     public void OnHit(Entity<HammerComponent> ent, ref HeldRelayedEvent<HammerHitDoneEvent> args)
     {
-        var arguments = args.Args;
-        var anvil = arguments.Anvil;
-        var user = arguments.User;
+        var ev = args.Args;
+        var anvil = ev.Anvil;
+        var user = ev.User;
 
         if (TerminatingOrDeleted(anvil))
             return;
 
         _effects.TryApplyEffects(anvil, ent.Comp.HitEffects, user: user);
+
+        // Don't duplicate effects if we hold 2 hammers, only run for first hammer found
+        args.RunOnce = true;
     }
 }

@@ -6,7 +6,6 @@
         <PanelContainer.PanelOverride>
             <graphics:StyleBoxFlat BackgroundColor="#36454F" BorderColor="#C2B067" BorderThickness="2"/>
         </PanelContainer.PanelOverride>
-
         <Label Name="PatternLabel" Align="Center"/>
     </PanelContainer>
 </controls:AnvilPattern>

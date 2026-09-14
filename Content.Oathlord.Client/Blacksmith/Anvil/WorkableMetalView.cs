@@ -4,6 +4,9 @@ using Robust.Client.UserInterface.XAML;
 
 namespace Content.Oathlord.Client.Blacksmith.Anvil;
 
+/// <summary>
+/// A pre-set control for displaying workable metals.
+/// </summary>
 [GenerateTypedNameReferences]
 public sealed partial class WorkableMetalView : Control
 {

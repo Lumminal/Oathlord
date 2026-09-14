@@ -6,7 +6,6 @@
     Title="Anvil"
     MinSize="500 500">
     <BoxContainer Orientation="Vertical">
-
         <BoxContainer Orientation="Vertical" HorizontalAlignment="Left" Margin="16" SeparationOverride="6">
             <Label Text="Metals" Align="Left"/>
             <controls:HLine StyleClasses="highlight" Thickness="2"/>
@@ -18,10 +17,8 @@
                 <Button Text="Outputs" Name="OutputsButton"/>
             </BoxContainer>
         </BoxContainer>
-
         <controls:HLine StyleClasses="highlight" Thickness="3" Margin="16 0"/>
         <BoxContainer Orientation="Vertical" HorizontalAlignment="Center" Margin="0 16">
-
             <BoxContainer Orientation="Vertical">
                 <Label Name="RecipeName" Align="Center" Margin="0 6"/>
                 <PanelContainer HorizontalAlignment="Center">
@@ -31,9 +28,7 @@
                     <TextureRect Name="RecipeView"/>
                 </PanelContainer>
             </BoxContainer>
-
         </BoxContainer>
-
         <BoxContainer Name="RecipeMinigameContainer"
                       VerticalExpand="True"
                       HorizontalExpand="True"
@@ -41,14 +36,11 @@
                       SeparationOverride="15"
                       Visible="False">
             <GridContainer Name="PositiveNumbersContainer" Columns="3" Rows="3"/>
-
             <PanelContainer Margin="8">
                 <PanelContainer.PanelOverride>
                     <graphics:StyleBoxFlat BackgroundColor="#36454F"/>
                 </PanelContainer.PanelOverride>
-
                 <BoxContainer SeparationOverride="5" Margin="6">
-
                     <oathcontrols:LabelProgressBar Name="WorkDoneBar"
                                                    MinSize="32 6"
                                                    Margin="12"
@@ -57,13 +49,11 @@
                             <graphics:StyleBoxFlat BackgroundColor="#228B22"/>
                         </ProgressBar.ForegroundStyleBoxOverride>
                     </oathcontrols:LabelProgressBar>
-
                     <PanelContainer VerticalExpand="True" MinWidth="3" VerticalAlignment="Stretch" Margin="6">
                         <PanelContainer.PanelOverride>
                             <graphics:StyleBoxFlat BackgroundColor="#a88b5e"/>
                         </PanelContainer.PanelOverride>
                     </PanelContainer>
-
                     <oathcontrols:LabelProgressBar Name="WorkNeededBar"
                                                    MinSize="32 6"
                                                    Margin="12"
@@ -72,13 +62,10 @@
                             <graphics:StyleBoxFlat BackgroundColor="#880808"/>
                         </ProgressBar.ForegroundStyleBoxOverride>
                     </oathcontrols:LabelProgressBar>
-
                 </BoxContainer>
             </PanelContainer>
-
             <GridContainer Name="NegativeNumbersContainer" Columns="3" Rows="3"/>
         </BoxContainer>
-
         <Label Name="PatternsLabel" Text="Patterns" Visible="False" HorizontalAlignment="Center" Align="Center"/>
         <BoxContainer Name="PatternContainer" Margin="12" HorizontalAlignment="Center" SeparationOverride="10" VerticalAlignment="Bottom" Visible="False"/>
     </BoxContainer>

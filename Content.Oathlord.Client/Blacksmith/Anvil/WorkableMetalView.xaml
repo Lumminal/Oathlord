@@ -6,7 +6,6 @@
         <PanelContainer.PanelOverride>
             <graphics:StyleBoxFlat BackgroundColor="#36454F"/>
         </PanelContainer.PanelOverride>
-
         <SpriteView Name="MetalView" Scale="2 2"/>
     </PanelContainer>
 </controls:WorkableMetalView>

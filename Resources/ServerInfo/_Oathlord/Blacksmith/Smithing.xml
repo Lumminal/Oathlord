@@ -6,8 +6,8 @@
   ## Anvils & You
 
   <Box>
-    <GuideEntityEmbed Entity="Anvil" Caption="A typical anvil"/>
-    <GuideEntityEmbed Entity="Hammer" Caption="Your main tool"/>
+    <GuideEntityEmbed Entity="Anvil" Caption="Anvil"/>
+    <GuideEntityEmbed Entity="Hammer" Caption="Hammer"/>
   </Box>
 
   In order to use an anvil, you must first have two things on you.
@@ -15,28 +15,28 @@
 
   Once you have those, you are ready to start smithing. Follow these steps:
 
-  1. Insert your desired metal into the anvil. You can do that by clicking on it, or via the context menu verb.
-  2. Hold the hammer in your active hand, and right click the anvil to open the context menu. Click "Toggle UI" to open the anvil UI.
-  2.5. From this point, you can have your hammer in any hand.
-  3. You'll notice there's a few slots at the top of the UI, and a button called "Outputs". Clicking on the button will show the recipes available for those metals you put in before.
-  4. Once you open the recipes menu, you may click on a recipe of your choice, and click the button at the bottom to confirm your choice.
-  5. You may now begin the minigame.
+  - 1. Insert your desired metal into the anvil. You can do that by clicking on it, or via the context menu verb.
+  - 2. Hold the hammer in your active hand, and right click the anvil to open the context menu. Click "Toggle UI" to open the anvil UI.
+  - 2.5. From this point, you can have your hammer in any hand.
+  - 3. You'll notice there's a few slots at the top of the UI, and a button called "Outputs". Clicking on the button will show the recipes available for those metals you put in before.
+  - 4. Once you open the recipes menu, you may click on a recipe of your choice, and click the button at the bottom to confirm your choice.
+  - 5. You may now begin the minigame.
 
   ## How to complete a recipe
 
   The minigame of the anvil is simple, but requires memorization and simple math. Here's how it works:
-  - There's two progress bars. One green, and one red. Both have a value displayed inside of them.
-    - The green bar indicates your progress. Your goal is to meet the red bar's value.
-    - The red bar indicates the work required for the recipe to complete itself.
+  - There's two progress bars. One [color=green]green[/color], and one [color=red]red[/color]. Both have a value displayed inside of them.
+    - The [color=green]green[/color] bar indicates your progress. Your goal is to meet the [color=red]red[/color] bar's value.
+    - The [color=red]red[/color] bar indicates the work required for the recipe to complete itself.
   - On the left and right you may see grids of numbers, positive and negative respectively. Those are called "hit numbers".
   - If you click on a positive number, the green bar will go up, otherwise it will go down with a negative number.
   - This is basically it. Click the right combination of numbers to match the green bar with the red bar.
 
   Once a recipe is complete, the result will spawn on top of the anvil, and the metals will no longer appear in the UI or storage.
 
-  Although this sounds simple for most recipes, advanced ones have an extra layer of difficulty called "Patterns"
+  Although this sounds simple for most recipes, advanced ones have an extra layer of difficulty called [color=yellow]Patterns[/color]
 
-  A pattern is a sequence of numbers you must meet before the recipe is considered complete.
+  A [color=yellow]Pattern[/color] is a sequence of numbers you must meet before the recipe is considered complete.
   As an example, if a recipe has a pattern with these numbers:
   - 7, 5, -5
 

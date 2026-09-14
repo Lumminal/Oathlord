@@ -45,6 +45,10 @@ public abstract partial class SharedHandsSystem
         foreach (var held in EnumerateHeld(entity.AsNullable()))
         {
             RaiseLocalEvent(held, ref ev);
+            // <Oathlord> - Exists for when we only want to run the event on first item found, instead of all
+            if (ev.RunOnce)
+                break;
+            // <Oathlord/>
         }
 
         return ev;

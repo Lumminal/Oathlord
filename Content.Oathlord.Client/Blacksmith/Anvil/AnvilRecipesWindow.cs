@@ -8,6 +8,9 @@ using Robust.Client.UserInterface.XAML;
 
 namespace Content.Oathlord.Client.Blacksmith.Anvil;
 
+/// <summary>
+/// A window for displaying anvil recipes, and selecting them
+/// </summary>
 [GenerateTypedNameReferences]
 public sealed partial class AnvilRecipesWindow : FancyWindow
 {

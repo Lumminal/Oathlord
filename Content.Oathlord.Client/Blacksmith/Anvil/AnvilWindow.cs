@@ -12,6 +12,10 @@ using Container = Robust.Client.UserInterface.Controls.Container;
 
 namespace Content.Oathlord.Client.Blacksmith.Anvil;
 
+/// <summary>
+/// A window for the anvil.
+/// Holds the minigame, and displays the active metals.
+/// </summary>
 [GenerateTypedNameReferences]
 public sealed partial class AnvilWindow : FancyWindow
 {

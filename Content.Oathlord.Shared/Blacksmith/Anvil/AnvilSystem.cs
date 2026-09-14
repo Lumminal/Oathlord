@@ -2,7 +2,6 @@
 using Content.Oathlord.Shared.Blacksmith.Anvil.Prototypes;
 using Content.Shared.Popups;
 using Content.Shared.Storage;
-using Content.Shared.Whitelist;
 using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
@@ -31,13 +30,12 @@ public abstract partial class AnvilSystem : EntitySystem
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private SharedContainerSystem _container = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
-    [Dependency] private EntityWhitelistSystem _whitelist = default!;
 
     [Dependency] private EntityQuery<AnvilComponent> _anvilQuery = default!;
     [Dependency] private EntityQuery<MetalWorkableComponent> _metalQuery = default!;
 
     /// <summary>
-    /// A dictionary of all metals matched with their respective recipes, for fast lookups
+    /// A list of all metals matched with their respective recipes, for fast lookups
     /// </summary>
     [ViewVariables]
     public List<ProtoId<AnvilRecipePrototype>> Recipes = new();
@@ -57,7 +55,7 @@ public abstract partial class AnvilSystem : EntitySystem
     }
 
     [SubscribeLocalEvent]
-    public void OnProtoReload(PrototypesReloadedEventArgs args)
+    private void OnProtoReload(PrototypesReloadedEventArgs args)
     {
         if (!args.WasModified<AnvilRecipePrototype>())
             return;
@@ -66,7 +64,7 @@ public abstract partial class AnvilSystem : EntitySystem
     }
 
     [SubscribeLocalEvent]
-    public void InsertAttempt(Entity<AnvilComponent> ent, ref ContainerIsInsertingAttemptEvent args)
+    private void InsertAttempt(Entity<AnvilComponent> ent, ref ContainerIsInsertingAttemptEvent args)
     {
         if (args.Container.ID != StorageComponent.ContainerId)
             return;
@@ -78,13 +76,13 @@ public abstract partial class AnvilSystem : EntitySystem
     }
 
     [SubscribeLocalEvent]
-    public void EntRemoved(Entity<AnvilComponent> ent, ref EntRemovedFromContainerMessage args)
+    private void EntRemoved(Entity<AnvilComponent> ent, ref EntRemovedFromContainerMessage args)
     {
         ResetAnvil(ent, args.Container.ID);
     }
 
     [SubscribeLocalEvent]
-    public void EntInserted(Entity<AnvilComponent> ent, ref EntInsertedIntoContainerMessage args)
+    private void EntInserted(Entity<AnvilComponent> ent, ref EntInsertedIntoContainerMessage args)
     {
         ResetAnvil(ent, args.Container.ID);
     }

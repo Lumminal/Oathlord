@@ -8,7 +8,6 @@
         <PanelContainer.PanelOverride>
             <graphics:StyleBoxFlat BackgroundColor="#36454F" BorderColor="#000000" BorderThickness="2"/>
         </PanelContainer.PanelOverride>
-
         <TextureButton Name="RecipeButton" Access="Public"/>
     </PanelContainer>
 </controls:AnvilRecipe>

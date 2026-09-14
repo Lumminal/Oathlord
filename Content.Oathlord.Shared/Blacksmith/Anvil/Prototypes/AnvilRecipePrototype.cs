@@ -27,13 +27,14 @@ public sealed partial class AnvilRecipePrototype : IPrototype, IInheritingProtot
 
     /// <summary>
     /// How much work it is required for this recipe.
-    /// This should be a number between 0 and 100
+    /// This should be a number between 1 and 100
     /// </summary>
     [DataField]
     public int WorkRequired = 50;
 
     /// <summary>
-    /// What will result from this recipe
+    /// What will result from this recipe.
+    /// It will be spawned on top of the Anvil.
     /// </summary>
     [DataField(required: true)]
     public EntProtoId Result;

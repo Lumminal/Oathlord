@@ -25,7 +25,7 @@ public sealed partial class AnvilComponent : Component
     public ProtoId<AnvilRecipePrototype>? SelectedRecipe;
 
     /// <summary>
-    /// The numbers that this anvil support, for hitting workables.
+    /// The hit numbers that this anvil support, for hitting workables.
     /// </summary>
     [DataField(required: true)]
     public List<int> Numbers = new();
@@ -38,14 +38,19 @@ public sealed partial class AnvilComponent : Component
     public int WorkDone;
 
     /// <summary>
-    /// The index of the <see cref="AnvilRecipePrototype.Pattern"/> the player must meet
-    /// It increases with every successful hit, but resets if user fails the pattern
-    /// -1 means no pattern
+    /// The index of the <see cref="AnvilRecipePrototype.Pattern"/> the player must meet.
+    /// It increases with every successful hit, but resets if user fails the pattern.
+    ///
+    /// -1 means no pattern was set, or a recipe has not been yet selected
     /// </summary>
     [DataField, AutoNetworkedField]
     public int PatternIndex = -1;
 }
 
+/// <summary>
+/// Sent when the user selects a recipe in the anvil UI
+/// </summary>
+/// <param name="recipe">The recipe that was selected</param>
 [Serializable, NetSerializable]
 public sealed class AnvilRecipeSelectedMessage(ProtoId<AnvilRecipePrototype> recipe) : BoundUserInterfaceMessage
 {
@@ -55,6 +60,10 @@ public sealed class AnvilRecipeSelectedMessage(ProtoId<AnvilRecipePrototype> rec
     public ProtoId<AnvilRecipePrototype> Recipe = recipe;
 }
 
+/// <summary>
+/// Sent when the user clicks a hit number button the anvil UI
+/// </summary>
+/// <param name="number">The hit number</param>
 [Serializable, NetSerializable]
 public sealed class AnvilHitMessage(int number) : BoundUserInterfaceMessage
 {
@@ -72,7 +81,6 @@ public enum AnvilUiKey : byte
 
 /// <summary>
 /// Raised before doing operations on the anvil, on the user, to check if they can operate on it.
-/// It is relayed to the hands to check if we're holding any hammer currently.
 /// </summary>
 [ByRefEvent]
 public record struct CanOperateAnvilAttemptEvent(bool Handled = false);

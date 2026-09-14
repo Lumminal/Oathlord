@@ -5,6 +5,9 @@ using Robust.Client.UserInterface.XAML;
 
 namespace Content.Oathlord.Client.Blacksmith.Anvil;
 
+/// <summary>
+/// A pre-set control for anvil recipes
+/// </summary>
 [GenerateTypedNameReferences]
 public sealed partial class AnvilRecipe : Control
 {

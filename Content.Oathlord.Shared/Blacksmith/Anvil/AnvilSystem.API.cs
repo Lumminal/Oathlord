@@ -156,7 +156,6 @@ public partial class AnvilSystem
             return;
 
         // In all cases, we clean up the metals once we win the minigame
-        // It can still fail if storage container is missing
         if (!TryCleanMetals(ent))
             return;
 
@@ -179,6 +178,12 @@ public partial class AnvilSystem
         if (!_container.TryGetContainer(ent, StorageComponent.ContainerId, out var container))
         {
             Log.Error($"Could not find anvil's ({ToPrettyString(ent)}) storage container");
+            return false;
+        }
+
+        if (container.Count == 0)
+        {
+            Log.Error($"There were no metals inside the storage container of {ToPrettyString(ent)}");
             return false;
         }
 
