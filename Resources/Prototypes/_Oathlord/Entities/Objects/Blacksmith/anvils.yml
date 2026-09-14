@@ -40,6 +40,9 @@
     requiredItems:
       components:
       - Hammer
+  - type: ContainerContainer
+    containers:
+      storagebase: !type:Container
   - type: Storage # Other option is to make this with item slots, but this is simpler
     storageOpenSound:
       path: /Audio/_Oathlord/Blacksmith/Smithing/anvil_storage.ogg
