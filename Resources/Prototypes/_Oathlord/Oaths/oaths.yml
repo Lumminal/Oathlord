@@ -1,0 +1,4 @@
+﻿- type: oath
+  id: Oathless
+  effects:
+  - !type:NoEffect

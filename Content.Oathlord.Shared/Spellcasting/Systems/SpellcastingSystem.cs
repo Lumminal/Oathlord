@@ -289,7 +289,7 @@ public abstract partial class SpellcastingSystem : EntitySystem
     public List<EntityUid> GetSpells(Entity<SpellsComponent?> ent, bool activeOnly)
     {
         if (!_spellsQuery.Resolve(ent.Owner, ref ent.Comp))
-            return new List<EntityUid>();
+            return new();
 
         var spells = new List<EntityUid>();
         foreach (var spell in ent.Comp.Container.ContainedEntities)
