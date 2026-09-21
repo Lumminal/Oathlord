@@ -1,4 +1,18 @@
 ﻿- type: oath
   id: Oathless
+  effect: OathlessEffect
+
+- type: oath
+  id: OathHammer
+  effect: OathHammerEffect
+
+# Effects
+- type: entityEffect
+  id: OathlessEffect
+  effects:
+  - !type:NoEffect
+
+- type: entityEffect
+  id: OathHammerEffect
   effects:
   - !type:NoEffect

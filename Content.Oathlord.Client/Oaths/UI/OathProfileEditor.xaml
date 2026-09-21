@@ -1,0 +1,6 @@
+﻿<controls:OathProfileEditor
+    xmlns="https://spacestation14.io"
+    xmlns:controls="using:Content.Oathlord.Client.Oaths.UI">
+    <BoxContainer Name="OathContainer" Orientation="Vertical"/>
+    <Button Name="SaveButton" Text="Set The Oath"/>
+</controls:OathProfileEditor>

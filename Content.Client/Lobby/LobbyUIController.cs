@@ -265,6 +265,7 @@ public sealed partial class LobbyUIController : UIController, IOnStateEntered<Lo
             _markings);
 
         _profileEditor.OnOpenGuidebook += _guide.OpenHelp;
+        OnProfileEditorCreated?.Invoke(_profileEditor); // Oathlord
 
         _characterSetup = new CharacterSetupGui(_profileEditor);
 

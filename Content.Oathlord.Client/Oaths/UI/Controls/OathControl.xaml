@@ -1,0 +1,8 @@
+﻿<controls:OathControl
+    xmlns="https://spacestation14.io"
+    xmlns:controls="using:Content.Oathlord.Client.Oaths.UI.Controls">
+    <BoxContainer>
+        <Label Name="OathLabel" Text="Test"/>
+        <Button Name="OathButton" Text="Test Button" Access="Public"/>
+    </BoxContainer>
+</controls:OathControl>
