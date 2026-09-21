@@ -807,6 +807,7 @@ namespace Content.Shared.Preferences
             {
                 _loadouts.Remove(value);
             }
+            EnsureValidOathlord(prototypeManager); // Oathlord
         }
 
         /// <summary>

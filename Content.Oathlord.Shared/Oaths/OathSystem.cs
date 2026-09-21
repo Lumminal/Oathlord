@@ -36,22 +36,6 @@ public abstract partial class OathSystem : CommonOathSystem
         LoadOaths();
     }
 
-    [SubscribeLocalEvent]
-    public void OnOrganInserted(Entity<OathComponent> ent, ref OrganGotInsertedEvent args)
-    {
-        if (_timing.ApplyingState)
-            return;
-
-        // Only run the effects once, on round-start.
-        if (ent.Comp.HasRunEffects)
-            return;
-
-        ApplyOathEffects(args.Target, ent.Comp.Oath);
-
-        ent.Comp.HasRunEffects = true;
-        DirtyField(ent.AsNullable(), nameof(OathComponent.HasRunEffects));
-    }
-
     /// <summary>
     /// Returns the oath active in the entity's brain
     /// </summary>
@@ -148,6 +132,8 @@ public abstract partial class OathSystem : CommonOathSystem
             return;
 
         _effects.TryApplyEffect(target, entEffect);
+
+        Log.Info($"Running Oath effects of: {oath.Id}");
     }
 
     private void LoadOaths()

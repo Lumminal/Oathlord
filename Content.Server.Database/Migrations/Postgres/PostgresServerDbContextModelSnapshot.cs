@@ -1156,6 +1156,11 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasColumnType("jsonb")
                         .HasColumnName("markings");
 
+                    b.Property<string>("Oath")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("oath");
+
                     b.Property<JsonDocument>("OrganMarkings")
                         .HasColumnType("jsonb")
                         .HasColumnName("organ_markings");

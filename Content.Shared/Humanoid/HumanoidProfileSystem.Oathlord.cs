@@ -1,5 +1,4 @@
 ﻿using Content.Oathlord.Common.Oaths;
-using Content.Shared.Preferences;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Humanoid;

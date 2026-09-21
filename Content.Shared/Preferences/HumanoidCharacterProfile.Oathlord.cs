@@ -13,4 +13,10 @@ public sealed partial class HumanoidCharacterProfile
     {
         return new(this) { Oath = oath };
     }
+
+    private void EnsureValidOathlord(IPrototypeManager proto)
+    {
+        if (!proto.HasIndex(Oath))
+            Oath = HumanoidProfileSystem.DefaultOath;
+    }
 }
