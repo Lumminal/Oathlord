@@ -2,12 +2,15 @@
 using Content.Client.Lobby.UI;
 using Content.Oathlord.Client.Oaths.UI;
 using Content.Oathlord.Shared.Oaths;
+using Robust.Client.GameObjects;
 using Robust.Client.UserInterface.Controls;
 
 namespace Content.Oathlord.Client.Oaths;
 
 public sealed partial class ClientOathSystem : OathSystem
 {
+    [Dependency] private SpriteSystem _sprite = default!;
+
     public override void Initialize()
     {
         base.Initialize();
@@ -27,7 +30,7 @@ public sealed partial class ClientOathSystem : OathSystem
         var above = editor.MarkingsTab;
         var index = above.GetPositionInParent();
 
-        var tab = new OathProfileEditor(this);
+        var tab = new OathProfileEditor(ProtoMan, this, _sprite);
         tab.OnSave += oath =>
         {
             editor.Profile = editor.Profile?.WithOath(oath);

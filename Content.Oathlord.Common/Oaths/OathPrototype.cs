@@ -1,4 +1,5 @@
 ﻿using Robust.Shared.Prototypes;
+using Robust.Shared.Utility;
 
 namespace Content.Oathlord.Common.Oaths;
 
@@ -13,6 +14,12 @@ public sealed partial class OathPrototype : IPrototype
     public string ID { get; private set; } = default!;
 
     /// <summary>
+    /// The name of the oath 
+    /// </summary>
+    [DataField(required: true)]
+    public string Name = string.Empty;
+
+    /// <summary>
     /// EntityEffectPrototype that will run on the user, when an oath has been chosen
     /// </summary>
     /// <remarks>
@@ -21,4 +28,16 @@ public sealed partial class OathPrototype : IPrototype
     /// </remarks>
     [DataField(required: true)]
     public string Effect = string.Empty;
+
+    /// <summary>
+    /// The icon of the oath to display in the UI.
+    /// </summary>
+    [DataField]
+    public SpriteSpecifier? Icon;
+
+    /// <summary>
+    /// The background icon of the oath to display in the UI.
+    /// </summary>
+    [DataField]
+    public SpriteSpecifier? Background;
 }

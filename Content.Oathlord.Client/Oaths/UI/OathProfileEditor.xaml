@@ -1,6 +1,6 @@
 ﻿<BoxContainer xmlns="https://spacestation14.io">
-    <BoxContainer Orientation="Vertical">
-        <BoxContainer Name="OathContainer" Orientation="Vertical"/>
-        <Button Name="SaveButton" Text="Set The Oath" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+    <BoxContainer Orientation="Vertical" VerticalExpand="True" HorizontalExpand="True">
+        <GridContainer Name="OathContainer" Rows="5" Columns="5" HSeparationOverride="25" Margin="6"/>
+        <Button Name="SaveButton" Text="Lock in your belief..." TextAlign="Center" VerticalAlignment="Bottom" VerticalExpand="True" HorizontalAlignment="Center"/>
     </BoxContainer>
 </BoxContainer>

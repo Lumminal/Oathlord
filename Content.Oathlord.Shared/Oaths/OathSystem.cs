@@ -2,7 +2,6 @@
 using Content.Shared.Body;
 using Content.Shared.EntityEffects;
 using Robust.Shared.Prototypes;
-using Robust.Shared.Timing;
 
 namespace Content.Oathlord.Shared.Oaths;
 
@@ -12,10 +11,13 @@ namespace Content.Oathlord.Shared.Oaths;
 /// </summary>
 public abstract partial class OathSystem : CommonOathSystem
 {
-    [Dependency] private IGameTiming _timing = default!;
     [Dependency] private BodySystem _body = default!;
     [Dependency] private SharedEntityEffectsSystem _effects = default!;
+
     [Dependency] private EntityQuery<OathComponent> _oathQuery = default!;
+
+    [ViewVariables]
+    public List<ProtoId<OathPrototype>> AllOaths = new();
 
     public override void Initialize()
     {
@@ -23,9 +25,6 @@ public abstract partial class OathSystem : CommonOathSystem
 
         LoadOaths();
     }
-
-    [ViewVariables]
-    public List<ProtoId<OathPrototype>> AllOaths = new();
 
     [SubscribeLocalEvent]
     public void OnProtoReload(PrototypesReloadedEventArgs args)
@@ -39,7 +38,7 @@ public abstract partial class OathSystem : CommonOathSystem
     /// <summary>
     /// Returns the oath active in the entity's brain
     /// </summary>
-    /// <param name="uid">The entity</param>
+    /// <param name="uid">The user</param>
     /// <returns>Null if the oath was not found</returns>
     public ProtoId<OathPrototype>? GetOath(EntityUid uid)
     {
@@ -112,7 +111,7 @@ public abstract partial class OathSystem : CommonOathSystem
     /// </summary>
     /// <param name="oath">The oath prototype</param>
     /// <returns>Empty if prototype was not resolved</returns>
-    public ProtoId<EntityEffectPrototype>? GetEffects(ProtoId<OathPrototype> oath)
+    public ProtoId<EntityEffectPrototype>? GetEffects([ForbidLiteral] ProtoId<OathPrototype> oath)
     {
         if (!ProtoMan.Resolve(oath, out var oathProto))
             return null;
@@ -120,7 +119,7 @@ public abstract partial class OathSystem : CommonOathSystem
         return oathProto.Effect;
     }
 
-    public override void ApplyOath(EntityUid target, ProtoId<OathPrototype> oath)
+    public override void ApplyOath(EntityUid target, [ForbidLiteral] ProtoId<OathPrototype> oath)
     {
         SetOath(target, oath);
     }
@@ -132,8 +131,6 @@ public abstract partial class OathSystem : CommonOathSystem
             return;
 
         _effects.TryApplyEffect(target, entEffect);
-
-        Log.Info($"Running Oath effects of: {oath.Id}");
     }
 
     private void LoadOaths()

@@ -1,18 +1,12 @@
 ﻿- type: oath
   id: Oathless
+  name: Oathless
   effect: OathlessEffect
-
-- type: oath
-  id: OathHammer
-  effect: OathHammerEffect
+  icon: /Textures/_Oathlord/Interface/Oaths/oath_oathless.png
+  background: /Textures/_Oathlord/Interface/Oaths/bg_oath.png
 
 # Effects
 - type: entityEffect
   id: OathlessEffect
-  effects:
-  - !type:NoEffect
-
-- type: entityEffect
-  id: OathHammerEffect
   effects:
   - !type:NoEffect

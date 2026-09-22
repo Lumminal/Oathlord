@@ -1,6 +1,14 @@
-﻿<Control xmlns="https://spacestation14.io">
-    <BoxContainer>
-        <Label Name="OathLabel" Text="Test"/>
-        <Button Name="OathButton" Text="Test Button" Access="Public"/>
+﻿<Control xmlns="https://spacestation14.io"
+         xmlns:graphics="using:Robust.Client.Graphics">
+    <BoxContainer Orientation="Vertical">
+        <Label Name="OathLabel" Align="Center" HorizontalAlignment="Center" Margin="6"/>
+
+        <PanelContainer Name="OathPanel" MinSize="64 64">
+            <PanelContainer.PanelOverride>
+                <graphics:StyleBoxTexture/>
+            </PanelContainer.PanelOverride>
+
+            <TextureButton Name="OathButton" Access="Public"/>
+        </PanelContainer>
     </BoxContainer>
 </Control>
