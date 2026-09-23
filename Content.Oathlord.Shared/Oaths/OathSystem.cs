@@ -74,7 +74,7 @@ public abstract partial class OathSystem : CommonOathSystem
             return;
 
         ent.Comp.Oath = oath;
-        DirtyField(ent, nameof(OathComponent.Oath));
+        Dirty(ent);
 
         if (!runEffects || user is not { } usr)
             return;
@@ -124,6 +124,11 @@ public abstract partial class OathSystem : CommonOathSystem
         SetOath(target, oath);
     }
 
+    /// <summary>
+    /// Helper to apply oath effects
+    /// </summary>
+    /// <param name="target">The target to apply the effects to</param>
+    /// <param name="oath">The oath</param>
     private void ApplyOathEffects(EntityUid target, ProtoId<OathPrototype> oath)
     {
         var effect = GetEffects(oath);

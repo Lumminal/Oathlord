@@ -5,10 +5,10 @@ using Robust.Shared.Prototypes;
 namespace Content.Oathlord.Shared.Oaths;
 
 /// <summary>
-/// Component used on the brain to define what Oath they are aligned to.
+/// Component used on the brain to define what Oath the player is aligned to.
 /// </summary>
 [RegisterComponent, NetworkedComponent]
-[AutoGenerateComponentState(fieldDeltas: true)]
+[AutoGenerateComponentState]
 public sealed partial class OathComponent : Component
 {
     /// <summary>
@@ -16,10 +16,4 @@ public sealed partial class OathComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public ProtoId<OathPrototype> Oath = "Oathless";
-
-    /// <summary>
-    /// Whether the effects have been run before on this brain before.
-    /// </summary>
-    [DataField, AutoNetworkedField]
-    public bool HasRunEffects;
 }
