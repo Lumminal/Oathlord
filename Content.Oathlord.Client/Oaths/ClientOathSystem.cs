@@ -33,7 +33,8 @@ public sealed partial class ClientOathSystem : OathSystem
 
     private void OnProfileEditor(HumanoidProfileEditor editor)
     {
-        var above = editor.TraitsTab;
+        // Put the oath window before markings
+        var above = editor.MarkingsTab;
         var index = above.GetPositionInParent();
 
         var tab = new OathProfileEditor(ProtoMan, this, _sprite);
@@ -53,10 +54,31 @@ public sealed partial class ClientOathSystem : OathSystem
         if (_player.LocalEntity is not { } player|| GetOath(player) is not { } oath)
             return;
 
-        // todo: test
-        var oathControl = new OathControl(oath, ProtoMan, _sprite);
-        oathControl.MaxSize = new Vector2(64, 64);
+        // We're basically searching for existing oath control, because if we don't,
+        // the character window will infinitely add it
+        OathControl? oathControl = null;
+        foreach (var child in window.CharacterContainer.Children)
+        {
+            if (child is OathControl)
+            {
+                oathControl = (OathControl) child;
+                break;
+            }
+        }
 
-        window.CharacterContainer.AddChild(oathControl);
+        if (oathControl == null)
+        {
+            // Add the control only if it wasn't found in the window
+            oathControl = new OathControl(oath, ProtoMan, _sprite)
+            {
+                MaxSize = new Vector2(64, 64),
+                Margin = new Thickness(16, 0)
+            };
+            window.CharacterContainer.AddChild(oathControl);
+            return;
+        }
+
+        // Update the control if it exists
+        oathControl.UpdateOath(oath);
     }
 }

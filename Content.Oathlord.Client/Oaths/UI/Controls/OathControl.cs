@@ -10,23 +10,38 @@ namespace Content.Oathlord.Client.Oaths.UI.Controls;
 [GenerateTypedNameReferences]
 public sealed partial class OathControl : Control
 {
+    private IPrototypeManager _proto;
+    private SpriteSystem _sprite;
+
     public ProtoId<OathPrototype> Oath;
 
     public OathControl(ProtoId<OathPrototype> oath, IPrototypeManager proto, SpriteSystem sprite)
     {
         RobustXamlLoader.Load(this);
-        Oath = oath;
+        _proto = proto;
+        _sprite = sprite;
 
-        if (!proto.TryIndex(oath, out var oathProto))
+        UpdateOath(oath);
+    }
+
+    /// <summary>
+    /// Sets the oath, and updates the icon on the UI
+    /// </summary>
+    /// <param name="oath">The updated oath</param>
+    public void UpdateOath(ProtoId<OathPrototype> oath)
+    {
+        Oath = oath;
+        if (!_proto.TryIndex(oath, out var oathProto))
             return;
 
-        OathLabel.Text = oathProto.Name;
+        // todo: we need a dedicated tooltip supplier...
+        OathButton.Tooltip = $"{oathProto.Name}: {oathProto.Description}";
 
         if (oathProto.Background is { } background && OathPanel.PanelOverride is StyleBoxTexture styleBox)
-            styleBox.Texture = sprite.Frame0(background);
+            styleBox.Texture = _sprite.Frame0(background);
 
         if (oathProto.Icon is { } icon)
-            OathButton.TextureNormal = sprite.Frame0(icon);
+            OathButton.TextureNormal = _sprite.Frame0(icon);
     }
 }
 

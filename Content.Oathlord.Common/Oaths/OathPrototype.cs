@@ -14,10 +14,16 @@ public sealed partial class OathPrototype : IPrototype
     public string ID { get; private set; } = default!;
 
     /// <summary>
-    /// The name of the oath 
+    /// The name of the oath
     /// </summary>
     [DataField(required: true)]
     public string Name = string.Empty;
+
+    /// <summary>
+    /// The description of the oath
+    /// </summary>
+    [DataField(required: true)]
+    public string Description = string.Empty;
 
     /// <summary>
     /// EntityEffectPrototype that will run on the user, when an oath has been chosen

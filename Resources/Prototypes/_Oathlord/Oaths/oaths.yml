@@ -1,6 +1,7 @@
 ﻿- type: oath
   id: Oathless
   name: Oathless
+  description: For those who are not bound by the unity of the Oathlord, free from any shackles.
   effect: OathlessEffect
   icon: /Textures/_Oathlord/Interface/Oaths/oath_oathless.png
   background: /Textures/_Oathlord/Interface/Oaths/bg_oath.png

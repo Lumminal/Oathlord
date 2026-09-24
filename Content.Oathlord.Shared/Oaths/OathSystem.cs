@@ -39,7 +39,7 @@ public abstract partial class OathSystem : CommonOathSystem
     /// Returns the oath active in the entity's brain
     /// </summary>
     /// <param name="uid">The user</param>
-    /// <returns>Null if the oath was not found</returns>
+    /// <returns>Null if user has no organs with oath component</returns>
     public ProtoId<OathPrototype>? GetOath(EntityUid uid)
     {
         // Return early if it's a brain
@@ -71,6 +71,9 @@ public abstract partial class OathSystem : CommonOathSystem
     public void SetOath(Entity<OathComponent?> ent, [ForbidLiteral] ProtoId<OathPrototype> oath, EntityUid? user, bool runEffects = true)
     {
         if (!_oathQuery.Resolve(ent.Owner, ref ent.Comp))
+            return;
+
+        if (ent.Comp.Oath == oath)
             return;
 
         ent.Comp.Oath = oath;

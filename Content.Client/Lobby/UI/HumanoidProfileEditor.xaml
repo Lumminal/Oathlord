@@ -60,7 +60,7 @@
                 </BoxContainer>
             </BoxContainer>
             <Control MinHeight="10" />
-            <!-- tabContainer | Oathlord - Added public access to tab container and traits -->
+            <!-- tabContainer | Oathlord - Added public access to tab container and markings -->
             <TabContainer Name="TabContainer" VerticalExpand="True" Access="Public">
                 <BoxContainer Orientation="Vertical">
                     <ScrollContainer VerticalExpand="True">
@@ -140,13 +140,13 @@
                         <BoxContainer Name="AntagList" Orientation="Vertical" />
                     </ScrollContainer>
                 </BoxContainer>
-                <BoxContainer Name="TraitsTab" Orientation="Vertical" Margin="10" Access="Public">
+                <BoxContainer Orientation="Vertical" Margin="10">
                     <!-- Traits -->
                     <ScrollContainer VerticalExpand="True">
                         <BoxContainer Name="TraitsList" Orientation="Vertical" />
                     </ScrollContainer>
                 </BoxContainer>
-                <BoxContainer Name="MarkingsTab" Orientation="Vertical" Margin="10">
+                <BoxContainer Name="MarkingsTab" Orientation="Vertical" Margin="10" Access="Public">
                     <!-- Markings -->
                     <humanoid:MarkingPicker Name="Markings" HorizontalExpand="True" VerticalExpand="True" />
                 </BoxContainer>
