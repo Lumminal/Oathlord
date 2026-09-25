@@ -26,6 +26,12 @@ public sealed partial class OathPrototype : IPrototype
     public string Description = string.Empty;
 
     /// <summary>
+    /// Whether the player can set this oath before the round starts, in the lobby.
+    /// </summary>
+    [DataField]
+    public bool Preference = true;
+
+    /// <summary>
     /// EntityEffectPrototype that will run on the user, when an oath has been chosen
     /// </summary>
     /// <remarks>
@@ -34,6 +40,12 @@ public sealed partial class OathPrototype : IPrototype
     /// </remarks>
     [DataField(required: true)]
     public string Effect = string.Empty;
+
+    /// <summary>
+    /// If set, this oath will run effects when the user switches off from it
+    /// </summary>
+    [DataField]
+    public string? CurseEffect;
 
     /// <summary>
     /// The icon of the oath to display in the UI.

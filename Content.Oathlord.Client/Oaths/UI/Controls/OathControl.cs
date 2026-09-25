@@ -35,13 +35,16 @@ public sealed partial class OathControl : Control
             return;
 
         // todo: we need a dedicated tooltip supplier...
-        OathButton.Tooltip = $"{oathProto.Name}: {oathProto.Description}";
+        OathButton.ToolTip = $"{oathProto.Name}: {oathProto.Description}";
 
-        if (oathProto.Background is { } background && OathPanel.PanelOverride is StyleBoxTexture styleBox)
-            styleBox.Texture = _sprite.Frame0(background);
+        if (OathPanel.PanelOverride is StyleBoxTexture styleBox)
+        {
+            var bg = oathProto.Background;
+            styleBox.Texture = bg == null ? null : _sprite.Frame0(bg);
+        }
 
-        if (oathProto.Icon is { } icon)
-            OathButton.TextureNormal = _sprite.Frame0(icon);
+        var icon = oathProto.Icon;
+        OathButton.TextureNormal = icon == null ? null : _sprite.Frame0(icon);
     }
 }
 

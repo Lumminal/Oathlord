@@ -1,0 +1,30 @@
+﻿# Define all oath effects (benefits + curse) here.
+# Naming:
+#
+# Benefit: XEffect where X is the oath's name
+# Curse: XCurseEffect where X is the oath's name
+#
+# Add a comment on top mentioning the oath the effects are used for, and for balancing, remember:
+# - Benefits should not give an advantage to the player. E.g. an oath of nature should probably make you be friendly to wild animals.
+#   It should not give you extra mana, or melee power.
+# - Curses should make the player contemplate whether they should risk swapping oaths, this means they shouldn't be nothingburger (e.g. deal 50 damage), nor should they make the game unplayable (e.g. remove vision forever).
+#
+# Oathless - Does not have a benefit. Deletes your stomach as a curse (subject to change in the future).
+- type: entityEffect
+  id: OathlessEffect
+  effects:
+  - !type:NoEffect
+
+- type: entityEffect
+  id: OathlessCurseEffect
+  effects:
+  - !type:RelayOrgans
+    whitelist:
+      components:
+      - Stomach
+    effect: !type:Delete
+      queued: true
+  - !type:PopupMessage
+    type: Local
+    visualType: LargeCaution
+    messages: [ "generic-reagent-effect-slicing-insides" ]

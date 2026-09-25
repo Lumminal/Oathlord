@@ -38,7 +38,7 @@ public sealed partial class OathProfileEditor : BoxContainer
     private void SetupOaths()
     {
         OathContainer.Children.Clear();
-        foreach (var oath in _oath.AllOaths)
+        foreach (var oath in _oath.AllRoundstartOaths)
         {
             var oathControl = new OathControl(oath, _proto, _sprite);
             OathContainer.AddChild(oathControl);
