@@ -22,6 +22,19 @@ public sealed partial class OathControl : Control
         _sprite = sprite;
 
         UpdateOath(oath);
+
+        OathButton.TooltipSupplier = SupplyTooltip;
+    }
+
+    private Control? SupplyTooltip(Control sender)
+    {
+        if (!_proto.TryIndex(Oath, out var oath))
+            return null;
+
+        var name = oath.Name;
+        var desc = oath.Description;
+
+        return new OathTooltip(name, desc);
     }
 
     /// <summary>
@@ -33,9 +46,6 @@ public sealed partial class OathControl : Control
         Oath = oath;
         if (!_proto.TryIndex(oath, out var oathProto))
             return;
-
-        // todo: we need a dedicated tooltip supplier...
-        OathButton.ToolTip = $"{oathProto.Name}: {oathProto.Description}";
 
         if (OathPanel.PanelOverride is StyleBoxTexture styleBox)
         {

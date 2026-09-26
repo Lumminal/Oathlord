@@ -9,22 +9,8 @@
 #   It should not give you extra mana, or melee power.
 # - Curses should make the player contemplate whether they should risk swapping oaths, this means they shouldn't be nothingburger (e.g. deal 50 damage), nor should they make the game unplayable (e.g. remove vision forever).
 #
-# Oathless - Does not have a benefit. Deletes your stomach as a curse (subject to change in the future).
+# Oathless - Does not have a benefit, nor a curse.
 - type: entityEffect
   id: OathlessEffect
   effects:
   - !type:NoEffect
-
-- type: entityEffect
-  id: OathlessCurseEffect
-  effects:
-  - !type:RelayOrgans
-    whitelist:
-      components:
-      - Stomach
-    effect: !type:Delete
-      queued: true
-  - !type:PopupMessage
-    type: Local
-    visualType: LargeCaution
-    messages: [ "generic-reagent-effect-slicing-insides" ]

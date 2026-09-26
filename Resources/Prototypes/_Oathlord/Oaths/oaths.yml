@@ -8,15 +8,23 @@
 # If you want an oath to not appear in the customization menu, but only in-world, set:
 #    preference: false
 #
+# For curses:
+#   curseEffect: your entity effect prototype
+#
 # If you want your oath to appear in-world, the only way to do it via making an entity with OathProvider component.
-# Ideally, most of those entities should be hard to come by, and not be items (statues, or structures that are set in one place)
+# Ideally, most of those entities should be hard to come by, and not be items (just statues, or structures that are set in one place)
 #
 # Define effects for oaths in EntityEffects/oaths.yml file (there's a small game design explanation on how to do effects)
 - type: oath
   id: Oathless
   name: Oathless
-  description: For those who are not bound by the unity of the Oathlord, free from any shackles.
+  description:
+    For those who are not bound by the unity of the Oathlord, free from any shackles.
+    Alas, an Oathless person is still connected to the link of the Oathlord.
+    It is said that becoming truly Oathless requires you to pass several trials.
+    Where those trials are located, however, is a question that only few individuals in the world know...
+
+    There is no benefit, nor downside in being Oathless.
   effect: OathlessEffect
-  curseEffect: OathlessCurseEffect
   icon: /Textures/_Oathlord/Interface/Oaths/oath_oathless.png
   background: /Textures/_Oathlord/Interface/Oaths/bg_oath.png
