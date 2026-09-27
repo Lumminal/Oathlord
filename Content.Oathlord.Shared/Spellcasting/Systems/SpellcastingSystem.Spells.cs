@@ -61,7 +61,7 @@ public partial class SpellcastingSystem
     public List<ProtoId<SpellTypePrototype>> GetSpellTypes(Entity<SpellComponent?> ent)
     {
         if (!_spellQuery.Resolve(ent.Owner, ref ent.Comp))
-            return new List<ProtoId<SpellTypePrototype>>();
+            return new();
 
         return ent.Comp.Types;
     }

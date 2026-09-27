@@ -8,7 +8,8 @@
     <ScrollContainer>
         <BoxContainer Orientation="Vertical">
             <Label Name="RoleType" VerticalAlignment="Top" Margin="0 6 0 10" HorizontalAlignment="Center" StyleClasses="LabelHeading" Access="Public"/>
-            <BoxContainer Orientation="Horizontal">
+            <!-- Oathlord - Added name CharacterContainer and access public -->
+            <BoxContainer Orientation="Horizontal" Name="CharacterContainer" Access="Public">
                 <SpriteView OverrideDirection="South" Scale="2 2" Name="SpriteView" Access="Public" SetSize="64 64"/>
                 <BoxContainer Orientation="Vertical" VerticalAlignment="Top">
                     <Label Name="NameLabel" Access="Public"/>

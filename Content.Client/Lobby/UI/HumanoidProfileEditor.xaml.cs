@@ -386,6 +386,7 @@ namespace Content.Client.Lobby.UI
             UpdateEyePickers();
             UpdateSaveButton();
             UpdateMarkings();
+            OnSetProfile?.Invoke(profile); // Oathlord
 
             RefreshAntags();
             RefreshJobs();

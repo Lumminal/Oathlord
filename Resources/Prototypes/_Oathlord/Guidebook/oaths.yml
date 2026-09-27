@@ -1,0 +1,6 @@
+- type: guideEntry
+  hidden: false
+  locFilter: "en-US"
+  id: OathlordOaths
+  name: guidebook-oathlord-oaths-name
+  text: "/ServerInfo/_Oathlord/Oaths.xml"

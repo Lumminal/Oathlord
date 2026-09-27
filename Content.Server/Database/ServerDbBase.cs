@@ -260,6 +260,7 @@ namespace Content.Server.Database
                         .Select(t => new Trait {TraitName = t})
             );
 
+            profile.Oath = humanoid.Oath; // Oathlord
             profile.Loadouts.Clear();
 
             foreach (var (role, loadouts) in humanoid.Loadouts)

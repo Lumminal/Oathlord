@@ -195,7 +195,8 @@ namespace Content.Server.Preferences.Managers
                 (PreferenceUnavailableMode) profile.PreferenceUnavailable,
                 antags.ToHashSet(),
                 traits.ToHashSet(),
-                loadouts
+                loadouts,
+                profile.Oath ?? HumanoidProfileSystem.DefaultOath // Oathlord
             );
         }
 
