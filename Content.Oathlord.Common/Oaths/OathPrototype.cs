@@ -50,12 +50,12 @@ public sealed partial class OathPrototype : IPrototype
     /// <summary>
     /// The icon of the oath to display in the UI.
     /// </summary>
-    [DataField]
-    public SpriteSpecifier? Icon;
+    [DataField(required: true)]
+    public SpriteSpecifier Icon = default!;
 
     /// <summary>
     /// The background icon of the oath to display in the UI.
     /// </summary>
-    [DataField]
-    public SpriteSpecifier? Background;
+    [DataField(required: true)]
+    public SpriteSpecifier Background = default!;
 }

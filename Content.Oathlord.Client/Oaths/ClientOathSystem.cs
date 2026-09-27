@@ -51,7 +51,7 @@ public sealed partial class ClientOathSystem : OathSystem
 
     private void EnsureOath(CharacterWindow window)
     {
-        if (_player.LocalEntity is not { } player|| GetOath(player) is not { } oath)
+        if (_player.LocalEntity is not { } player)
             return;
 
         // We're basically searching for existing oath control, because if we don't,
@@ -66,10 +66,16 @@ public sealed partial class ClientOathSystem : OathSystem
             }
         }
 
+        // If we have no brain, just disable the control from showing up, or adding it in the first place...
+        if (GetOath(player) is not { } oath)
+        {
+            oathControl?.DisableControl();
+            return;
+        }
+
         if (oathControl == null)
         {
-            // Add the control only if it wasn't found in the window
-            oathControl = new OathControl(oath, ProtoMan, _sprite)
+            oathControl = new OathControl(oath, ProtoMan, _sprite, clickable: false)
             {
                 MaxSize = new Vector2(64, 64),
                 Margin = new Thickness(16, 0)

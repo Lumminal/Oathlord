@@ -6,8 +6,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Oathlord.Shared.Oaths;
 
 /// <summary>
-/// Oaths are beliefs, similar to Patrons/Gods.
-/// They are a little more complex. todo: expand
+/// System that provides a public API for handling oaths
 /// </summary>
 public abstract partial class OathSystem : CommonOathSystem
 {
@@ -174,7 +173,7 @@ public abstract partial class OathSystem : CommonOathSystem
 
     public override void ApplyOath(EntityUid target, [ForbidLiteral] ProtoId<OathPrototype> oath)
     {
-        // called from humanoid profile editor, so it's a preference
+        // Called from humanoid profile editor, so it's a preference
         SetOath(target, oath, isPreference: true);
     }
 

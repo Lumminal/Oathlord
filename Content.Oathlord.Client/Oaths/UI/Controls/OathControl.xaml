@@ -5,7 +5,6 @@
             <PanelContainer.PanelOverride>
                 <graphics:StyleBoxTexture/>
             </PanelContainer.PanelOverride>
-
             <TextureButton Name="OathButton" Access="Public"/>
         </PanelContainer>
     </BoxContainer>

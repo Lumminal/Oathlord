@@ -15,7 +15,7 @@ public sealed partial class OathControl : Control
 
     public ProtoId<OathPrototype> Oath;
 
-    public OathControl(ProtoId<OathPrototype> oath, IPrototypeManager proto, SpriteSystem sprite)
+    public OathControl(ProtoId<OathPrototype> oath, IPrototypeManager proto, SpriteSystem sprite, bool clickable = true)
     {
         RobustXamlLoader.Load(this);
         _proto = proto;
@@ -23,6 +23,8 @@ public sealed partial class OathControl : Control
 
         UpdateOath(oath);
 
+        // Needed if we want this on the character window, for example. No reason to make it clickable there...
+        OathButton.Disabled = !clickable;
         OathButton.TooltipSupplier = SupplyTooltip;
     }
 
@@ -43,18 +45,23 @@ public sealed partial class OathControl : Control
     /// <param name="oath">The updated oath</param>
     public void UpdateOath(ProtoId<OathPrototype> oath)
     {
+        Visible = true;
         Oath = oath;
+
         if (!_proto.TryIndex(oath, out var oathProto))
             return;
 
-        if (OathPanel.PanelOverride is StyleBoxTexture styleBox)
-        {
-            var bg = oathProto.Background;
-            styleBox.Texture = bg == null ? null : _sprite.Frame0(bg);
-        }
-
+        var bg = oathProto.Background;
         var icon = oathProto.Icon;
-        OathButton.TextureNormal = icon == null ? null : _sprite.Frame0(icon);
+
+        OathButton.TextureNormal = _sprite.Frame0(icon);
+        if (OathPanel.PanelOverride is StyleBoxTexture styleBox)
+            styleBox.Texture = _sprite.Frame0(bg);
+    }
+
+    public void DisableControl()
+    {
+        Visible = false;
     }
 }
 
