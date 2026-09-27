@@ -3,7 +3,7 @@
 namespace Content.Oathlord.Shared.EntityEffects;
 
 /// <summary>
-/// Deletes the target entity, be careful with this...
+/// Effect that deletes the target entity, be careful with this...
 /// </summary>
 public sealed partial class Delete : EntityEffectBase<Delete>
 {

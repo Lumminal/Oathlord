@@ -12,7 +12,7 @@ public sealed partial class OathProviderSystem : EntitySystem
     public void OnVerb(Entity<OathProviderComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
     {
         var user = args.User;
-        if (!args.CanInteract || !args.CanInteract || _oath.GetOath(user) == null)
+        if (!args.CanInteract || !args.CanAccess || _oath.GetOath(user) == null)
             return;
 
         if (!ProtoMan.Resolve(ent.Comp.Oath, out var oathProto))
@@ -24,6 +24,7 @@ public sealed partial class OathProviderSystem : EntitySystem
             Text = "Pray to Avatar",
             Act = () =>
             {
+                // note: should this be a do-after?
                 if (_oath.SetOath(user, ent.Comp.Oath))
                 {
                     _popup.PopupEntity("You break your previous oath, and fall into a new one...", user, PopupType.Medium);
