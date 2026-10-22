@@ -1,0 +1,6 @@
+<controls:FancyWindow
+    xmlns="https://spacestation14.io"
+    xmlns:controls="using:Content.Client.UserInterface.Controls"
+    Title="Attributes"
+    MinSize="300 400">
+</controls:FancyWindow>
