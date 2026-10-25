@@ -59,13 +59,29 @@ public sealed partial class CharacterAttributesSystem : EntitySystem
         _container.ShutdownContainer(ent.Comp.Container);
     }
 
+    [EventSubscription]
+    private void OnApplyAttributes(ApplyCharacterAttributesEvent msg, EntitySessionEventArgs args)
+    {
+        if (args.SenderSession.AttachedEntity is not { } player)
+            return;
+
+        var entityAttributes = new Dictionary<EntityUid, int>();
+        foreach (var (attribute, points) in msg.ChangedPoints)
+        {
+            var entityAttr = GetEntity(attribute);
+            entityAttributes.Add(entityAttr, points);
+        }
+
+        AdjustAttributes(player, entityAttributes);
+    }
+
     private void LoadAttributes()
     {
         AllAttributes.Clear();
         var name = Factory.CompName<CharacterAttributeComponent>();
         foreach (var proto in ProtoMan.EnumeratePrototypes<EntityPrototype>())
         {
-            if (!proto.HasComp(name))
+            if (!proto.HasComp(name) || proto.Abstract)
                 continue;
 
             AllAttributes.Add(proto.ID);
