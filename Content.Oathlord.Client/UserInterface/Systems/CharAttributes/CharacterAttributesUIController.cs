@@ -1,12 +1,13 @@
 using Content.Client.Gameplay;
-using Content.Client.UserInterface.Controls;
 using Content.Client.UserInterface.Systems.MenuBar;
 using Content.Client.UserInterface.Systems.MenuBar.Widgets;
 using Content.Oathlord.Client.UserInterface.Systems.CharAttributes.Widgets;
 using Content.Oathlord.Client.UserInterface.Systems.CharAttributes.Windows;
+using Content.Oathlord.Common.Input;
 using JetBrains.Annotations;
 using Robust.Client.UserInterface.Controllers;
 using Robust.Client.UserInterface.Controls;
+using Robust.Shared.Input.Binding;
 
 namespace Content.Oathlord.Client.UserInterface.Systems.CharAttributes;
 
@@ -14,7 +15,7 @@ namespace Content.Oathlord.Client.UserInterface.Systems.CharAttributes;
 public sealed partial class CharacterAttributesUIController : UIController, IOnStateChanged<GameplayState>
 {
     private CharacterAttributeWindow? _menu;
-    private MenuButton? CharAttributeButton => UIManager.GetActiveUIWidgetOrNull<CharAttributeMenuButton>()?.CharAttributeButton;
+    private CharAttributeMenuButton? _charButton;
 
     public override void Initialize()
     {
@@ -26,7 +27,7 @@ public sealed partial class CharacterAttributesUIController : UIController, IOnS
 
     private void OnUnload(GameTopMenuBar bar)
     {
-        UnloadButton();
+        UnloadButton(bar);
     }
 
     private void OnLoad(GameTopMenuBar bar)
@@ -36,38 +37,54 @@ public sealed partial class CharacterAttributesUIController : UIController, IOnS
 
     public void OnStateEntered(GameplayState state)
     {
-        //
+        CommandBinds.Builder.Bind(OathlordKeyFunctions.OpenAttributesMenu,
+                InputCmdHandler.FromDelegate(_ => ToggleCharAttributeMenu()))
+            .Register<CharacterAttributesUIController>();
     }
 
     public void OnStateExited(GameplayState state)
     {
-        //
+        CommandBinds.Unregister<CharacterAttributesUIController>();
     }
 
     private void LoadButton(GameTopMenuBar bar)
     {
-        if (CharAttributeButton == null)
-            return; // todo fix
-
-        foreach (var child in bar.Children)
-        {
-            if (child == CharAttributeButton)
-                return;
-        }
-
-        CharAttributeButton.OnPressed += OnPressed;
-
-        bar.AddChild(CharAttributeButton);
-        CharAttributeButton.SetPositionLast();
-
+        _charButton = new CharAttributeMenuButton();
         _menu = new CharacterAttributeWindow();
+
+        var btn = _charButton.CharAttributeButton;
+
+        _charButton.RemoveChild(btn);
+
+        btn.OnPressed += OnPressed;
+        bar.AddChild(btn);
+        btn.SetPositionLast();
+
+        _menu.OnClose += OnMenuClosed;
+        _menu.OnOpen += OnMenuOpened;
     }
 
-    private void UnloadButton()
+    private void UnloadButton(GameTopMenuBar bar)
     {
-        _menu?.Close();
-        _menu = null;
-        CharAttributeButton?.OnPressed -= OnPressed;
+        foreach (var child in bar.Children)
+        {
+            if (child == _charButton?.CharAttributeButton)
+            {
+                bar.RemoveChild(child);
+                break;
+            }
+        }
+
+        if (_menu is not null)
+        {
+            _menu.Close();
+            _menu.OnClose -= OnMenuClosed;
+            _menu.OnOpen -= OnMenuOpened;
+
+            _menu = null;
+        }
+
+        _charButton?.CharAttributeButton.OnPressed -= OnPressed;
     }
 
     private void OnPressed(BaseButton.ButtonEventArgs obj)
@@ -82,12 +99,26 @@ public sealed partial class CharacterAttributesUIController : UIController, IOnS
 
         if (_menu.IsOpen)
         {
-            CharAttributeButton?.SetClickPressed(false);
             _menu.Close();
             return;
         }
 
-        CharAttributeButton?.SetClickPressed(true);
         _menu.OpenCenteredRight();
+    }
+
+    private void OnMenuClosed()
+    {
+        if (_charButton is not { } charBtn)
+            return;
+
+        charBtn.CharAttributeButton.SetClickPressed(false);
+    }
+
+    private void OnMenuOpened()
+    {
+        if (_charButton is not { } charBtn)
+            return;
+
+        charBtn.CharAttributeButton.SetClickPressed(true);
     }
 }
